@@ -10,12 +10,17 @@ FROM ${RENKU_BASE_IMAGE}
 # e.g. the following installs apt-utils and vim; each pkg on its own line, all lines
 # except for the last end with backslash '\' to continue the RUN line
 #
-# USER root
+USER root
+## install fastq screen
+RUN curl -LO http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/fastq_screen_v0.14.0.tar.gz
+RUN tar -xzf fastq_screen_v0.14.0.tar.gz
+RUN cp -r fastq_screen_v0.14.0 /opt/
+
 # RUN apt-get update && \
 #    apt-get install -y --no-install-recommends \
 #    apt-utils \
 #    vim
-# USER ${NB_USER}
+USER ${NB_USER}
 
 # install the R dependencies
 COPY install.R /tmp/
