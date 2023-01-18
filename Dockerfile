@@ -14,7 +14,15 @@ USER root
 ## install fastq screen
 RUN curl -LO http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/fastq_screen_v0.14.0.tar.gz
 RUN tar -xzf fastq_screen_v0.14.0.tar.gz
-RUN cp -r fastq_screen_v0.14.0 /opt/
+RUN mv fastq_screen_v0.14.0 /opt/
+## install fastqc
+RUN curl -LO https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
+RUN unzip fastqc_v0.11.9.zip
+RUN mv FastQC /opt/
+RUN chmod 775 /opt/FastQC/fastqc
+
+## Set path
+ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
 
 # RUN apt-get update && \
 #    apt-get install -y --no-install-recommends \
