@@ -6,4 +6,20 @@
 # For example, remove the comment from the line below if you wish to
 # install the `ggplot2` package.
 #
-# install.packages('ggplot2')
+
+if (!require("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+
+cranPackages <- c(
+  "ggplot2",
+  "tidyverse"
+)
+install.packages(cranPackages)
+
+biocPackages <- c(
+  "Rsubread",
+  "SummarizedExperiment",
+  "DESeq2"
+)
+BiocManager::install(biocPackages)
