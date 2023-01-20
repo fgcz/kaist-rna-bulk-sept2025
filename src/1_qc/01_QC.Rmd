@@ -8,6 +8,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r, include=FALSE}
+suppressPackageStartupMessages({
+  library(tidyverse)
+})
+```
+
 ## Introduction
 
 Welcome to our introductory RNA-seq course. 
@@ -18,16 +24,25 @@ In this course, we will be primarily working with yeast samples, initially seque
 
 First, let's download the data. In this directory, you will find a bash script called `01_download_data.sh`. This script will download a tar file containing our fastq files, decompress it, and deposit the files into the folder `data/tmp/yeast_fastq_full`. To execute this script, please switch to the terminal and execute the following lines (ensuring that you are in the root of the project directory, i.e. `/home/rstudio/work/rna-seq-course-feb2023`). 
 
-```{bash, eval=FALSE}
+```{sh, eval=FALSE}
 bash src/1_qc/01_download_data.sh
 ```
 
 The data should be downloaded into `data/tmp/yeast_fastq_full/`. To check this, run
 
-```{bash, eval=FALSE}
+```{sh, eval=FALSE}
 ls -lh data/tmp/yeast_fastq_full
 ```
 
-You should see 9 files in this directory. 8 files ending in fastq.gz and 1 `dataset.tsv` file.
+You should see 9 files in this directory. 8 files ending in fastq.gz and 1 "dataset.tsv" file. The "dataset.tsv" file gives some details about the samples. Let's load this file now in R to see how it looks like.
 
+```{r}
+ds <- data.table::fread("../../data/tmp/yeast_fastq_full/dataset.tsv") %>% as_tibble()
+ds
+```
+
+Take a moment to explore the table and answer the following questions:
+1. How many groups of samples are there?
+2. What Library Prep Kit was used?
+3. What is the read count? Is this what we expect for RNA-seq?
 
