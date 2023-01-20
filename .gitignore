@@ -378,3 +378,4 @@ tags
 .renku.lock
 .renku/tmp
 .renku/cache
+data/tmp
