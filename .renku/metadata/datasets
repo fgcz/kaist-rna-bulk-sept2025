@@ -15,7 +15,7 @@
                   "supplementary-files",
                   {
                     "@renku_data_type": "renku.domain_model.dataset.Dataset",
-                    "@renku_oid": "7b86d91fa9fa38fe74afb3dce7f92e9dba11a28bcc44a6c865b2e024aeeb2bae",
+                    "@renku_oid": "fb4aaaf0ed06c6af599afff1772206109e84f78850556b21a3595ae0d0c4bb9f",
                     "@renku_reference": true
                   }
                 ]

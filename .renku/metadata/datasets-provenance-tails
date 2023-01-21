@@ -12,16 +12,16 @@
               {
                 "@renku_data_type": "builtins.tuple",
                 "@renku_data_value": [
+                  "/datasets/d128db2fc5be4566899a40ac9f838604",
+                  {
+                    "@renku_data_type": "renku.domain_model.dataset.Dataset",
+                    "@renku_oid": "fb4aaaf0ed06c6af599afff1772206109e84f78850556b21a3595ae0d0c4bb9f",
+                    "@renku_reference": true
+                  },
                   "/datasets/fbf8c7923455467eb3a3906fd3154ed8",
                   {
                     "@renku_data_type": "renku.domain_model.dataset.Dataset",
                     "@renku_oid": "e359cabba00a265a9e9beca94d47a01b9a0728df8e7e1271bb3638da0048a54e",
-                    "@renku_reference": true
-                  },
-                  "/datasets/ff1738289331400b9ec0151c79c05a4a",
-                  {
-                    "@renku_data_type": "renku.domain_model.dataset.Dataset",
-                    "@renku_oid": "7b86d91fa9fa38fe74afb3dce7f92e9dba11a28bcc44a6c865b2e024aeeb2bae",
                     "@renku_reference": true
                   }
                 ]
