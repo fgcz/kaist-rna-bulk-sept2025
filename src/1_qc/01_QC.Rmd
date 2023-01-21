@@ -46,3 +46,8 @@ Take a moment to explore the table and answer the following questions:
 2. What Library Prep Kit was used?
 3. What is the read count? Is this what we expect for RNA-seq?
 
+## Running fastqc
+
+```{sh}
+pwd
+```
