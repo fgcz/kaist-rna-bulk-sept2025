@@ -18,8 +18,10 @@ RUN mv fastq_screen_v0.14.0 /opt/
 ## install fastqc
 RUN curl -LO https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
 RUN unzip fastqc_v0.11.9.zip
-RUN mv FastQC /opt/
-RUN chmod 775 /opt/FastQC/fastqc
+RUN mv FastQC /opt/ && chmod 775 /opt/FastQC/fastqc
+## install fastp
+RUN wget http://opengene.org/fastp/fastp && chmod a+x ./fastp && mv ./fastp /opt/
+
 
 ## Set path
 ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
