@@ -13,16 +13,14 @@ FROM ${RENKU_BASE_IMAGE}
 USER root
 ## install fastq screen
 RUN curl -LO http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/fastq_screen_v0.14.0.tar.gz
-RUN tar -xzf fastq_screen_v0.14.0.tar.gz
-RUN mv fastq_screen_v0.14.0 /opt/
+RUN tar -xzf fastq_screen_v0.14.0.tar.gz && mv fastq_screen_v0.14.0 /opt/ && rm -f fastq_screen_v0.14.0.tar.gz
 ## install fastqc
-RUN curl -LO https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
-RUN unzip fastqc_v0.11.9.zip
-RUN mv FastQC /opt/ && chmod 775 /opt/FastQC/fastqc
+RUN curl -LO https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip && unzip fastqc_v0.11.9.zip
+RUN mv FastQC /opt/ && chmod 775 /opt/FastQC/fastqc && rm -f fastqc_v0.11.9.zip
 ## install fastp
 RUN curl -LO http://opengene.org/fastp/fastp && chmod a+x ./fastp && mv ./fastp /opt/
 ## install kallisto
-RUN curl -LO https://github.com/pachterlab/kallisto/releases/download/v0.48.0/kallisto_linux-v0.48.0.tar.gz && tar -xf kallisto_linux-v0.48.0.tar.gz && mv kallisto/kallisto /opt/
+RUN curl -LO https://github.com/pachterlab/kallisto/releases/download/v0.48.0/kallisto_linux-v0.48.0.tar.gz && tar -xf kallisto_linux-v0.48.0.tar.gz && mv kallisto/kallisto /opt/ && rm -rf ./kallisto kallisto_linux-v0.48.0.tar.gz
 
 ## Set path
 ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
