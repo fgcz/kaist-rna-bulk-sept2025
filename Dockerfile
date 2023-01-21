@@ -16,7 +16,7 @@ RUN curl -LO http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/fast
 RUN tar -xzf fastq_screen_v0.14.0.tar.gz && mv fastq_screen_v0.14.0 /opt/ && rm -f fastq_screen_v0.14.0.tar.gz
 ## install fastqc
 RUN curl -LO https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip && unzip fastqc_v0.11.9.zip
-RUN mv FastQC /opt/ && chmod 775 /opt/FastQC/fastqc && rm -f fastqc_v0.11.9.zip
+RUN chmod a+x FastQC/fastqc && mv FastQC/fastqc /opt/ && rm -rf FastQC fastqc_v0.11.9.zip
 ## install fastp
 RUN curl -LO http://opengene.org/fastp/fastp && chmod a+x ./fastp && mv ./fastp /opt/
 ## install kallisto
