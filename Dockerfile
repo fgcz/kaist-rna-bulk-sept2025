@@ -20,8 +20,9 @@ RUN curl -LO https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0
 RUN unzip fastqc_v0.11.9.zip
 RUN mv FastQC /opt/ && chmod 775 /opt/FastQC/fastqc
 ## install fastp
-RUN wget http://opengene.org/fastp/fastp && chmod a+x ./fastp && mv ./fastp /opt/
-
+RUN curl -LO http://opengene.org/fastp/fastp && chmod a+x ./fastp && mv ./fastp /opt/
+## install kallisto
+RUN curl -LO https://github.com/pachterlab/kallisto/releases/download/v0.48.0/kallisto_linux-v0.48.0.tar.gz && tar -xf kallisto_linux-v0.48.0.tar.gz && mv kallisto/kallisto /opt/
 
 ## Set path
 ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
