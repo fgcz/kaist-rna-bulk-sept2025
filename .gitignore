@@ -379,3 +379,4 @@ tags
 .renku/tmp
 .renku/cache
 data/tmp
+results/
