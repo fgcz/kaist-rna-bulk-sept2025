@@ -11,6 +11,10 @@ FROM ${RENKU_BASE_IMAGE}
 # except for the last end with backslash '\' to continue the RUN line
 #
 USER root
+RUN apt-get update && \
+   apt-get install -y --no-install-recommends \
+   libhdf5-dev
+
 ## install fastq screen
 RUN curl -LO http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/fastq_screen_v0.14.0.tar.gz
 RUN tar -xzf fastq_screen_v0.14.0.tar.gz && mv fastq_screen_v0.14.0 /opt/ && rm -f fastq_screen_v0.14.0.tar.gz
@@ -25,10 +29,6 @@ RUN curl -LO https://github.com/pachterlab/kallisto/releases/download/v0.48.0/ka
 ## Set path
 ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
 
-# RUN apt-get update && \
-#    apt-get install -y --no-install-recommends \
-#    apt-utils \
-#    vim
 USER ${NB_USER}
 
 # install the R dependencies
