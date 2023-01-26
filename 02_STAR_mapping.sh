@@ -1,0 +1,1 @@
+TRIMMED_FASTQS=results/1_qc/fastp
