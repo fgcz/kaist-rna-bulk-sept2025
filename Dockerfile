@@ -26,7 +26,7 @@ RUN curl -LO http://opengene.org/fastp/fastp && chmod a+x ./fastp && mv ./fastp 
 ## install kallisto
 RUN curl -LO https://github.com/pachterlab/kallisto/releases/download/v0.48.0/kallisto_linux-v0.48.0.tar.gz && tar -xf kallisto_linux-v0.48.0.tar.gz && mv kallisto/kallisto /opt/ && rm -rf ./kallisto kallisto_linux-v0.48.0.tar.gz
 ## install STAR
-curl -LO https://github.com/alexdobin/STAR/archive/2.7.10b.tar.gz && tar -xzf 2.7.10b.tar.gz && cd STAR-2.7.10b && cd source && make && cp STAR /opt/ && cd ../.. && rm -rf ./STAR-2.7.10b
+RUN curl -LO https://github.com/alexdobin/STAR/archive/2.7.10b.tar.gz && tar -xzf 2.7.10b.tar.gz && cd STAR-2.7.10b && cd source && make && cp STAR /opt/ && cd ../.. && rm -rf ./STAR-2.7.10b
 
 ## Set path
 ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
