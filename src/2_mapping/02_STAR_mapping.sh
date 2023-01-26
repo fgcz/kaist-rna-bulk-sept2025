@@ -1,11 +1,13 @@
 TRIMMED_FASTQS=results/1_qc/fastp
 OUTPUT_DIR=results/2_mapping/STAR_alignment
+mkdir -p $OUTPUT_DIR
+echo $(pwd)
 
 # Start processing with fastp
-for FASTQ in $TRIMMED_FASTQS/*_R1.fastq.gz
+for FASTQ in $TRIMMED_FASTQS/*trimmed_R1.fastq.gz
   do SAMPLE_NAME=$(basename ${FASTQ%_R1.fastq.gz})
-  echo $SAMPLE_NAME
-  STAR \
+  echo $FASTQ
+  /opt/STAR \
     --genomeDir data/supplementary-files/Ensembl_R64_genes_STARIndex \
     --readFilesIn $FASTQ --twopassMode None --runThreadN 4 \
     --sjdbOverhang 150 --outFilterType BySJout --outFilterMatchNmin 30 \
@@ -16,6 +18,5 @@ for FASTQ in $TRIMMED_FASTQS/*_R1.fastq.gz
     --chimJunctionOverhangMin 15 --chimScoreMin 15 --chimScoreSeparation 10 \
     --outSAMstrandField intronMotif --alignEndsProtrude 3 ConcordantPair \
     --outSAMattributes All --outStd BAM_Unsorted --outSAMtype BAM Unsorted \
-    --outSAMattrRGline ID:GE4 SM:GE4 --readFilesCommand zcat \
-    > $OUTPUT_DIR/$SAMPLE_NAME.out.bam
+    --outSAMattrRGline ID:GE4 SM:GE4 --readFilesCommand zcat > $OUTPUT_DIR/$SAMPLE_NAME.out.bam
 done
