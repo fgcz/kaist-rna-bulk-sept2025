@@ -9,6 +9,7 @@ for FASTQ in $TRIMMED_FASTQS/*trimmed_R1.fastq.gz
   echo $FASTQ
   /opt/STAR \
     --genomeDir data/supplementary-files/Ensembl_R64_genes_STARIndex \
+    --outFileNamePrefix $OUTPUT_DIR/$SAMPLE_NAME \
     --readFilesIn $FASTQ --twopassMode None --runThreadN 4 \
     --sjdbOverhang 150 --outFilterType BySJout --outFilterMatchNmin 30 \
     --outFilterMismatchNmax 10 --outFilterMismatchNoverLmax 0.05 \
