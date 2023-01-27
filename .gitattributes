@@ -9,3 +9,13 @@ data/supplementary-files/Ensembl_R64_genes_STARIndex/SAindex filter=lfs diff=lfs
 data/supplementary-files/Ensembl_R64_genes_STARIndex/geneInfo.tab filter=lfs diff=lfs merge=lfs -text
 data/supplementary-files/Ensembl_R64_genes_STARIndex/transcriptInfo.tab filter=lfs diff=lfs merge=lfs -text
 data/supplementary-files/Ensembl_R64_genes_STARIndex/exonGeTrInfo.tab filter=lfs diff=lfs merge=lfs -text
+data/supplementary-files/Ensembl_R64_genes/genes.bed filter=lfs diff=lfs merge=lfs -text
+data/supplementary-files/Ensembl_R64_genes/genes_annotation_byTranscript.txt filter=lfs diff=lfs merge=lfs -text
+data/supplementary-files/Ensembl_R64_genes/features_annotation_byGene.txt filter=lfs diff=lfs merge=lfs -text
+data/supplementary-files/Ensembl_R64_genes/features_annotation_byTranscript.txt filter=lfs diff=lfs merge=lfs -text
+data/supplementary-files/Ensembl_R64_genes/features.gtf filter=lfs diff=lfs merge=lfs -text
+data/supplementary-files/Ensembl_R64_genes/genes_annotation_byGene.txt filter=lfs diff=lfs merge=lfs -text
+data/supplementary-files/Ensembl_R64_genes/transcripts.only.gtf filter=lfs diff=lfs merge=lfs -text
+data/supplementary-files/Ensembl_R64_genes/genes_annotation_byTranscript.txt.bak filter=lfs diff=lfs merge=lfs -text
+data/supplementary-files/Ensembl_R64_genes/genes.gtf filter=lfs diff=lfs merge=lfs -text
+data/supplementary-files/Ensembl_R64_genes/genes.sorted.gtf filter=lfs diff=lfs merge=lfs -text
