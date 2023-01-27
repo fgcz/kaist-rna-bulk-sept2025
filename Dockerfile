@@ -13,7 +13,8 @@ FROM ${RENKU_BASE_IMAGE}
 USER root
 RUN apt-get update && \
    apt-get install -y --no-install-recommends \
-   libhdf5-dev
+   libhdf5-dev \
+   libncurses5
 
 ## install fastq screen
 RUN curl -LO http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/fastq_screen_v0.14.0.tar.gz
@@ -38,6 +39,9 @@ USER ${NB_USER}
 # install the R dependencies
 COPY install.R /tmp/
 RUN R -f /tmp/install.R
+
+# install conda dependencies
+RUN conda install -y -c bioconda samtools
 
 # install the python dependencies
 COPY requirements.txt /tmp/
