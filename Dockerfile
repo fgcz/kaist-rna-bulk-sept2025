@@ -27,6 +27,8 @@ RUN curl -LO http://opengene.org/fastp/fastp && chmod a+x ./fastp && mv ./fastp 
 RUN curl -LO https://github.com/pachterlab/kallisto/releases/download/v0.48.0/kallisto_linux-v0.48.0.tar.gz && tar -xf kallisto_linux-v0.48.0.tar.gz && mv kallisto/kallisto /opt/ && rm -rf ./kallisto kallisto_linux-v0.48.0.tar.gz
 ## install STAR
 RUN curl -LO https://github.com/alexdobin/STAR/archive/2.7.10b.tar.gz && tar -xzf 2.7.10b.tar.gz && cd STAR-2.7.10b && cd source && make && cp STAR /opt/ && cd ../.. && rm -rf ./STAR-2.7.10b
+## install seqkit
+RUN curl -LO https://github.com/shenwei356/seqkit/releases/download/v2.3.1/seqkit_linux_amd64.tar.gz && tar -zxf seqkit_linux_amd64.tar.gz && mv seqkit /opt/ && rm -f seqkit_linux_amd64.tar.gz
 
 ## Set path
 ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
