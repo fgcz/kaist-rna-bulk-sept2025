@@ -20,4 +20,8 @@ for FASTQ in $TRIMMED_FASTQS/*trimmed_R1.fastq.gz
     --outSAMstrandField intronMotif --alignEndsProtrude 3 ConcordantPair \
     --outSAMattributes All --outStd BAM_Unsorted --outSAMtype BAM Unsorted \
     --outSAMattrRGline ID:GE4 SM:GE4 --readFilesCommand zcat > $OUTPUT_DIR/$SAMPLE_NAME.out.bam
+  samtools sort -l 9 -m 2625M -@ 8 $OUTPUT_DIR/$SAMPLE_NAME.out.bam -o $OUTPUT_DIR/$SAMPLE_NAME.bam
+  rm -f $OUTPUT_DIR/$SAMPLE_NAME.out.bam
+  samtools index $OUTPUT_DIR/$SAMPLE_NAME.bam
+  infer_experiment.py -r data/supplementary-files/Ensembl_R64_genes.bed -i $OUTPUT_DIR/$SAMPLE_NAME.bam -s 1000000
 done
