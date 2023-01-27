@@ -40,7 +40,7 @@ COPY install.R /tmp/
 RUN R -f /tmp/install.R
 
 # install conda dependencies
-RUN conda install -c bioconda samtools
+RUN conda install -y -c bioconda samtools
 
 # install the python dependencies
 COPY requirements.txt /tmp/
