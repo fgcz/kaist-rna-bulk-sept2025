@@ -13,7 +13,8 @@ FROM ${RENKU_BASE_IMAGE}
 USER root
 RUN apt-get update && \
    apt-get install -y --no-install-recommends \
-   libhdf5-dev
+   libhdf5-dev \
+   libncurses5
 
 ## install fastq screen
 RUN curl -LO http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/fastq_screen_v0.14.0.tar.gz
