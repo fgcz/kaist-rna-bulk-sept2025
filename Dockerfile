@@ -39,6 +39,9 @@ USER ${NB_USER}
 COPY install.R /tmp/
 RUN R -f /tmp/install.R
 
+# install conda dependencies
+RUN conda install -c bioconda samtools
+
 # install the python dependencies
 COPY requirements.txt /tmp/
 RUN pip3 install -r /tmp/requirements.txt
