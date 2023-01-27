@@ -4,9 +4,11 @@ mkdir -p $OUTPUT_DIR
 echo $(pwd)
 
 # Start processing with fastp
-for FASTQ in $TRIMMED_FASTQS/*trimmed_R1.fastq.gz
+for FASTQ in $TRIMMED_FASTQS/*_trimmed_R1.fastq.gz
   do SAMPLE_NAME=$(basename ${FASTQ%_R1.fastq.gz})
   echo $FASTQ
+  
+  # First do alignment with STAR using a pre-built index
   /opt/STAR \
     --genomeDir data/supplementary-files/Ensembl_R64_genes_STARIndex \
     --outFileNamePrefix $OUTPUT_DIR/$SAMPLE_NAME"_" \
@@ -20,8 +22,13 @@ for FASTQ in $TRIMMED_FASTQS/*trimmed_R1.fastq.gz
     --outSAMstrandField intronMotif --alignEndsProtrude 3 ConcordantPair \
     --outSAMattributes All --outStd BAM_Unsorted --outSAMtype BAM Unsorted \
     --outSAMattrRGline ID:GE4 SM:GE4 --readFilesCommand zcat > $OUTPUT_DIR/$SAMPLE_NAME.out.bam
-  samtools sort -l 9 -m 2625M -@ 8 $OUTPUT_DIR/$SAMPLE_NAME.out.bam -o $OUTPUT_DIR/$SAMPLE_NAME.bam
+  
+  # Sort and index
+  samtools sort -l 9 -m 2625M -@ 4 $OUTPUT_DIR/$SAMPLE_NAME.out.bam -o $OUTPUT_DIR/$SAMPLE_NAME.bam
   rm -f $OUTPUT_DIR/$SAMPLE_NAME.out.bam
   samtools index $OUTPUT_DIR/$SAMPLE_NAME.bam
-  infer_experiment.py -r data/supplementary-files/Ensembl_R64_genes.bed -i $OUTPUT_DIR/$SAMPLE_NAME.bam -s 1000000
+  
+  # “Guess” how RNA-seq sequencing were configured
+  infer_experiment.py -r data/supplementary-files/Ensembl_R64_genes/genes.bed \
+    -i $OUTPUT_DIR/$SAMPLE_NAME.bam -s 200000 > $OUTPUT_DIR/$SAMPLE_NAME"_inferred.txt"
 done
