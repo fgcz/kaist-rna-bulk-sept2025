@@ -17,4 +17,13 @@ source("../helpers.R")
 
 ```{r}
 seqAnno <- getFeatureAnnotation("../../data/supplementary-files/Ensembl_R64_genes/genes_annotation_byTranscript.txt", dataFeatureType="transcript")
+transcriptsUse = rownames(seqAnno)[seqAnno$type %in% "protein_coding"]
+gtf <- readGff(param$ezRef@refFeatureFile)
+transcripts <- getGffAttributeField(gtf$attributes,
+                                    field="transcript_id", 
+                                    attrsep="; *", valuesep=" ")
+transcriptsUse = union(transcriptsUse, setdiff(transcripts, rownames(seqAnno))) ## add those where we have no info, e.g. spikes
+gtf = gtf[transcripts %in% transcriptsUse, ]
+gtfFile = paste(Sys.getpid(), "genes.gtf", sep="-")
+write.table(gtf, gtfFile, quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
 ```
