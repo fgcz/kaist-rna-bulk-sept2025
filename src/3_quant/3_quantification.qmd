@@ -8,6 +8,13 @@ editor: visual
 
 ```{r}
 suppressPackageStartupMessages({
-  
+  library(tidyverse)
+  library(Rsubread)
+  library(stringr)
 })
+source("../helpers.R")
+```
+
+```{r}
+getFeatureAnnotation("")
 ```
