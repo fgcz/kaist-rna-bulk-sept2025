@@ -19,6 +19,7 @@ install.packages(cranPackages)
 
 biocPackages <- c(
   "Rsubread",
+  "rtracklayer",
   "SummarizedExperiment",
   "DESeq2"
 )
