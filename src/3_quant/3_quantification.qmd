@@ -16,5 +16,5 @@ source("../helpers.R")
 ```
 
 ```{r}
-getFeatureAnnotation("")
+seqAnno <- getFeatureAnnotation("../../data/supplementary-files/Ensembl_R64_genes/genes_annotation_byTranscript.txt", dataFeatureType="transcript")
 ```

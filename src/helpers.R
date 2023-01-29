@@ -6,24 +6,12 @@ getFeatureAnnotation = function(featAnnoFn, dataFeatureType=c("gene", "transcrip
   if(dataFeatureType == "gene"){
     refAnnoGeneFn <- sub("(_byTranscript)*\\.txt$", "_byGene.txt", featAnnoFn)
     
-    if(file.exists(refAnnoGeneFn)){
-      message("Using gene level annotation: ", refAnnoGeneFn)
-      seqAnno <- fread(refAnnoGeneFn, data.table=FALSE)
-      ## replace the NA character columns with ""; 
-      ## numeric columns shall not have NA.
-      seqAnno[is.na(seqAnno)] <- ""
-      rownames(seqAnno) <- seqAnno$gene_id
-    }else{
-      message("Using isoform level annotation and aggregating.")
-      ## For compatibility of old annotation without _byGene.txt
-      seqAnnoTx <- fread(featAnnoFn)
-      ## replace the NA character columns with ""; 
-      ## numeric columns shall not have NA.
-      seqAnnoTx[is.na(seqAnnoTx)] <- ""
-      ## historical reason: replace Identifier with transcript_id
-      colnames(seqAnnoTx)[colnames(seqAnnoTx)=="Identifier"] <- "transcript_id"
-      seqAnno <- aggregateFeatAnno(seqAnnoTx)
-    }
+    message("Using gene level annotation: ", refAnnoGeneFn)
+    seqAnno <- fread(refAnnoGeneFn, data.table=FALSE)
+    ## replace the NA character columns with ""; 
+    ## numeric columns shall not have NA.
+    seqAnno[is.na(seqAnno)] <- ""
+    rownames(seqAnno) <- seqAnno$gene_id
   }else if(dataFeatureType %in% c("transcript", "isoform")){
     seqAnno <- fread(featAnnoFn, data.table=FALSE)
     ## replace the NA character columns with ""; 
@@ -60,4 +48,29 @@ getFeatureAnnotation = function(featAnnoFn, dataFeatureType=c("gene", "transcrip
          " must exist in annotation file!")
   }
   return(seqAnno)
+}
+
+readGff = function(gffFile, nrows=-1){
+  require(data.table)
+  gff <- fread(gffFile, sep="\t", header=FALSE, data.table=FALSE,
+               quote="", col.names=c("seqid", "source", "type", "start", "end",
+                                     "score", "strand", "phase", "attributes"),
+               colClasses=c("character", "character", "character", "integer", 
+                            "integer", "character", "character", "character",
+                            "character"),
+               nrows=nrows)
+  stopifnot(!any(is.na(gff$start)), !any(is.na(gff$end)))
+  
+  return(gff)
+}
+
+getGffAttributeField = function (x, field, attrsep = ";", valuesep="=") {
+  require(stringr)
+  x <- str_extract(paste0(x, attrsep), paste(field, paste0('"{0,1}[^"',attrsep, ']+"{0,1}', attrsep),
+                                             sep=valuesep)
+  )
+  
+  x <- sub(paste(field, "\"{0,1}", sep=valuesep), "", x)
+  x <- sub(paste0("\"{0,1}", attrsep, "$"), "", x)
+  return(x)
 }
