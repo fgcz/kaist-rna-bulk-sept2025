@@ -157,3 +157,11 @@ rm -rf ./results/1_qc/fastp/
 ```
 
 ## Exercise #1
+
+1.  Did you notice a difference between the execution time of featureCounts versus Kallisto? Are the execution times comparable?
+2.  Take a moment to look at the outputs of Kallisto and featureCounts. Are the rows the same? How can you check? What about the columns?
+3.  In what format are the counts outputted by kallisto? By featureCounts? What influence could this possibly have on downstream analysis?
+
+#### Solutions
+
+# Count QC
