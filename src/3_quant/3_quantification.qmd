@@ -4,6 +4,10 @@ format: html
 editor: visual
 ---
 
+# Methods for Quantification
+
+In this tutorial, we will perform quantification
+
 ## FeatureCounts
 
 ```{r}
@@ -69,15 +73,39 @@ for (bamFile in bamFiles) {
     useMetaFeatures=TRUE,
     allowMultiOverlap=TRUE,
     isPairedEnd=FALSE, 
-    nthreads=4, 
+    nthreads=8, 
     strandSpecific=2,
     minMQS=10,
     minOverlap=10,
     primaryOnly=TRUE
   )
   colnames(countResult$counts) = "matchCounts"
-  data.table::fwrite(countResult$counts, file=paste0(outputPrefix, ".txt"), sep="\t", row.names=TRUE)
+  cnts <- countResult$counts %>% as.data.frame() %>% rownames_to_column("Identifier")
+  data.table::fwrite(cnts, file=paste0(outputPrefix, ".txt"), sep="\t")
   colnames(countResult$stat) = c("Status", "Count")
-  data.table::fwrite(countResult$stat, file=paste0(outputPrefix, "-stats.txt"), row.names=FALSE)
+  sts <- countResult$stat %>% as.data.frame()
+  data.table::fwrite(sts, file=paste0(outputPrefix, "-stats.txt"), sep="\t")
 }
+```
+
+## Kallisto
+
+Next, we will perform the quantification using Kallisto and see how its performance compares against STAR. As Kallisto is a command-line tool, all code in this section will be again bash-based.
+
+#### 
+
+```{bash}
+CURR_DIR=$(pwd)
+cd ../..
+
+# Download the data
+FASTP_OUTDIR=results/1_qc/fastp
+mkdir -p $FASTP_OUTDIR
+cd $FASTP_OUTDIR
+echo "Depositing data in "$FASTP_OUTDIR
+curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/processed_yeast_fastp.tar
+
+# Extract data
+tar -xvf processed_yeast_fastp.tar
+rm -f processed_yeast_fastp.tar
 ```
