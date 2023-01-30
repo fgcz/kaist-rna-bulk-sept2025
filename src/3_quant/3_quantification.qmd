@@ -47,3 +47,37 @@ write.table(gtf, gtfFile, quote=FALSE, sep="\t", row.names=FALSE, col.names=FALS
 ```
 
 #### Run `featureCounts`
+
+We are now ready to run `featureCounts` from the Rsubread package.
+
+```{r}
+bamFiles <- Sys.glob(file.path("../../results/2_mapping/STAR_alignment", "*bam"))
+bamFile <- bamFiles[1]
+for (bamFile in bamFiles) {
+  countResult = featureCounts(bamFile, 
+                            annot.inbuilt=NULL,
+                            annot.ext=gtfFile,
+                            isGTFAnnotationFile=TRUE,
+                            GTF.featureType="exon",
+                            GTF.attrType="gene_id",
+                            useMetaFeatures=TRUE,
+                            allowMultiOverlap=TRUE,
+                            isPairedEnd=FALSE, 
+                            requireBothEndsMapped=FALSE,
+                            checkFragLength=FALSE,
+                            minFragLength=50,
+                            maxFragLength=600,
+                            nthreads=4, 
+                            strandSpecific=2,
+                            minMQS=10,
+                            readExtension5=0,readExtension3=0,read2pos=NULL,
+                            minOverlap=10,
+                            ignoreDup=FALSE,
+                            splitOnly=FALSE,
+                            countMultiMappingReads=TRUE,
+                            fraction=FALSE,
+                            primaryOnly=TRUE,
+                            countChimericFragments=TRUE,chrAliases=NULL,
+                            reportReads=NULL)
+}
+```
