@@ -50,7 +50,7 @@ gtfFile <- file.path(tmpOutDir, "genes_protein_coding.gtf")
 write.table(gtf, gtfFile, quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
 ```
 
-#### Run `featureCounts`
+#### Running `featureCounts`
 
 We are now ready to run `featureCounts` from the Rsubread package.
 
@@ -96,7 +96,7 @@ We clean up the STAR output to save space.
 rm -rf ../../results/2_mapping/STAR_alignment
 ```
 
-## Kallisto
+## Running Kallisto
 
 Next, we will perform the quantification using Kallisto and see how its performance compares against STAR. As Kallisto is a command-line tool, all code in this section will be again bash-based.
 
@@ -123,7 +123,7 @@ rm -f processed_yeast_fastp.tar
 cd $CURR_DIR
 ```
 
-Now that we have downloaded the data, we are ready to perform the quantification with Kallisto. Execute the script below.
+Now that we have downloaded the data, we are ready to perform the quantification with Kallisto. Execute the script below. Take note of the inputs used and refer to the [Kallisto manual](https://pachterlab.github.io/kallisto/manual) for an explanation of the arguments used.
 
 ```{bash}
 CURR_DIR=$(pwd)
@@ -149,3 +149,11 @@ done
 # Back home
 cd $CURR_DIR
 ```
+
+#### Clean-up Kallisto inputs
+
+```{bash}
+rm -rf ./results/1_qc/fastp/
+```
+
+## Exercise #1
