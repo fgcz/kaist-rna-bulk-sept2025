@@ -88,11 +88,21 @@ for (bamFile in bamFiles) {
 }
 ```
 
+#### Clean-up STAR bams
+
+We clean up the STAR output to save space.
+
+```{bash}
+rm -rf ../../results/2_mapping/STAR_alignment
+```
+
 ## Kallisto
 
 Next, we will perform the quantification using Kallisto and see how its performance compares against STAR. As Kallisto is a command-line tool, all code in this section will be again bash-based.
 
-#### 
+#### Download trimmed data
+
+As we did for previous parts, we will download the fastp-processed data to save time. In case you executed the previous script and still have the files there, feel free to skip this step. Just make sure you deposit the files in the location specified in the script below.
 
 ```{bash}
 CURR_DIR=$(pwd)
@@ -108,4 +118,34 @@ curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/processed_yeast_fastp.tar
 # Extract data
 tar -xvf processed_yeast_fastp.tar
 rm -f processed_yeast_fastp.tar
+
+# Back home
+cd $CURR_DIR
+```
+
+Now that we have downloaded the data, we are ready to perform the quantification with Kallisto. Execute the script below.
+
+```{bash}
+CURR_DIR=$(pwd)
+cd ../..
+
+FASTP_OUTDIR=results/1_qc/fastp
+KALLISTO_OUTDIR=results/3_quant/kallisto
+mkdir -p $KALLISTO_OUTDIR
+
+# Start processing with kallisto
+for FASTQ in $FASTP_OUTDIR/*_R1.fastq.gz
+  do SAMPLE_NAME=$(basename ${FASTQ%_trimmed_R1.fastq.gz})
+  echo $SAMPLE_NAME
+  /opt/kallisto quant \
+    -i data/supplementary-files/Ensembl_R64_genes_protein_coding_kallistoIndex/transcripts.idx \
+    -o $KALLISTO_OUTDIR -t 4 --bias --bootstrap-samples 10 --seed 42 \
+    --single --rf-stranded --fragment-length 180 --sd 50 $FASTQ \
+    2> $KALLISTO_OUTDIR/$SAMPLE_NAME"_kallisto.stderr" > $KALLISTO_OUTDIR/$SAMPLE_NAME"_kallisto.stdout"
+  mv $KALLISTO_OUTDIR/abundance.tsv $KALLISTO_OUTDIR/$SAMPLE_NAME".txt"
+  mv $KALLISTO_OUTDIR/run_info.json $KALLISTO_OUTDIR/$SAMPLE_NAME".json"
+done
+
+# Back home
+cd $CURR_DIR
 ```
