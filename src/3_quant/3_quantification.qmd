@@ -52,32 +52,32 @@ We are now ready to run `featureCounts` from the Rsubread package.
 
 ```{r}
 bamFiles <- Sys.glob(file.path("../../results/2_mapping/STAR_alignment", "*bam"))
-bamFile <- bamFiles[1]
+outputDir <- "../../results/3_quant/featureCounts"
+dir.create(outputDir, showWarnings=FALSE, recursive=TRUE)
+
 for (bamFile in bamFiles) {
-  countResult = featureCounts(bamFile, 
-                            annot.inbuilt=NULL,
-                            annot.ext=gtfFile,
-                            isGTFAnnotationFile=TRUE,
-                            GTF.featureType="exon",
-                            GTF.attrType="gene_id",
-                            useMetaFeatures=TRUE,
-                            allowMultiOverlap=TRUE,
-                            isPairedEnd=FALSE, 
-                            requireBothEndsMapped=FALSE,
-                            checkFragLength=FALSE,
-                            minFragLength=50,
-                            maxFragLength=600,
-                            nthreads=4, 
-                            strandSpecific=2,
-                            minMQS=10,
-                            readExtension5=0,readExtension3=0,read2pos=NULL,
-                            minOverlap=10,
-                            ignoreDup=FALSE,
-                            splitOnly=FALSE,
-                            countMultiMappingReads=TRUE,
-                            fraction=FALSE,
-                            primaryOnly=TRUE,
-                            countChimericFragments=TRUE,chrAliases=NULL,
-                            reportReads=NULL)
+  sampleName <- tools::file_path_sans_ext(basename(bamFile))
+  outputPrefix <- file.path(outputDir, sampleName)
+  
+  countResult = Rsubread::featureCounts(
+    bamFile, 
+    annot.inbuilt=NULL,
+    annot.ext=gtfFile,
+    isGTFAnnotationFile=TRUE,
+    GTF.featureType="exon",
+    GTF.attrType="gene_id",
+    useMetaFeatures=TRUE,
+    allowMultiOverlap=TRUE,
+    isPairedEnd=FALSE, 
+    nthreads=4, 
+    strandSpecific=2,
+    minMQS=10,
+    minOverlap=10,
+    primaryOnly=TRUE
+  )
+  colnames(countResult$counts) = "matchCounts"
+  data.table::fwrite(countResult$counts, file=paste0(outputPrefix, ".txt"), sep="\t", row.names=TRUE)
+  colnames(countResult$stat) = c("Status", "Count")
+  data.table::fwrite(countResult$stat, file=paste0(outputPrefix, "-stats.txt"), row.names=FALSE)
 }
 ```
