@@ -13,7 +13,8 @@ if (!require("BiocManager", quietly = TRUE)) {
 
 cranPackages <- c(
   "ggplot2",
-  "tidyverse"
+  "tidyverse",
+  "plotly"
 )
 install.packages(cranPackages)
 
