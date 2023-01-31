@@ -15,8 +15,7 @@ cranPackages <- c(
   "ggplot2",
   "tidyverse",
   "plotly",
-  "pheatmap",
-  "WGCNA"
+  "pheatmap"
 )
 install.packages(cranPackages)
 
@@ -25,6 +24,7 @@ biocPackages <- c(
   "rtracklayer",
   "SummarizedExperiment",
   "DESeq2",
-  "edgeR"
+  "edgeR",
+  "WGCNA"
 )
 BiocManager::install(biocPackages)
