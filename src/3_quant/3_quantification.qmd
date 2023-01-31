@@ -12,10 +12,10 @@ In this tutorial, we will perform quantification
 
 ```{r}
 suppressPackageStartupMessages({
-  library(tidyverse)
   library(Rsubread)
   library(stringr)
-  library(ggplot2)
+  library(plotly)
+  library(tidyverse)
 })
 source("../helpers.R")
 ```
