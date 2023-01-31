@@ -12,7 +12,7 @@ In this tutorial, we will perform quantification
 
 ```{r}
 suppressPackageStartupMessages({
-  library(Rsubread)
+  library(SummarizedExperiment)
   library(stringr)
   library(plotly)
   library(tidyverse)
@@ -195,6 +195,7 @@ Now that the we have generated the counts, we can start exploring the data. We c
 
 ```{r}
 countDirectoryToUse <- "../../results/3_quant/featureCounts"
+sigThresh <- 10
 ```
 
 First, we load the counts and combine them into a single data-frame.
@@ -202,7 +203,7 @@ First, we load the counts and combine them into a single data-frame.
 ```{r}
 # Define meta dataframe for later use
 meta <- data.frame(
-  Condition=c(rep("Glucose", 4), rep("GlycEth", 4)),
+  Condition=as.factor(c(rep("Glucose", 4), rep("GlycEth", 4))),
   row.names=c(paste0("G", 1:4), paste0("GE", 1:4))
 )
 
@@ -224,18 +225,79 @@ rawCounts <- bind_cols(countList)
 saveRDS(rawCounts, file=file.path(countDirectoryToUse, "mergedCounts.rds"))
 ```
 
+### Count Statistics
+
 Let's look at the count statistics first.
 
 ```{r}
 toPlot <- tibble(
   Sample=colnames(rawCounts),
   `Read Counts`=colSums(rawCounts),
-  `Fraction of features above threshold`=colSums(rawCounts > 10),
-  Percentages=paste(signif(100 * colSums(rawCounts > 10) / nrow(rawCounts), digits=2), "%")
+  `Fraction of features above threshold`=colSums(rawCounts > sigThresh),
+  Percentages=paste(signif(100 * colSums(rawCounts > sigThresh) / nrow(rawCounts), digits=2), "%")
 )
 plot_ly(toPlot, x = ~Sample, y = ~`Read Counts`, type = "bar") %>%
   layout(title="Total reads", yaxis = list(title = "Counts [Mio]"))
 plot_ly(toPlot, x = ~Sample, y = ~`Fraction of features above threshold`, type="bar",
         text=~Percentages, textposition = 'auto') %>%
   layout(title="Genomic features with reads above threshold", yaxis = list(title = "Count"))
+```
+
+### Filtering Counts
+
+Before continuing, we should filter out genes which are lowly expressed or absent.
+
+```{r}
+# First filter genes which are at expressed below threshold in less than half the samples within a group
+isPresent <- rawCounts > sigThresh
+isPresentCond <- rowsum(t(isPresent * 1), group=meta$Condition)
+isPresentCond <- t(sweep(isPresentCond, 1,
+                         table(meta$Condition)[rownames(isPresentCond)], FUN="/")) >= 0.5
+isValid <- rowMeans(isPresentCond) >= 0.5
+rawCountsFilt <- rawCounts[isValid, ]
+
+# Load data into a DESeq2 dataset so we can use the variance stabilizing function from Deseq2
+dds <- DESeq2::DESeqDataSetFromMatrix(countData=rawCountsFilt,
+                                      colData=meta,
+                                      design=~Condition)
+vsd <- DESeq2::vst(dds)
+
+# Extract normalized counts
+normCounts <- assay(vsd)
+```
+
+### Dimensionality Reduction
+
+#### PCA
+
+```{r}
+# Run PCA
+pcDat  <- prcomp(t(normCounts), scale. = TRUE)
+
+# Calculate explained variance
+varExp <- (100*pcDat$sdev^2)/sum(pcDat$sdev^2)
+
+# Store the explained variance of top 8 PCs
+varExp_df <- data.frame(PC= paste0("PC",1:8),
+                          varExp=varExp[1:8])
+
+# Scree plot
+varExp_df %>%
+  ggplot(aes(x=PC,y=varExp, group=1)) +
+  geom_point(colour="steelblue", size=4) +
+  geom_col(fill="steelblue") +
+  geom_line() + 
+  theme_bw() + ylim(c(0,100))
+```
+
+```{r}
+plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Set1",
+        type="scatter", mode="markers") %>%
+  layout(title="PCA Plot")
+```
+
+### Multi-dimensional scaling (MDS)
+
+```{r}
+EdgeR::
 ```
