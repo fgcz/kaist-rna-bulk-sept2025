@@ -15,7 +15,8 @@ cranPackages <- c(
   "ggplot2",
   "tidyverse",
   "plotly",
-  "pheatmap"
+  "pheatmap",
+  "WGCNA"
 )
 install.packages(cranPackages)
 
