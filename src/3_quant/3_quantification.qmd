@@ -291,6 +291,7 @@ varExp_df %>%
 ```
 
 ```{r}
+??plotMDS
 plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Set1",
         type="scatter", mode="markers") %>%
   layout(title="PCA Plot")
@@ -299,5 +300,11 @@ plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Se
 ### Multi-dimensional scaling (MDS)
 
 ```{r}
-EdgeR::
+mds <- limma::plotMDS(normCounts, plot=FALSE)
+mdsOut <- mds$eigen.vectors[,1:3]
+colnames(mdsOut) <- c("Leading logFC dim1", "Leading logFC dim2", 
+                      "Leading logFC dim3")
+toPlot <- cbind(meta %>% rownames_to_column("Sample"), mdsOut)
+plot_ly(toPlot, x=~`Leading logFC dim1`, y=~`Leading logFC dim2`, z=~`Leading logFC dim3`, color=~Condition, colors="Set1", type='scatter3d', mode='markers+text', text=~Sample, textposition = "top right") %>%
+  plotly::layout(title="Classical MDS", scene=list(xaxis=list(title = 'Leading logFC dim1'), yaxis = list(title = 'Leading logFC dim2'), zaxis = list(title = 'Leading logFC dim3')))
 ```
