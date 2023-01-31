@@ -22,6 +22,7 @@ biocPackages <- c(
   "Rsubread",
   "rtracklayer",
   "SummarizedExperiment",
-  "DESeq2"
+  "DESeq2",
+  "edgeR"
 )
 BiocManager::install(biocPackages)
