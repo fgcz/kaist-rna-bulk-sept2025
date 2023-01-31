@@ -22,13 +22,34 @@ source("../helpers.R")
 
 #### Set-up
 
-First, we need to subset the annotation (gtf) file to include only protein-coding genes. There are a few reasons why we might rather exclude transcript types such as lncRNA and snRNA.
+First, let's fetch the input bam files for each sample. While we could use the bams we generated in the past exercises, keep in mind that these utilized downsampled fastqs in order to speed up computation. The bams provided here used the full fastq files but were processed in an otherwise identical way.
+
+```{bash}
+CURR_DIR=$(pwd)
+cd ../..
+
+# Download the data
+STAR_OUTDIR=results/2_mapping/STAR_alignment
+mkdir -p $STAR_OUTDIR
+cd $STAR_OUTDIR
+echo "Depositing data in "$STAR_OUTDIR
+curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/processed_yeast_STAR_aligned.tar
+
+# Extract data
+tar -xvf processed_yeast_STAR_aligned.tar
+rm -f processed_yeast_STAR_aligned.tar
+
+# Back home
+cd $CURR_DIR
+```
+
+Second, we need to subset the annotation (gtf) file to include only protein-coding genes. There are a few reasons why we might rather exclude transcript types such as lncRNA and snRNA.
 
 -   Including these other transcript types increase the number of tests, meaning more false positives, and less power to detect protein-coding genes
 
 -   non-coding RNAs do not have poly-A tails and can't be detected with mRNA sequencing, so their absence might be misinterpreted
 
--   They are sometimes not well annotated
+-   They are sometimes not well annotated and this can adversely enrichment analysis
 
 In general, a good strategy is to exclude them by default and include them by demand (i.e. if the research question explicitly demands it). Let's do this subsetting now.
 
@@ -103,7 +124,7 @@ Next, we will perform the quantification using Kallisto and see how its performa
 
 #### Download trimmed data
 
-As we did for previous parts, we will download the fastp-processed data to save time. In case you executed the previous script and still have the files there, feel free to skip this step. Just make sure you deposit the files in the location specified in the script below.
+As we did for previous parts, we will download the fastp-processed data to save time. In case you executed the fasp script and still have the associated files there, feel free to skip this step. Just make sure you deposit the files in the location specified in the script below.
 
 ```{bash}
 CURR_DIR=$(pwd)
@@ -138,7 +159,7 @@ mkdir -p $KALLISTO_OUTDIR
 for FASTQ in $FASTP_OUTDIR/*_R1.fastq.gz
   do SAMPLE_NAME=$(basename ${FASTQ%_trimmed_R1.fastq.gz})
   echo $SAMPLE_NAME
-  /opt/kallisto quant \
+  time /opt/kallisto quant \
     -i data/supplementary-files/Ensembl_R64_genes_protein_coding_kallistoIndex/transcripts.idx \
     -o $KALLISTO_OUTDIR -t 4 --bias --bootstrap-samples 10 --seed 42 \
     --single --rf-stranded --fragment-length 180 --sd 50 $FASTQ \
@@ -203,18 +224,18 @@ rawCounts <- bind_cols(countList)
 saveRDS(rawCounts, file=file.path(countDirectoryToUse, "mergedCounts.rds"))
 ```
 
-Let's look at some
+Let's look at the count statistics first.
 
 ```{r}
-toPlot <- data.frame(
+toPlot <- tibble(
   Sample=colnames(rawCounts),
-  "Read Counts"=colSums(rawCounts),
-  "Fraction of features above threshold"=colSums(rawCounts > 10)
+  `Read Counts`=colSums(rawCounts),
+  `Fraction of features above threshold`=colSums(rawCounts > 10),
+  Percentages=paste(signif(100 * colSums(rawCounts > 10) / nrow(rawCounts), digits=2), "%")
 )
-plot_ly(
-  toPlot, x = ~Sample, y = ~`Read Counts`,
-  name = "Total Read Counts",
-  type = "bar"
-)
-
+plot_ly(toPlot, x = ~Sample, y = ~`Read Counts`, type = "bar") %>%
+  layout(title="Total reads", yaxis = list(title = "Counts [Mio]"))
+plot_ly(toPlot, x = ~Sample, y = ~`Fraction of features above threshold`, type="bar",
+        text=~Percentages, textposition = 'auto') %>%
+  layout(title="Genomic features with reads above threshold", yaxis = list(title = "Count"))
 ```
