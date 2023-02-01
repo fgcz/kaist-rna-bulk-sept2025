@@ -197,6 +197,7 @@ rm -rf ./results/1_qc/fastp/
     2. The rows are the same, but they are in a different order.
 
     3. The kallisto counts (est_count) are floating point numbers. This may become a problem when it comes time to load these counts for differential expression, since most of the available tools expect the counts to be discreet. In such cases we may have to round the counts.
+
     :::
 
 # Count QC
