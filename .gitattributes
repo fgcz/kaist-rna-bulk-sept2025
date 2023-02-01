@@ -19,3 +19,10 @@ data/supplementary-files/Ensembl_R64_genes/transcripts.only.gtf filter=lfs diff=
 data/supplementary-files/Ensembl_R64_genes/genes_annotation_byTranscript.txt.bak filter=lfs diff=lfs merge=lfs -text
 data/supplementary-files/Ensembl_R64_genes/genes.gtf filter=lfs diff=lfs merge=lfs -text
 data/supplementary-files/Ensembl_R64_genes/genes.sorted.gtf filter=lfs diff=lfs merge=lfs -text
+src/3_quant/3_quantification_files/libs/bootstrap/bootstrap.min.css filter=lfs diff=lfs merge=lfs -text
+src/3_quant/3_quantification.html filter=lfs diff=lfs merge=lfs -text
+src/3_quant/3_quantification_files/libs/plotly-main-2.5.1/plotly-latest.min.js filter=lfs diff=lfs merge=lfs -text
+src/3_quant/3_quantification_files/figure-html/unnamed-chunk-18-1.png filter=lfs diff=lfs merge=lfs -text
+src/3_quant/3_quantification_files/libs/jquery-3.5.1/jquery.js filter=lfs diff=lfs merge=lfs -text
+src/3_quant/3_quantification_files/libs/bootstrap/bootstrap-icons.woff filter=lfs diff=lfs merge=lfs -text
+src/3_quant/3_quantification_files/libs/jquery-3.5.1/jquery.min.map filter=lfs diff=lfs merge=lfs -text

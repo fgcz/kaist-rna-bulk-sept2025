@@ -6,7 +6,7 @@ editor: visual
 
 # Methods for Quantification
 
-In this tutorial, we will perform quantification
+In this tutorial, we will perform quantification using two main methods: FeatureCounts and Kallisto.
 
 ## FeatureCounts
 
@@ -245,7 +245,7 @@ rawCounts <- bind_cols(countList)
 saveRDS(rawCounts, file=file.path(countDirectoryToUse, "mergedCounts.rds"))
 ```
 
-### Count Statistics
+## Count Statistics
 
 Let's look at the count statistics first.
 
@@ -263,7 +263,7 @@ plot_ly(toPlot, x = ~Sample, y = ~`Fraction of features above threshold`, type="
   layout(title="Genomic features with reads above threshold", yaxis = list(title = "Count"))
 ```
 
-### Filtering Counts
+## Filtering Counts
 
 Before continuing, we should filter out genes which are lowly expressed or absent.
 
@@ -286,9 +286,9 @@ vsd <- DESeq2::vst(dds)
 normCounts <- SummarizedExperiment::assay(vsd)
 ```
 
-### Dimensionality Reduction
+## Dimensionality Reduction
 
-#### PCA
+### PCA
 
 ```{r}
 # Run PCA
@@ -316,7 +316,7 @@ plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Se
   layout(title="PCA Plot")
 ```
 
-#### Multi-dimensional scaling (MDS)
+### Multi-dimensional scaling (MDS)
 
 ```{r}
 mds <- limma::plotMDS(normCounts, plot=FALSE)
@@ -328,7 +328,7 @@ plot_ly(toPlot, x=~`Leading logFC dim1`, y=~`Leading logFC dim2`, z=~`Leading lo
   plotly::layout(title="Classical MDS", scene=list(xaxis=list(title = 'Leading logFC dim1'), yaxis = list(title = 'Leading logFC dim2'), zaxis = list(title = 'Leading logFC dim3')))
 ```
 
-### Correlation Plots
+## Correlation Plots
 
 ```{r}
 d <- as.dist(1-cor(normCounts, use="complete.obs"))
@@ -336,7 +336,7 @@ hc <- hclust(d, method="ward.D2")
 WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 ```
 
-#### Heatmap
+### Correlation Heatmap
 
 ```{r}
 # Pearson correlation plot 
@@ -356,7 +356,7 @@ pheatmap(
   fontsize_number   = 12)
 ```
 
-#### Top 2'000 Variable Genes Heatmap
+### Top 2'000 Variable Genes Heatmap
 
 ```{r}
 # First, we center the matrix
