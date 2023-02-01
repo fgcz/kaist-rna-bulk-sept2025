@@ -1,8 +1,18 @@
 ---
 title: "Part 3: Quantification"
-format: html
+format:
+  html:
+    embed-resources: true
 editor: visual
+bibliography: references.bib
 ---
+
+```{css, echo = FALSE, include=FALSE}
+.scroll-out {
+  max-height: 500px;
+  overflow-y: scroll;
+}
+```
 
 # Methods for Quantification
 
@@ -79,6 +89,7 @@ write.table(gtf, gtfFile, quote=FALSE, sep="\t", row.names=FALSE, col.names=FALS
 We are now ready to run `featureCounts` from the Rsubread package.
 
 ```{r}
+#| class: scroll-out
 bamFiles <- Sys.glob(file.path("../../results/2_mapping/STAR_alignment", "*bam"))
 outputDir <- "../../results/3_quant/featureCounts"
 dir.create(outputDir, showWarnings=FALSE, recursive=TRUE)
@@ -150,6 +161,8 @@ cd $CURR_DIR
 Now that we have downloaded the data, we are ready to perform the quantification with Kallisto. Execute the script below. Take note of the inputs used and refer to the [Kallisto manual](https://pachterlab.github.io/kallisto/manual) for an explanation of the arguments used.
 
 ```{bash}
+#| class: scroll-out
+
 CURR_DIR=$(pwd)
 cd ../..
 
@@ -188,22 +201,26 @@ rm -rf ../../results/1_qc/fastp/
 
 3.  In what format are the counts outputted by kallisto? By featureCounts? What influence could this possibly have on downstream analysis?
 
-    ::: {.callout-note appearance="simple" collapse="true"}
-    ## Solutions
+```{r}
+# Write your code here
+```
 
-    1.  Kallisto and featureCounts perform similarly quickly. Keep in mind however, that featureCounts requires .bam files which we generated in a previous step with STAR, while Kallisto works on the fastqs themselves. Alignment with STAR can take a long time (remember we didn't even use the full fastqs for the STAR alignment), especially with large genomes.
+::: {.callout-note appearance="simple" collapse="true"}
+### Solutions
 
-    2.  The rows are the different. Kallisto quantifies on the transcript-level while FeatureCounts quantifies on the gene-level. For yeast however, alternative splicing is very rare, which is why there is a 1-to-1 mapping of transcripts to genes, hence why the matrices have the same number of rows. In the case of human or mouse, Kallisto's transcript dataframe would have to be accumulated to the gene-level.
+1.  Kallisto and featureCounts perform similarly quickly. Keep in mind however, that featureCounts requires .bam files which we generated in a previous step with STAR, while Kallisto works on the fastqs themselves. Alignment with STAR can take a long time (remember we didn't even use the full fastqs for the STAR alignment), especially with large genomes.
 
-        ```{r, eval=FALSE}
-        fcG1 <- data.table::fread("../../results/3_quant/featureCounts/G1.txt")
-        kaG1 <- data.table::fread("../../results/3_quant/Kallisto/G1.txt")
-        all(sort(fcG1$Identifier) == sort(kaG1$target_id))  # Returns FALSE
-        all(sort(fcG1$Identifier) == sort(unlist(str_remove(kaG1$target_id, "_mRNA"))))  # Returns TRUE
-        ```
+2.  The rows are the different. Kallisto quantifies on the transcript-level while FeatureCounts quantifies on the gene-level. For yeast however, alternative splicing is very rare, which is why there is a 1-to-1 mapping of transcripts to genes, hence why the matrices have the same number of rows. In the case of human or mouse, Kallisto's transcript dataframe would have to be accumulated to the gene-level.s
 
-    3.  The kallisto counts (est_count) are floating point numbers. This may become a problem when it comes time to load these counts for differential expression, since most of the available tools expect the counts to be discreet. In such cases we may have to round the counts to integers, or using packages like tximport.
-    :::
+    ```{r, eval=FALSE}
+    fcG1 <- data.table::fread("../../results/3_quant/featureCounts/G1.txt")
+    kaG1 <- data.table::fread("../../results/3_quant/Kallisto/G1.txt")
+    all(sort(fcG1$Identifier) == sort(kaG1$target_id))  # Returns FALSE
+    all(sort(fcG1$Identifier) == sort(unlist(str_remove(kaG1$target_id, "_mRNA"))))  # Returns TRUE
+    ```
+
+3.  The kallisto counts (est_count) are floating point numbers. This may become a problem when it comes time to load these counts for differential expression, since most of the available tools expect the counts to be discreet. In such cases we may have to round the counts to integers, or using packages like tximport.
+:::
 
 # Count QC
 
@@ -224,7 +241,7 @@ names(conditionColours) <- unique(meta$Condition)
 sampleColours <- conditionColours[meta$Condition]
 ```
 
-First, we load the counts and combine them into a single data-frame.
+First, we load the counts and combine them into a single data-frame. Note we do this here manually, but there are methods like the aforementioned tximport which perform this operation in a convenient way, and beyond this, correct for biases in the counts. We will be using this method of import in the section on differential expression analysis.
 
 ```{r}
 # Find the count files on the system
@@ -247,7 +264,7 @@ saveRDS(rawCounts, file=file.path(countDirectoryToUse, "mergedCounts.rds"))
 
 ## Count Statistics
 
-Let's look at the count statistics first.
+Let's look at the count statistics first. In the first of two plots, we get the total counts for each sample. In the second, we see how many features, and what fraction of all features, exceed our signal threshold.
 
 ```{r}
 toPlot <- tibble(
@@ -263,9 +280,23 @@ plot_ly(toPlot, x = ~Sample, y = ~`Fraction of features above threshold`, type="
   layout(title="Genomic features with reads above threshold", yaxis = list(title = "Count"))
 ```
 
+## Exercise #2
+
+1.  How do the read counts compare to the initial FastQC report?
+
+2.  How many features (in %) are above threshold? Do you think re-sequencing the samples with relatively low counts will be useful?
+
+::: {.callout-note appearance="simple" collapse="true"}
+### Solutions
+
+1.  They are lower. We started with around 10M reads or more for each sample.
+
+2.  All around 85%. Re-sequencing is unlikely to be worth our time, unless we are interested in very lowly-expressed genes. GE3 has almost as many features with a count above threshold as GE4, despite having half as many counts.
+:::
+
 ## Filtering Counts
 
-Before continuing, we should filter out genes which are lowly expressed or absent.
+Before continuing, we should filter out genes which are lowly expressed or absent, which we do this on a per-group basis (think about why this might be). Next, we generate normalised counts using "Variance Stabilisation" as provided in the DESeq2 package. As per the documentation, this function calculates a variance stabilizing transformation (VST) from the fitted dispersion-mean relation(s) and then transforms the count data (normalized by division by the size factors or normalization factors), yielding a matrix of values which now have constant variance along the range of mean values (homoskedastic)[@DESeq2]. There are other functions we could use, such as `rlog` which is less sensitive to size factors, but VST works best in the general case.
 
 ```{r}
 # First filter genes which are at expressed below threshold in less than half the samples within a group
@@ -284,6 +315,13 @@ vsd <- DESeq2::vst(dds)
 
 # Extract normalized counts
 normCounts <- SummarizedExperiment::assay(vsd)
+```
+
+Let's quickly compare the raw and normalised counts to see how they have changed.
+
+```{r}
+head(rawCountsFilt)
+head(as.data.frame(normCounts))
 ```
 
 ## Dimensionality Reduction
@@ -380,3 +418,13 @@ hmObj <- pheatmap(countsToPlot,
          fontsize=8)
 hmObj
 ```
+
+## Exercise #3 (time allowing):
+
+Change the above code such that the Kallisto outputs are read in intead of the FeatureCount count matrices. What differences, if any, do you observe?
+
+    ::: {.callout-tip}
+    ## Tip
+
+    You can use `stringr::str_remove` as we did above to transform the name of the transcripts into genes (as we did for the previous exercise).
+    :::
