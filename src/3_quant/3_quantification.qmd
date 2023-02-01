@@ -296,7 +296,6 @@ varExp_df %>%
 ```
 
 ```{r}
-??plotMDS
 plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Set1",
         type="scatter", mode="markers") %>%
   layout(title="PCA Plot")
@@ -340,4 +339,29 @@ pheatmap(
   fontsize_col      = 12,
   display_numbers   = TRUE,
   fontsize_number   = 12)
+```
+
+#### Top 2'000 Variable Genes Heatmap
+
+```{r}
+# First, we center the matrix
+normCountsCentered <- sweep(normCounts, 1, rowMeans(normCounts))
+# Identify high variance features
+topGenes <- rownames(normCounts)[head(order(rowSds(normCounts, na.rm=TRUE),
+                                            decreasing = TRUE), 2000)]
+
+countsToPlot <- normCountsCentered[topGenes,]
+
+# Clustering of high variance features
+hmObj <- pheatmap(countsToPlot, 
+         clustering_method="ward.D2",
+         scale = "row", cluster_rows = TRUE,
+         cluster_cols = TRUE, show_rownames = FALSE,
+         cutree_rows = 6, cutree_cols = 2,
+         treeheight_row = 50, treeheight_col = 50,
+         annotation_col = meta,
+         fontsize_row = 8, fontsize_col = 9,
+         annotation_legend = TRUE,
+         fontsize=8)
+hmObj
 ```
