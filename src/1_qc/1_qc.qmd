@@ -1,7 +1,9 @@
 ---
-title: 'Chapter 1: QC'
-author: "Falko Noé"
-output: html_document
+title: "Part 1: Quality Control"
+format:
+  html:
+    embed-resources: true
+editor: visual
 ---
 
 ```{r setup, include=FALSE}
@@ -16,13 +18,13 @@ suppressPackageStartupMessages({
 
 ## Introduction
 
-Welcome to our introductory RNA-seq course. 
+Welcome to our introductory RNA-seq course.
 
 In this course, we will be primarily working with yeast samples, initially sequenced and analyzed at the Functional Genomics Center Zürich. We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.
 
 ## Downloading the data
 
-First, let's download the data. In this directory, you will find a bash script called `01_download_data.sh`. This script will download a tar file containing our fastq files, decompress it, and deposit the files into the folder `data/tmp/yeast_fastq_full`. To execute this script, please switch to the terminal and execute the following lines (ensuring that you are in the root of the project directory, i.e. `/home/rstudio/work/rna-seq-course-feb2023`). 
+First, let's download the data. In this directory, you will find a bash script called `01_download_data.sh`. This script will download a tar file containing our fastq files, decompress it, and deposit the files into the folder `data/tmp/yeast_fastq_full`. To execute this script, please switch to the terminal and execute the following lines (ensuring that you are in the root of the project directory, i.e. `/home/rstudio/work/rna-seq-course-feb2023`).
 
 ```{sh, eval=FALSE}
 bash src/1_qc/01_download_data.sh
@@ -41,10 +43,7 @@ ds <- data.table::fread("../../data/tmp/yeast_fastq_full/dataset.tsv") %>% as_ti
 ds
 ```
 
-Take a moment to explore the table and answer the following questions:
-1. How many groups of samples are there?
-2. What Library Prep Kit was used?
-3. What is the read count? Is this what we expect for RNA-seq?
+Take a moment to explore the table and answer the following questions: 1. How many groups of samples are there? 2. What Library Prep Kit was used? 3. What is the read count? Is this what we expect for RNA-seq?
 
 ## Running fastqc
 
