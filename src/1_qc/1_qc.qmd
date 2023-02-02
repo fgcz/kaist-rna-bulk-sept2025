@@ -21,7 +21,7 @@ In this part of the course, we will be primarily working with yeast samples, ini
 
 ## Downloading the data
 
-First, let's download the data. In this directory, you will find a bash script called `01_download_data.sh`. This script will download a tar file containing our fastq files, decompress it, and deposit the files into the folder `data/tmp/yeast_fastq_full`. To execute this script, please switch to the terminal and execute the following lines (ensuring that you are in the root of the project directory, i.e. `/home/rstudio/work/rna-seq-course-feb2023`).
+First, let's download the data. The script will download a tar file containing our fastq files, decompress it, and deposit the files into the folder `data/tmp/yeast_fastq_full`. To execute this script, press on the green arrow button (for all such bash scripts, we first switch to the root directory i.e. `/home/rstudio/work/rna-seq-course-feb2023` , so the locations of all output files is clearer).
 
 ```{bash, eval=FALSE}
 CURR_DIR=$(pwd)
@@ -80,7 +80,7 @@ ds
 
 # FastQC & MultiQC
 
-First, let's run FastQC. This tool was developed by Babraham Bioinformatics \[@Andrews:2010tn\] and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC [@ewels2016] which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. Let's run these tools now.
+First, let's run FastQC. This tool was developed by Babraham Bioinformatics [@Andrews:2010tn] and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC [@ewels2016] which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. Let's run these tools now.
 
 ```{bash}
 CURR_DIR=$(pwd)
@@ -92,7 +92,7 @@ PROCESSED_MULTIQC=results/1_qc/multiqc
 mkdir -p $PROCESSED_FASTQC $PROCESSED_MULTIQC
 
 # Process with FastQC
-/opt/Fastqc/fastqc --extract -o $PROCESSED_FASTQC \
+/opt/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
   -t 4 -a data/supplementary-files/adapter_list.txt --kmers 7 \
   data/tmp/yeast_fastq_full/*fastq.gz
   
@@ -102,3 +102,64 @@ multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
 # Back home
 cd $CURR_DIR
 ```
+
+# Preprocessing with `fastp`
+
+In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp[@chen2018]. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does, but **do not execute it**. Depending on the resources, fastp can take a long time to execute for this number of samples (\~1 hr in this case), so we opt to rather download the outputs for use in the next chapter.
+
+```{bash}
+CURR_DIR=$(pwd)
+cd ../..
+
+FASTP_OUTDIR=results/1_qc/fastp
+mkdir -p $FASTP_OUTDIR
+
+# Start processing with fastp
+for FASTQ in data/tmp/yeast_fastq_full/*_R1.fastq.gz
+  do SAMPLE_NAME=$(basename ${FASTQ%_R1.fastq.gz})
+  echo $SAMPLE_NAME
+  /opt/fastp --in1 $FASTQ \
+    --out1 $FASTP_OUTDIR/$SAMPLE_NAME"_trimmed_R1.fastq.gz" \
+    --thread 4 --trim_front1 0 --trim_tail1 0 \
+    --adapter_fasta data/supplementary-files/allIllumina-forTrimmomatic-20160202.fa \
+    --max_len1 0 --max_len2 0 --trim_poly_x \
+    --poly_x_min_len 10 --length_required 18 --compression 2 \
+    2> $FASTP_OUTDIR/$SAMPLE_NAME"_preprocessing.log"
+  rm -f $FASTQ
+done
+
+# Back home
+cd $CURR_DIR
+```
+
+## Exercise #3
+
+1.  What issues if any that you noticed in the FastQC output would be solved by using fastp with the arguments provided?
+2.  Which sequences are provided for trimming?
+3.  How could the sequence of operations of fastp affect trimming?
+
+::: {.callout-note appearance="simple" collapse="true"}
+### Solutions
+
+1.  The adapter content in some of the samples
+
+2.  The file with all sequences considered to be adapter provided here `data/supplementary-files/allIllumina-forTrimmomatic-20160202.fa` . This list is not exhaustive and may need to be expanded if your library prep in question uses an adapter not in the list.
+
+3.  According to the documentation on GitHub, fastp performs trimming in the following order:
+
+    ``` text
+    1, UMI preprocessing (--umi)
+    2, global trimming at front (--trim_front)
+    3, global trimming at tail (--trim_tail)
+    4, quality pruning at 5' (--cut_front)
+    5, quality pruning by sliding window (--cut_right)
+    6, quality pruning at 3' (--cut_tail)
+    7, trim polyG (--trim_poly_g, enabled by default for NovaSeq/NextSeq data)
+    8, trim adapter by overlap analysis (enabled by default for PE data)
+    9, trim adapter by adapter sequence (--adapter_sequence, --adapter_sequence_r2. For PE data, this step is skipped if last step succeeded)
+    10, trim polyX (--trim_poly_x)
+    11, trim to max length (---max_len)
+    ```
+
+    This sequence of steps might not work for every application. As an example: If we know we need to trim bases after the 5' adapter, as might be the case in some types of library prep, one round of fastp processing will not be enough. We would need to run fastp once to perform adapter trimming and then run fastp again to trim off the remaining sequences at the 5'.
+:::
