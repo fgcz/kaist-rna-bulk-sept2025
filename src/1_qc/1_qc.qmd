@@ -4,6 +4,7 @@ format:
   html:
     embed-resources: true
 editor: visual
+bibliography: references.bib
 ---
 
 ```{r}
@@ -16,7 +17,7 @@ suppressPackageStartupMessages({
 
 Welcome to our introductory RNA-seq course.
 
-In this course, we will be primarily working with yeast samples, initially sequenced and analyzed at the Functional Genomics Center Zürich. We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.
+In this part of the course, we will be primarily working with yeast samples, initially sequenced and analyzed at the Functional Genomics Center Zürich. We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.
 
 ## Downloading the data
 
@@ -55,10 +56,49 @@ ds <- data.table::fread("../../data/tmp/yeast_fastq_full/dataset.tsv") %>% as_ti
 ds
 ```
 
-1\. How many groups of samples are there? 2. What Library Prep Kit was used? 3. What is the read count? Is this what we expect for RNA-seq?
+## Exercise #1
 
-# FastQC
+1.  How many groups of samples are there?
 
-```{sh}
-pwd
+2.  What Library Prep Kit was used?
+
+3.  What is the read count? Is this what we expect for RNA-seq?
+
+4.  Is there information about the strandedness of the libraries?
+
+::: {.callout-note appearance="simple" collapse="true"}
+### Solutions
+
+1.  2 groups: Glucose and GlycEth (i.e. Glucose+Ethanol)
+
+2.  Lexogen mRNA Stranded Kit
+
+3.  The samples vary between 5M to just under 20M reads. In general, we seek to get around 20M samples for bulk RNA-seq of human and mouse samples. Given that these are yeast samples and the corresponding genome is significantly smaller, even 5M reads is enough to get good results (see Count QC in chapter 3).
+
+4.  The libraries are anti-sense.
+:::
+
+# FastQC & MultiQC
+
+First, let's run FastQC. This tool was developed by Babraham Bioinformatics \[@Andrews:2010tn\] and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC [@ewels2016] which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. Let's run these tools now.
+
+```{bash}
+CURR_DIR=$(pwd)
+cd ../..
+
+# Make directories
+PROCESSED_FASTQC=results/1_qc/fastqc
+PROCESSED_MULTIQC=results/1_qc/multiqc
+mkdir -p $PROCESSED_FASTQC $PROCESSED_MULTIQC
+
+# Process with FastQC
+/opt/Fastqc/fastqc --extract -o $PROCESSED_FASTQC \
+  -t 4 -a data/supplementary-files/adapter_list.txt --kmers 7 \
+  data/tmp/yeast_fastq_full/*fastq.gz
+  
+# Combine result with multiqc
+multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
+
+# Back home
+cd $CURR_DIR
 ```
