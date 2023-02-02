@@ -3,16 +3,10 @@ title: "Part 3: Quantification"
 format:
   html:
     embed-resources: true
+    css: ../style.css
 editor: visual
 bibliography: references.bib
 ---
-
-```{css, echo = FALSE, include=FALSE}
-.scroll-out {
-  max-height: 500px;
-  overflow-y: scroll;
-}
-```
 
 # Methods for Quantification
 

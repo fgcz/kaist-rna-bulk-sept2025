@@ -3,6 +3,7 @@ title: "Part 1: Quality Control"
 format:
   html:
     embed-resources: true
+    css: ../style.css
 editor: visual
 bibliography: references.bib
 ---
@@ -23,7 +24,7 @@ In this part of the course, we will be primarily working with yeast samples, ini
 
 First, let's download the data. The script will download a tar file containing our fastq files, decompress it, and deposit the files into the folder `data/tmp/yeast_fastq_full`. To execute this script, press on the green arrow button (for all such bash scripts, we first switch to the root directory i.e. `/home/rstudio/work/rna-seq-course-feb2023` , so the locations of all output files is clearer).
 
-```{bash, eval=FALSE}
+```{bash}
 CURR_DIR=$(pwd)
 cd ../..
 
@@ -45,7 +46,7 @@ cd $CURR_DIR
 
 The data should be downloaded into `data/tmp/yeast_fastq_full/`. To check this, run
 
-```{bash, eval=FALSE}
+```{bash}
 ls -lh ../../data/tmp/yeast_fastq_full
 ```
 
@@ -80,9 +81,11 @@ ds
 
 # FastQC & MultiQC
 
-First, let's run FastQC. This tool was developed by Babraham Bioinformatics [@Andrews:2010tn] and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC [@ewels2016] which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. Let's run these tools now.
+First, let's run FastQC. This tool was developed by Babraham Bioinformatics [@Andrews:2010tn] and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC [@ewels2016] which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. Let's run these tools now. This process takes upwards of 5 minutes on 4 cores.
 
 ```{bash}
+#| class: scroll-out
+
 CURR_DIR=$(pwd)
 cd ../..
 
@@ -93,7 +96,7 @@ mkdir -p $PROCESSED_FASTQC $PROCESSED_MULTIQC
 
 # Process with FastQC
 /opt/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
-  -t 4 -a data/supplementary-files/adapter_list.txt --kmers 7 \
+  -t 8 -a data/supplementary-files/adapter_list.txt --kmers 7 \
   data/tmp/yeast_fastq_full/*fastq.gz
   
 # Combine result with multiqc
@@ -107,7 +110,7 @@ cd $CURR_DIR
 
 In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp[@chen2018]. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does, but **do not execute it**. Depending on the resources, fastp can take a long time to execute for this number of samples (\~1 hr in this case), so we opt to rather download the outputs for use in the next chapter.
 
-```{bash}
+```{bash, eval=FALSE}
 CURR_DIR=$(pwd)
 cd ../..
 
