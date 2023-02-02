@@ -83,7 +83,7 @@ write.table(gtf, gtfFile, quote=FALSE, sep="\t", row.names=FALSE, col.names=FALS
 We are now ready to run `featureCounts` from the Rsubread package.
 
 ```{r}
-#| class: scroll-out
+#| class-output: scrolling
 bamFiles <- Sys.glob(file.path("../../results/2_mapping/STAR_alignment", "*bam"))
 outputDir <- "../../results/3_quant/featureCounts"
 dir.create(outputDir, showWarnings=FALSE, recursive=TRUE)
@@ -155,8 +155,7 @@ cd $CURR_DIR
 Now that we have downloaded the data, we are ready to perform the quantification with Kallisto. Execute the script below. Take note of the inputs used and refer to the [Kallisto manual](https://pachterlab.github.io/kallisto/manual) for an explanation of the arguments used.
 
 ```{bash}
-#| class: scroll-out
-
+#| class-output: scrolling
 CURR_DIR=$(pwd)
 cd ../..
 

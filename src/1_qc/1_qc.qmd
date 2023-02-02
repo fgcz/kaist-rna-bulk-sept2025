@@ -81,10 +81,10 @@ ds
 
 # FastQC & MultiQC
 
-First, let's run FastQC. This tool was developed by Babraham Bioinformatics [@Andrews:2010tn] and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC [@ewels2016] which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. Let's run these tools now. This process takes upwards of 5 minutes on 4 cores.
+First, let's run FastQC. This tool was developed by Babraham Bioinformatics [@Andrews:2010tn] and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC [@ewels2016] which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. Let's run these tools now. This process takes about 10 minutes on 8 cores.
 
 ```{bash}
-#| class: scroll-out
+#| class-output: scrolling
 
 CURR_DIR=$(pwd)
 cd ../..
@@ -104,6 +104,12 @@ multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
 
 # Back home
 cd $CURR_DIR
+```
+
+Assuming we are not carrying on with manual execution of fastp in the next section, run the following block to delete the raw data.
+
+```{bash}
+rm -rf ../../data/tmp/yeast_fastq_full
 ```
 
 # Preprocessing with `fastp`
