@@ -68,14 +68,56 @@ seqAnno <- getFeatureAnnotation("../../data/supplementary-files/Ensembl_R64_gene
 seqAnno <- seqAnno[seqAnno$type %in% "protein_coding", ]
 ```
 
+::: callout-note
+### On `Condition` factor levels
+
+R will choose a reference level for factors based on alphabetical order. Then, once we do the differential expression with DESeq2, you will never tell the DESeq2 functions which level you want to compare against (e.g. which level represents the control group), the comparisons will be based on the alphabetical order of the levels. There are two solutions: you can either explicitly tell results which comparison to make using the contrast argument (this will be shown later), or you can explicitly set the factors levels. In order to see the change of reference levels reflected in the results names, you need to either run `DESeq` or `nbinomWaldTest`/`nbinomLRT` after the re-leveling operation.
+
+In our case, we are lucky in that the Glucose group comes before GlycEth alphabetically and is therefore already set as the reference, and subsequently is the first term when you run `levels(meta$Condition)`. Try it out for yourself.
+:::
+
 Here, we load the counts using `tximport` , a convenience function for loading in count data from a variety of sources (Salmon, Kallisto, featureCounts, etc.) which also performs the aggregation of transcript counts to the gene level (remember that Kallisto produced count files on the transcript level).
 
 ```{r}
 # Get the files
 kallistoFiles <- file.path("../../results/3_quant/kallisto", paste0(rownames(meta), ".txt"))
+names(kallistoFiles) <- rownames(meta)
 stopifnot(all(file.exists(kallistoFiles)))  # Ensure we have all the files
 kallistoFiles
 
 # Use tximport to load the counts
-txiKallisto <- tximport(kallistoFiles, type = "kallisto", tx2gene = seqAnno, ignoreAfterBar = TRUE)
+txiKallisto <- tximport(kallistoFiles, type = "kallisto", tx2gene = seqAnno, ignoreAfterBar = TRUE, txIdCol = "transcript_id", geneIdCol = "gene_id")
 ```
+
+Take a quick look at the `txiKallisto` object we generated and take a look at the rownames. Contrast this to the rownames in the raw files.
+
+```{r}
+# Your code here
+```
+
+::: {.callout-note appearance="simple"}
+`txiKallisto` is a simple list with matrices, `"abundance"`, `"counts"`, and `"length"`, where the transcript level information is summarized to the gene-level. Typically, abundance is provided by the quantification tools as TPM (transcripts-per-million), while the counts are estimated counts (possibly fractional), and the `"length"` matrix contains the effective gene lengths.
+:::
+
+Finally, let's construct a *DESeqDataSet* from the `txi` object and sample information in `meta`
+
+```{r}
+dds <- DESeq2::DESeqDataSetFromTximport(txiKallisto,
+                                        colData=meta,
+                                        design=~Condition)
+dds
+```
+
+Let's filter as before, taking into account the grouping of the samples.
+
+```{r}
+sigThresh <- 10
+isPresent <- counts(dds) > sigThresh
+isPresentCond <- rowsum(t(isPresent * 1), group=meta$Condition)
+isPresentCond <- t(sweep(isPresentCond, 1,
+                         table(meta$Condition)[rownames(isPresentCond)], FUN="/")) >= 0.5
+isValid <- rowMeans(isPresentCond) >= 0.5
+dds <- dds[isValid,]
+```
+
+## Performing the DE

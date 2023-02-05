@@ -416,8 +416,6 @@ hmObj
 
 Change the above code such that the Kallisto outputs are read in intead of the FeatureCount count matrices. What differences, if any, do you observe?
 
-    ::: {.callout-tip}
-    ## Tip
-
-    You can use `stringr::str_remove` as we did above to transform the name of the transcripts into genes (as we did for the previous exercise).
-    :::
+::: {.callout-tip appearance="simple"}
+You can use `stringr::str_remove` as we did above to transform the name of the transcripts into genes (as we did for the previous exercise).
+:::
