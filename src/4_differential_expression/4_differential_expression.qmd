@@ -125,3 +125,13 @@ dds <- dds[isValid,]
 ```
 
 ## Performing the DE
+
+The standard differential expression analysis steps are wrapped into a single function, `DESeq`. The estimation steps performed by this function are described below, in the manual page for `?DESeq` .
+
+```{r}
+dds <- DESeq(dds)
+res <- results(dds)
+res
+```
+
+Results tables are generated using the function `results`, which extracts a results table with log2 fold changes, p-values and adjusted p-values. With no additional arguments to results, the log2 fold change and Wald test p value will be for the last variable in the design formula, and if this is a factor, the comparison will be the last level of this variable over the reference level (see previous note on factor levels). However, the order of the variables of the design do not matter so long as the user specifies the comparison to build a results table for, using the name or contrast arguments of results.
