@@ -62,10 +62,6 @@ meta <- data.frame(
   Condition=as.factor(rep(c("Glucose", "GlycEth"), each=4)),
   row.names=c(paste0("G", 1:4), paste0("GE", 1:4))
 )
-
-# Load the annotation
-seqAnno <- getFeatureAnnotation("../../data/supplementary-files/Ensembl_R64_genes/genes_annotation_byTranscript.txt", dataFeatureType="transcript")
-seqAnno <- seqAnno[seqAnno$type %in% "protein_coding", ]
 ```
 
 ::: callout-note
@@ -76,7 +72,15 @@ R will choose a reference level for factors based on alphabetical order. Then, o
 In our case, we are lucky in that the Glucose group comes before GlycEth alphabetically and is therefore already set as the reference, and subsequently is the first term when you run `levels(meta$Condition)`. Try it out for yourself.
 :::
 
-Here, we load the counts using `tximport` , a convenience function for loading in count data from a variety of sources (Salmon, Kallisto, featureCounts, etc.) which also performs the aggregation of transcript counts to the gene level (remember that Kallisto produced count files on the transcript level).
+Again, load the by-transcript gtf file to aid us in the annotation of our Kallisto results.
+
+```{r}
+# Load the annotation
+seqAnno <- getFeatureAnnotation("../../data/supplementary-files/Ensembl_R64_genes/genes_annotation_byTranscript.txt", dataFeatureType="transcript")
+seqAnno <- seqAnno[seqAnno$type %in% "protein_coding", ]
+```
+
+Next, we load the counts using `tximport` , a convenience function for loading in count data from a variety of sources (Salmon, Kallisto, featureCounts, etc.) which also performs the aggregation of transcript counts to the gene level (remember that Kallisto produced count files on the transcript level).
 
 ```{r}
 # Get the files
