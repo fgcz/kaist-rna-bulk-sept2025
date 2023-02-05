@@ -222,7 +222,7 @@ Now that the we have generated the counts, we can start exploring the data. We c
 ```{r}
 # Define meta dataframe for later use
 meta <- data.frame(
-  Condition=as.factor(c(rep("Glucose", 4), rep("GlycEth", 4))),
+  Condition=as.factor(rep(c("Glucose", "GlycEth"), each=4)),
   row.names=c(paste0("G", 1:4), paste0("GE", 1:4))
 )
 

@@ -5,9 +5,30 @@ format:
     embed-resources: true
     css: ../style.css
 editor: visual
+bibliography: references.bib
 ---
 
 # Differential Expression Analysis
+
+In this section, we will use the count data from Kallisto from the previous part, redo some of the QC, and perform the differential expression analysis using DESeq2[@DESeq2]. This part is adapted from the official DESeq2 [vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html), available on Bioconductor, so feel free to look there for additional information.
+
+## Preparing data
+
+```{r}
+suppressPackageStartupMessages({
+  library(SummarizedExperiment)
+  library(pheatmap)
+  library(RColorBrewer)
+  library(stringr)
+  library(plotly)
+  library(tidyverse)
+  library(tximport)
+  library(DESeq2)
+})
+source("../helpers.R")
+```
+
+Let's download data. These counts should be mostly identical to the results we produced ourselves in the last step but are provided here as a download for convenience.
 
 ```{bash}
 CURR_DIR=$(pwd)
@@ -31,4 +52,30 @@ rm -f processed_yeast_kallisto_counts.tar
 
 # Back home
 cd $CURR_DIR
+```
+
+First, let's create our meta-information frame and load in the gtf file.
+
+```{r}
+# Define meta dataframe for later use
+meta <- data.frame(
+  Condition=as.factor(rep(c("Glucose", "GlycEth"), each=4)),
+  row.names=c(paste0("G", 1:4), paste0("GE", 1:4))
+)
+
+# Load the annotation
+seqAnno <- getFeatureAnnotation("../../data/supplementary-files/Ensembl_R64_genes/genes_annotation_byTranscript.txt", dataFeatureType="transcript")
+seqAnno <- seqAnno[seqAnno$type %in% "protein_coding", ]
+```
+
+Here, we load the counts using `tximport` , a convenience function for loading in count data from a variety of sources (Salmon, Kallisto, featureCounts, etc.) which also performs the aggregation of transcript counts to the gene level (remember that Kallisto produced count files on the transcript level).
+
+```{r}
+# Get the files
+kallistoFiles <- file.path("../../results/3_quant/kallisto", paste0(rownames(meta), ".txt"))
+stopifnot(all(file.exists(kallistoFiles)))  # Ensure we have all the files
+kallistoFiles
+
+# Use tximport to load the counts
+txiKallisto <- tximport(kallistoFiles, type = "kallisto", tx2gene = seqAnno, ignoreAfterBar = TRUE)
 ```
