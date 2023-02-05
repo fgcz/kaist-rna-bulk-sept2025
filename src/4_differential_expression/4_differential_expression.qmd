@@ -7,23 +7,28 @@ format:
 editor: visual
 ---
 
-## Quarto
+# Differential Expression Analysis
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+```{bash}
+CURR_DIR=$(pwd)
+cd ../..
 
-## Running Code
+# Download the data
+KALLISTO_OUTDIR=results/3_quant/kallisto
+mkdir -p $KALLISTO_OUTDIR
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+# change to kallisto dir and delete contents if there are any
+cd $KALLISTO_OUTDIR
+rm -f ./*
 
-```{r}
-1 + 1
+# Download data
+echo "Depositing data in "$KALLISTO_OUTDIR
+curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/processed_yeast_kallisto_counts.tar
+
+# Extract data
+tar -xvf processed_yeast_kallisto_counts.tar
+rm -f processed_yeast_kallisto_counts.tar
+
+# Back home
+cd $CURR_DIR
 ```
-
-You can add options to executable code like this
-
-```{r}
-#| echo: false
-2 * 2
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).
