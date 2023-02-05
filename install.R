@@ -25,6 +25,7 @@ biocPackages <- c(
   "SummarizedExperiment",
   "DESeq2",
   "edgeR",
+  "tximport",
   "WGCNA"
 )
 BiocManager::install(biocPackages)
