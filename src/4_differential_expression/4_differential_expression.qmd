@@ -7,7 +7,7 @@ format:
     toc-location: left
     toc-depth: 3
     title-block-banner: "#00A7FF"
-    css: url(../style.css)
+css: style.css
 editor: visual
 bibliography: references.bib
 ---
@@ -154,7 +154,14 @@ Next, let's take a closer look at the results.
 ## Solutions
 
 1.  The columns most interesting to us are pvalue, padj (adjusted p-value), and log2FoldChange. Some other columns include `lfcSE`, which gives the standard error of the `log2FoldChange` and `stat`, which gives the Wald statistic. See ?results for more information.
-2.  
+
+2.  BH (Benjamin-Hochberg)
+
+3.  Execute the following:
+
+    ```{r}
+    sum(abs(res$log2FoldChange) >= 0.5 & res$pvalue <= 0.01)
+    ```
 :::
 
 ```{r}
