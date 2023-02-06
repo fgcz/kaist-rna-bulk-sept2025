@@ -2,3 +2,12 @@
   max-height: 500px;
   overflow-y: auto;
 }
+
+.quarto-title-block .quarto-title-banner {
+  background-image: url(FGCZ.png);
+  background-size: 300px;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding-left: 10px;
+  background-origin: content-box;
+}
