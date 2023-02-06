@@ -7,7 +7,7 @@ format:
     toc-location: left
     toc-depth: 3
     title-block-banner: "#00A7FF"
-    css: ../style.css
+    css: url(../style.css)
 editor: visual
 bibliography: references.bib
 ---
