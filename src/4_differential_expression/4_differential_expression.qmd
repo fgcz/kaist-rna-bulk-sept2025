@@ -227,15 +227,24 @@ WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 
 ## Performing the DE
 
-The standard differential expression analysis steps are wrapped into a single function, `DESeq`. The estimation steps performed by this function are described below, in the manual page for `?DESeq` . We take here an additional step of calculating the size factors
+The standard differential expression analysis steps are wrapped into a single function, `DESeq`. The estimation steps performed by this function are described below, in the manual page for `?DESeq` .
 
 ```{r}
+# Calculate size factors
+dds <- estimateSizeFactors(dds, controlGenes = isValid)
+sf <- 1 / dds@colData$sizeFactor
+
+# Calculate DESeq
 dds <- DESeq(dds)
 res <- results(dds)
 res
 ```
 
-::: callout-note
+::: {.callout-note appearance="simple"}
+You may wonder why we designated all genes above threshold as being "control genes" when calculating the size factors. Though this list of course also includes genes which will presumably be differentially expressed between the two conditions, the majority of genes will not be, and this therefore serves as a good approximation of the control genes in cases where we do not have this information a priori.
+:::
+
+::: {.callout-note appearance="simple"}
 Results tables are generated using the function `results`, which extracts a results table with log2 fold changes, p-values and adjusted p-values. With no additional arguments to results, the log2 fold change and Wald test p-value will be for the last variable in the design formula, and if this is a factor, the comparison will be the last level of this variable over the reference level (see previous note on factor levels).
 :::
 
