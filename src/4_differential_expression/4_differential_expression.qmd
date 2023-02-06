@@ -133,14 +133,14 @@ isValid <- rowMeans(isPresentCond) >= 0.5
 vsdQC <- DESeq2::vst(dds[isValid,])
 
 # Extract normalized counts
-normCounts <- SummarizedExperiment::assay(vsdQC)
+vsdSE <- SummarizedExperiment::assay(vsdQC)
 ```
 
 ### PCA
 
 ```{r}
 # Run PCA
-pcDat  <- prcomp(t(normCounts), scale. = TRUE)
+pcDat  <- prcomp(t(vsdSE), scale. = FALSE)
 
 # Calculate explained variance
 varExp <- (100*pcDat$sdev^2)/sum(pcDat$sdev^2)
@@ -159,15 +159,13 @@ varExp_df %>%
 ```
 
 ```{r}
-plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Set1",
-        type="scatter", mode="markers") %>%
-  layout(title="PCA Plot")
+plotPCA(vsdQC, intgroup=c("Condition"), ntop=nrow(vsdQC))
 ```
 
 ### MDS
 
 ```{r}
-mds <- limma::plotMDS(normCounts, plot=FALSE)
+mds <- limma::plotMDS(vsdSE, plot=FALSE)
 mdsOut <- mds$eigen.vectors[,1:3]
 colnames(mdsOut) <- c("Leading logFC dim1", "Leading logFC dim2", 
                       "Leading logFC dim3")
@@ -179,7 +177,7 @@ plot_ly(toPlot, x=~`Leading logFC dim1`, y=~`Leading logFC dim2`, z=~`Leading lo
 ### Hierarchical Clustering Plot
 
 ```{r}
-d <- as.dist(1-cor(normCounts, use="complete.obs"))
+d <- as.dist(1-cor(vsdSE, use="complete.obs"))
 hc <- hclust(d, method="ward.D2")
 WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 ```
@@ -238,6 +236,9 @@ sf <- 1 / dds@colData$sizeFactor
 dds <- DESeq(dds)
 res <- results(dds)
 res
+
+# Correct NA p-values
+
 ```
 
 ::: {.callout-note appearance="simple"}
