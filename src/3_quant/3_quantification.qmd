@@ -311,14 +311,14 @@ dds <- DESeq2::DESeqDataSetFromMatrix(countData=rawCountsFilt,
 vsd <- DESeq2::vst(dds)
 
 # Extract normalized counts
-normCounts <- SummarizedExperiment::assay(vsd)
+vsdSE <- SummarizedExperiment::assay(vsd)
 ```
 
 Let's quickly compare the raw and normalised counts to see how they have changed.
 
 ```{r}
 head(rawCountsFilt)
-head(as.data.frame(normCounts))
+head(as.data.frame(vsdSE))
 ```
 
 ## Dimensionality Reduction
@@ -327,7 +327,7 @@ head(as.data.frame(normCounts))
 
 ```{r}
 # Run PCA
-pcDat  <- prcomp(t(normCounts), scale. = TRUE)
+pcDat  <- prcomp(t(vsdSE), scale. = TRUE)
 
 # Calculate explained variance
 varExp <- (100*pcDat$sdev^2)/sum(pcDat$sdev^2)
@@ -354,7 +354,7 @@ plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Se
 ### Multi-dimensional scaling (MDS)
 
 ```{r}
-mds <- limma::plotMDS(normCounts, plot=FALSE)
+mds <- limma::plotMDS(vsdSE, plot=FALSE)
 mdsOut <- mds$eigen.vectors[,1:3]
 colnames(mdsOut) <- c("Leading logFC dim1", "Leading logFC dim2", 
                       "Leading logFC dim3")
@@ -366,7 +366,7 @@ plot_ly(toPlot, x=~`Leading logFC dim1`, y=~`Leading logFC dim2`, z=~`Leading lo
 ## Correlation Plots
 
 ```{r}
-d <- as.dist(1-cor(normCounts, use="complete.obs"))
+d <- as.dist(1-cor(vsdSE, use="complete.obs"))
 hc <- hclust(d, method="ward.D2")
 WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 ```
@@ -376,7 +376,7 @@ WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 ```{r}
 # Pearson correlation plot 
 pheatmap(
-  mat               = cor(normCounts, use="complete.obs"),
+  mat               = cor(vsdSE, use="complete.obs"),
   treeheight_row    = 100,
   treeheight_col    = 100,
   cutree_rows       = 2, 
@@ -395,12 +395,12 @@ pheatmap(
 
 ```{r}
 # First, we center the matrix
-normCountsCentered <- sweep(normCounts, 1, rowMeans(normCounts))
+vsdSECentered <- sweep(vsdSE, 1, rowMeans(vsdSE))
 # Identify high variance features
-topGenes <- rownames(normCounts)[head(order(rowSds(normCounts, na.rm=TRUE),
+topGenes <- rownames(vsdSE)[head(order(rowSds(vsdSE, na.rm=TRUE),
                                             decreasing = TRUE), 2000)]
 
-countsToPlot <- normCountsCentered[topGenes,]
+countsToPlot <- vsdSECentered[topGenes,]
 
 # Clustering of high variance features
 hmObj <- pheatmap(countsToPlot, 
