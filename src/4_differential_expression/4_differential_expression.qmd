@@ -164,6 +164,31 @@ Next, let's take a closer look at the results.
     ```
 :::
 
+## Exploring and Visualizing Results
+
+Let's next order the counts by smallest p-value.
+
 ```{r}
 resOrdered <- res[order(res$pvalue),]
+```
+
+Let's also summarise the results table we get.
+
+```{r}
+summary(res)
+```
+
+You will notice that there are no low-count genes in the result since we filtered them all out prior to performing the DE.
+
+The `results` function contains a number of arguments to customize the results table which is generated. You can read about these arguments by looking up `?results`. Note that the results function automatically performs independent filtering based on the mean of normalized counts for each gene, optimizing the number of genes which will have an adjusted p-value below a given FDR cutoff, `alpha`. All genes which do not pass the threshold are set to `NA`.
+
+```{r}
+res05 <- results(dds, alpha=0.05)
+summary(res05)
+```
+
+DESeq2 includes a number of convenience methods for visualizing results. The function *plotMA* shows the log2 fold changes attributable to a given variable over the mean of normalized counts for all the samples in the *DESeqDataSet*. Points will be colored red if the adjusted *p* value is less than 0.1 (the default `alpha` value).
+
+```{r}
+plotMA(res, ylim=c(-2,2))
 ```
