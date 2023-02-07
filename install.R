@@ -20,6 +20,7 @@ cranPackages <- c(
 install.packages(cranPackages)
 
 biocPackages <- c(
+  "clusterProfiler",
   "Rsubread",
   "rtracklayer",
   "SummarizedExperiment",
@@ -27,7 +28,6 @@ biocPackages <- c(
   "edgeR",
   "tximport",
   "EnhancedVolcano",
-  "clusterProfiler",
   "WGCNA"
 )
 BiocManager::install(biocPackages)
