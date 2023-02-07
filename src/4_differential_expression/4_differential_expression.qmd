@@ -371,3 +371,5 @@ EnhancedVolcano::EnhancedVolcano(toPlot,
 
     Two of the three genes are extremely down-regulated in the Glucose+Ethanol condition relative to Glucose. We don't expect changing the thresholds to have much affect on this.
 :::
+
+# Pathway Enrichment
