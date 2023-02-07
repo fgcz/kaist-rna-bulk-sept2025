@@ -11,14 +11,6 @@ if (!require("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
 }
 
-cranPackages <- c(
-  "ggplot2",
-  "tidyverse",
-  "plotly",
-  "pheatmap"
-)
-install.packages(cranPackages)
-
 biocPackages <- c(
   "clusterProfiler",
   "Rsubread",
@@ -31,3 +23,11 @@ biocPackages <- c(
   "WGCNA"
 )
 BiocManager::install(biocPackages)
+
+cranPackages <- c(
+  "ggplot2",
+  "tidyverse",
+  "plotly",
+  "pheatmap"
+)
+install.packages(cranPackages)
