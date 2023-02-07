@@ -26,6 +26,7 @@ biocPackages <- c(
   "DESeq2",
   "edgeR",
   "tximport",
+  "EnhancedVolcano",
   "WGCNA"
 )
 BiocManager::install(biocPackages)
