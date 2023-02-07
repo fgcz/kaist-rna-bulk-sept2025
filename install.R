@@ -27,6 +27,7 @@ biocPackages <- c(
   "edgeR",
   "tximport",
   "EnhancedVolcano",
+  "clusterProfiler",
   "WGCNA"
 )
 BiocManager::install(biocPackages)
