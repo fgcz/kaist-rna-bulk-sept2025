@@ -165,7 +165,10 @@ div.csl-indent {
   <ul class="collapse">
   <li><a href="#exercise-2" id="toc-exercise-2" class="nav-link" data-scroll-target="#exercise-2">Exercise #2</a></li>
   </ul></li>
-  <li><a href="#exploring-and-visualizing-results" id="toc-exploring-and-visualizing-results" class="nav-link" data-scroll-target="#exploring-and-visualizing-results">Exploring and Visualizing Results</a></li>
+  <li><a href="#exploring-and-visualizing-results" id="toc-exploring-and-visualizing-results" class="nav-link" data-scroll-target="#exploring-and-visualizing-results">Exploring and Visualizing Results</a>
+  <ul class="collapse">
+  <li><a href="#volcano-plot" id="toc-volcano-plot" class="nav-link" data-scroll-target="#volcano-plot">Volcano Plot</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -224,7 +227,7 @@ div.csl-indent {
                                  Dload  Upload   Total   Spent    Left  Speed
 
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 4760k  100 4760k    0     0  38.7M      0 --:--:-- --:--:-- --:--:-- 38.7M
+100 4760k  100 4760k    0     0  37.4M      0 --:--:-- --:--:-- --:--:-- 37.4M
 G1.h5
 G1.json
 G1.txt
@@ -412,13 +415,13 @@ colData names(1): Condition</code></pre>
 <pre><code>using 'avgTxLength' from assays(dds), correcting for library size</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract normalized counts</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>normCounts <span class="ot">&lt;-</span> SummarizedExperiment<span class="sc">::</span><span class="fu">assay</span>(vsdQC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>vsdSE <span class="ot">&lt;-</span> SummarizedExperiment<span class="sc">::</span><span class="fu">assay</span>(vsdQC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="pca" class="level3">
 <h3 class="anchored" data-anchor-id="pca">PCA</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run PCA</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>pcDat  <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="fu">t</span>(normCounts), <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>pcDat  <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="fu">t</span>(vsdSE), <span class="at">scale. =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate explained variance</span></span>
 <span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>varExp <span class="ot">&lt;-</span> (<span class="dv">100</span><span class="sc">*</span>pcDat<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span><span class="fu">sum</span>(pcDat<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span>)</span>
@@ -439,19 +442,16 @@ colData names(1): Condition</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(<span class="fu">as.data.frame</span>(pcDat<span class="sc">$</span>x), <span class="at">x=</span><span class="sc">~</span>PC1, <span class="at">y=</span><span class="sc">~</span>PC2, <span class="at">color=</span>meta<span class="sc">$</span>Condition, <span class="at">colors=</span><span class="st">"Set1"</span>,</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">type=</span><span class="st">"scatter"</span>, <span class="at">mode=</span><span class="st">"markers"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">layout</span>(<span class="at">title=</span><span class="st">"PCA Plot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotPCA</span>(vsdQC, <span class="at">intgroup=</span><span class="fu">c</span>(<span class="st">"Condition"</span>), <span class="at">ntop=</span><span class="fu">nrow</span>(vsdQC))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="htmlwidget-3216bf46570c15aa5b2b" style="width:100%;height:464px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3216bf46570c15aa5b2b">{"x":{"visdat":{"88f268aa72c":["function () ","plotlyVisDat"]},"cur_data":"88f268aa72c","attrs":{"88f268aa72c":{"x":{},"y":{},"mode":"markers","color":["Glucose","Glucose","Glucose","Glucose","GlycEth","GlycEth","GlycEth","GlycEth"],"colors":"Set1","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"PCA Plot","xaxis":{"domain":[0,1],"automargin":true,"title":"PC1"},"yaxis":{"domain":[0,1],"automargin":true,"title":"PC2"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-49.3047650700246,-32.7316294642429,-40.3808279801352,-44.8330584765153],"y":[36.3597720309979,-31.4088647379974,-36.9154853872422,17.5541054863385],"mode":"markers","type":"scatter","name":"Glucose","marker":{"color":"rgba(228,26,28,1)","line":{"color":"rgba(228,26,28,1)"}},"textfont":{"color":"rgba(228,26,28,1)"},"error_y":{"color":"rgba(228,26,28,1)"},"error_x":{"color":"rgba(228,26,28,1)"},"line":{"color":"rgba(228,26,28,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[48.6089213451534,38.0011604711075,34.9902898055846,45.6499093690726],"y":[-34.5430386487641,-22.2388812825796,62.3615177042118,8.83087483503513],"mode":"markers","type":"scatter","name":"GlycEth","marker":{"color":"rgba(55,126,184,1)","line":{"color":"rgba(55,126,184,1)"}},"textfont":{"color":"rgba(55,126,184,1)"},"error_y":{"color":"rgba(55,126,184,1)"},"error_x":{"color":"rgba(55,126,184,1)"},"line":{"color":"rgba(55,126,184,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
 <section id="mds" class="level3">
 <h3 class="anchored" data-anchor-id="mds">MDS</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>mds <span class="ot">&lt;-</span> limma<span class="sc">::</span><span class="fu">plotMDS</span>(normCounts, <span class="at">plot=</span><span class="cn">FALSE</span>)</span>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>mds <span class="ot">&lt;-</span> limma<span class="sc">::</span><span class="fu">plotMDS</span>(vsdSE, <span class="at">plot=</span><span class="cn">FALSE</span>)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>mdsOut <span class="ot">&lt;-</span> mds<span class="sc">$</span>eigen.vectors[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mdsOut) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Leading logFC dim1"</span>, <span class="st">"Leading logFC dim2"</span>, </span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Leading logFC dim3"</span>)</span>
@@ -459,15 +459,15 @@ colData names(1): Condition</code></pre>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(toPlot, <span class="at">x=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim1</span><span class="st">`</span>, <span class="at">y=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim2</span><span class="st">`</span>, <span class="at">z=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim3</span><span class="st">`</span>, <span class="at">color=</span><span class="sc">~</span>Condition, <span class="at">colors=</span><span class="st">"Set1"</span>, <span class="at">type=</span><span class="st">'scatter3d'</span>, <span class="at">mode=</span><span class="st">'markers+text'</span>, <span class="at">text=</span><span class="sc">~</span>Sample, <span class="at">textposition =</span> <span class="st">"top right"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  plotly<span class="sc">::</span><span class="fu">layout</span>(<span class="at">title=</span><span class="st">"Classical MDS"</span>, <span class="at">scene=</span><span class="fu">list</span>(<span class="at">xaxis=</span><span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim1'</span>), <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim2'</span>), <span class="at">zaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim3'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="htmlwidget-aba33230ce07cdeaed8c" style="width:100%;height:464px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-aba33230ce07cdeaed8c">{"x":{"visdat":{"88f236138ac3":["function () ","plotlyVisDat"]},"cur_data":"88f236138ac3","attrs":{"88f236138ac3":{"x":{},"y":{},"z":{},"mode":"markers+text","text":{},"textposition":"top right","color":{},"colors":"Set1","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Classical MDS","scene":{"xaxis":{"title":"Leading logFC dim1"},"yaxis":{"title":"Leading logFC dim2"},"zaxis":{"title":"Leading logFC dim3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-0.37608837817204,-0.362126628145731,-0.323681703130708,-0.348981167623267],"y":[0.274948059131787,-0.0961810490299608,-0.448285246947217,0.208070151631864],"z":[0.263889951267472,-0.512079641746123,0.215206107974928,0.0929623249093178],"mode":"markers+text","text":["G1","G2","G3","G4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"Glucose","marker":{"color":"rgba(228,26,28,1)","line":{"color":"rgba(228,26,28,1)"}},"textfont":{"color":"rgba(228,26,28,1)"},"error_y":{"color":"rgba(228,26,28,1)"},"error_x":{"color":"rgba(228,26,28,1)"},"line":{"color":"rgba(228,26,28,1)"},"frame":null},{"x":[0.379931940391863,0.361639973571027,0.364209290132452,0.305096672976402],"y":[-0.431251708255777,-0.34748921528266,0.494975557157824,0.345213451594143],"z":[0.0306516058939538,0.0969269604123899,0.44717311925359,-0.634730427965528],"mode":"markers+text","text":["GE1","GE2","GE3","GE4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"GlycEth","marker":{"color":"rgba(55,126,184,1)","line":{"color":"rgba(55,126,184,1)"}},"textfont":{"color":"rgba(55,126,184,1)"},"error_y":{"color":"rgba(55,126,184,1)"},"error_x":{"color":"rgba(55,126,184,1)"},"line":{"color":"rgba(55,126,184,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-b91275075f843d3337b0" style="width:100%;height:464px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b91275075f843d3337b0">{"x":{"visdat":{"9aea4a137bf6":["function () ","plotlyVisDat"]},"cur_data":"9aea4a137bf6","attrs":{"9aea4a137bf6":{"x":{},"y":{},"z":{},"mode":"markers+text","text":{},"textposition":"top right","color":{},"colors":"Set1","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Classical MDS","scene":{"xaxis":{"title":"Leading logFC dim1"},"yaxis":{"title":"Leading logFC dim2"},"zaxis":{"title":"Leading logFC dim3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-0.37608837817204,-0.362126628145731,-0.323681703130708,-0.348981167623267],"y":[0.274948059131787,-0.0961810490299608,-0.448285246947217,0.208070151631864],"z":[0.263889951267472,-0.512079641746123,0.215206107974928,0.0929623249093178],"mode":"markers+text","text":["G1","G2","G3","G4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"Glucose","marker":{"color":"rgba(228,26,28,1)","line":{"color":"rgba(228,26,28,1)"}},"textfont":{"color":"rgba(228,26,28,1)"},"error_y":{"color":"rgba(228,26,28,1)"},"error_x":{"color":"rgba(228,26,28,1)"},"line":{"color":"rgba(228,26,28,1)"},"frame":null},{"x":[0.379931940391863,0.361639973571027,0.364209290132452,0.305096672976402],"y":[-0.431251708255777,-0.34748921528266,0.494975557157824,0.345213451594143],"z":[0.0306516058939538,0.0969269604123899,0.44717311925359,-0.634730427965528],"mode":"markers+text","text":["GE1","GE2","GE3","GE4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"GlycEth","marker":{"color":"rgba(55,126,184,1)","line":{"color":"rgba(55,126,184,1)"}},"textfont":{"color":"rgba(55,126,184,1)"},"error_y":{"color":"rgba(55,126,184,1)"},"error_x":{"color":"rgba(55,126,184,1)"},"line":{"color":"rgba(55,126,184,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
 <section id="hierarchical-clustering-plot" class="level3">
 <h3 class="anchored" data-anchor-id="hierarchical-clustering-plot">Hierarchical Clustering Plot</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">as.dist</span>(<span class="dv">1</span><span class="sc">-</span><span class="fu">cor</span>(normCounts, <span class="at">use=</span><span class="st">"complete.obs"</span>))</span>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">as.dist</span>(<span class="dv">1</span><span class="sc">-</span><span class="fu">cor</span>(vsdSE, <span class="at">use=</span><span class="st">"complete.obs"</span>))</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>hc <span class="ot">&lt;-</span> <span class="fu">hclust</span>(d, <span class="at">method=</span><span class="st">"ward.D2"</span>)</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>WGCNA<span class="sc">::</span><span class="fu">plotDendroAndColors</span>(hc, sampleColours, <span class="at">autoColorHeight=</span><span class="cn">TRUE</span>, <span class="at">hang =</span> <span class="sc">-</span><span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -532,14 +532,19 @@ Solutions
 </section>
 <section id="performing-the-de" class="level2">
 <h2 class="anchored" data-anchor-id="performing-the-de">Performing the DE</h2>
-<p>The standard differential expression analysis steps are wrapped into a single function, <code>DESeq</code>. The estimation steps performed by this function are described below, in the manual page for <code>?DESeq</code> . We take here an additional step of calculating the size factors</p>
+<p>The standard differential expression analysis steps are wrapped into a single function, <code>DESeq</code>. The estimation steps performed by this function are described below, in the manual page for <code>?DESeq</code> .</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">DESeq</span>(dds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>estimating size factors</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate size factors</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">estimateSizeFactors</span>(dds, <span class="at">controlGenes =</span> isValid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>using 'avgTxLength' from assays(dds), correcting for library size</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>sf <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> dds<span class="sc">@</span>colData<span class="sc">$</span>sizeFactor</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate DESeq</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">DESeq</span>(dds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>using pre-existing normalization factors</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>estimating dispersions</code></pre>
@@ -556,38 +561,46 @@ Solutions
 <div class="cell-output cell-output-stderr">
 <pre><code>fitting model and testing</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">results</span>(dds)</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">results</span>(dds)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>log2 fold change (MLE): Condition GlycEth vs Glucose 
 Wald test p-value: Condition GlycEth vs Glucose 
 DataFrame with 6600 rows and 6 columns
            baseMean log2FoldChange     lfcSE      stat      pvalue        padj
           &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;
-Q0010      0.133636       0.753532  3.525002  0.213768 8.30728e-01          NA
+Q0010      0.133925        0.75709  3.524951   0.21478 8.29939e-01          NA
 Q0017      0.000000             NA        NA        NA          NA          NA
 Q0032      0.000000             NA        NA        NA          NA          NA
-Q0045     17.531510       3.233381  0.714722  4.523968 6.06910e-06 6.45579e-05
-Q0050     48.389523       3.388121  0.442177  7.662369 1.82534e-14 5.55973e-13
+Q0045     17.543419        3.23652  0.714457   4.53003 5.89741e-06 6.29461e-05
+Q0050     48.426998        3.39134  0.441980   7.67306 1.67941e-14 5.11523e-13
 ...             ...            ...       ...       ...         ...         ...
-YPR201W    28.23591       1.005451  0.505424  1.989323 4.66655e-02 1.41241e-01
-YPR202W    42.03165       0.889515  0.518174  1.716633 8.60463e-02 2.23530e-01
-YPR203W    31.36816      -1.034021  0.625267 -1.653726 9.81831e-02 2.45517e-01
-YPR204C-A   2.54041      -0.775415  1.336804 -0.580051 5.61880e-01 7.60542e-01
-YPR204W   985.95742       0.883429  0.170332  5.186498 2.14286e-07 3.04783e-06</code></pre>
+YPR201W    28.24256       1.008524  0.505255  1.996067 4.59266e-02 1.39954e-01
+YPR202W    42.04438       0.892940  0.517929  1.724061 8.46969e-02 2.20445e-01
+YPR203W    31.35051      -1.030423  0.624919 -1.648889 9.91703e-02 2.47837e-01
+YPR204C-A   2.53859      -0.773100  1.337551 -0.577997 5.63266e-01 7.61032e-01
+YPR204W   986.30147       0.886455  0.170717  5.192551 2.07432e-07 2.97066e-06</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correct NA p-values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-note callout callout-style-simple">
+<div class="callout-body d-flex">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
-Note
+<div class="callout-body-container">
+<p>You may wonder why we designated all genes above threshold as being “control genes” when calculating the size factors. Though this list of course also includes genes which will presumably be differentially expressed between the two conditions, the majority of genes will not be, and this therefore serves as a good approximation of the control genes in cases where we do not have this information a priori.</p>
 </div>
 </div>
-<div class="callout-body-container callout-body">
+</div>
+<div class="callout-note callout callout-style-simple">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
 <p>Results tables are generated using the function <code>results</code>, which extracts a results table with log2 fold changes, p-values and adjusted p-values. With no additional arguments to results, the log2 fold change and Wald test p-value will be for the last variable in the design formula, and if this is a factor, the comparison will be the last level of this variable over the reference level (see previous note on factor levels).</p>
+</div>
 </div>
 </div>
 <p>Next, let’s take a closer look at the results.</p>
@@ -599,7 +612,7 @@ Note
 <li>How many significantly-expressed genes are there assuming we consider genes differentially expressed if <code>p &lt;= 0.01</code> and <code>log2FoldChange &gt;= 0.5</code> ?</li>
 </ol>
 <div class="callout-tip callout callout-style-simple callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -608,14 +621,14 @@ Solutions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="1">
 <li><p>The columns most interesting to us are pvalue, padj (adjusted p-value), and log2FoldChange. Some other columns include <code>lfcSE</code>, which gives the standard error of the <code>log2FoldChange</code> and <code>stat</code>, which gives the Wald statistic. See ?results for more information.</p></li>
 <li><p>BH (Benjamin-Hochberg)</p></li>
 <li><p>Execute the following:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">abs</span>(res<span class="sc">$</span>log2FoldChange) <span class="sc">&gt;=</span> <span class="fl">0.5</span> <span class="sc">&amp;</span> res<span class="sc">$</span>pvalue <span class="sc">&lt;=</span> <span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">abs</span>(res<span class="sc">$</span>log2FoldChange) <span class="sc">&gt;=</span> <span class="fl">0.5</span> <span class="sc">&amp;</span> res<span class="sc">$</span>pvalue <span class="sc">&lt;=</span> <span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] NA</code></pre>
 </div>
@@ -630,13 +643,13 @@ Solutions
 <h2 class="anchored" data-anchor-id="exploring-and-visualizing-results">Exploring and Visualizing Results</h2>
 <p>Let’s first summarise the results table we get.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 out of 6369 with nonzero total read count
 adjusted p-value &lt; 0.1
-LFC &gt; 0 (up)       : 941, 15%
-LFC &lt; 0 (down)     : 907, 14%
+LFC &gt; 0 (up)       : 948, 15%
+LFC &lt; 0 (down)     : 902, 14%
 outliers [1]       : 1, 0.016%
 low counts [2]     : 124, 1.9%
 (mean count &lt; 0)
@@ -647,14 +660,14 @@ low counts [2]     : 124, 1.9%
 <p>You will notice that there are no low-count genes in the result since we filtered them all out prior to performing the DE.</p>
 <p>The <code>results</code> function contains a number of arguments to customize the results table which is generated. You can read about these arguments by looking up <code>?results</code>. Note that the results function automatically performs independent filtering based on the mean of normalized counts for each gene, optimizing the number of genes which will have an adjusted p-value below a given FDR cutoff, <code>alpha</code>. All genes which do not pass the threshold are set to <code>NA</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>res05 <span class="ot">&lt;-</span> <span class="fu">results</span>(dds, <span class="at">alpha=</span><span class="fl">0.05</span>)</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res05)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>res05 <span class="ot">&lt;-</span> <span class="fu">results</span>(dds, <span class="at">alpha=</span><span class="fl">0.05</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res05)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 out of 6369 with nonzero total read count
 adjusted p-value &lt; 0.05
 LFC &gt; 0 (up)       : 798, 13%
-LFC &lt; 0 (down)     : 738, 12%
+LFC &lt; 0 (down)     : 731, 11%
 outliers [1]       : 1, 0.016%
 low counts [2]     : 0, 0%
 (mean count &lt; 0)
@@ -664,19 +677,19 @@ low counts [2]     : 0, 0%
 </div>
 <p>DESeq2 includes a number of convenience methods for visualizing results. The function <em>plotMA</em> shows the log2 fold changes attributable to a given variable over the mean of normalized counts for all the samples in the <em>DESeqDataSet</em>. Points will be colored red if the adjusted <em>p</em> value is less than 0.1 (the default <code>alpha</code> value).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotMA</span>(res, <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotMA</span>(res, <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="4_differential_expression_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>resultsName <span class="ot">&lt;-</span> <span class="fu">resultsNames</span>(dds)[<span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>resultsName  <span class="co"># Get the contrast</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>resultsName <span class="ot">&lt;-</span> <span class="fu">resultsNames</span>(dds)[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>resultsName  <span class="co"># Get the contrast</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Condition_GlycEth_vs_Glucose"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>resLFC <span class="ot">&lt;-</span> <span class="fu">lfcShrink</span>(dds, <span class="at">coef=</span>resultsName, <span class="at">type=</span><span class="st">"normal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>resLFC <span class="ot">&lt;-</span> <span class="fu">lfcShrink</span>(dds, <span class="at">coef=</span>resultsName, <span class="at">type=</span><span class="st">"normal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>using 'normal' for LFC shrinkage, the Normal prior from Love et al (2014).
 
@@ -684,16 +697,19 @@ Note that type='apeglm' and type='ashr' have shown to have less bias than type='
 See ?lfcShrink for more details on shrinkage type, and the DESeq2 vignette.
 Reference: https://doi.org/10.1093/bioinformatics/bty895</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotMA</span>(resLFC, <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotMA</span>(resLFC, <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="4_differential_expression_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<section id="volcano-plot" class="level3 unnumbered">
+
 
 </section>
 </section>
+</section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">Volcano Plot</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
 <div id="ref-DESeq2" class="csl-entry" role="doc-biblioentry">
 Love, Michael I., Wolfgang Huber, and Simon Anders. 2014. <span>“Moderated Estimation of Fold Change and Dispersion for RNA-Seq Data with DESeq2”</span> 15: 550. <a href="https://doi.org/10.1186/s13059-014-0550-8">https://doi.org/10.1186/s13059-014-0550-8</a>.
 </div>

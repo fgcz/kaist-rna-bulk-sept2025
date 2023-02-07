@@ -302,3 +302,5 @@ resultsName  # Get the contrast
 resLFC <- lfcShrink(dds, coef=resultsName, type="normal")
 plotMA(resLFC, ylim=c(-2,2))
 ```
+
+### Volcano Plot
