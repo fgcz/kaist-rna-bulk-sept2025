@@ -373,3 +373,7 @@ EnhancedVolcano::EnhancedVolcano(toPlot,
 :::
 
 # Pathway Enrichment
+
+```{r}
+library(clusterProfiler)
+```
