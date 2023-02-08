@@ -11,6 +11,10 @@ if (!require("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
 }
 
+install.packages(c("remotes"))
+remotes::install_version("ggplot2", version = "3.4.0", repos = "http://cran.us.r-project.org")
+remotes::install_version("gson", version = "0.0.7", repos = "http://cran.us.r-project.org")
+
 cranPackages <- c(
   "ggplot2",
   "tidyverse",
@@ -20,6 +24,7 @@ cranPackages <- c(
 install.packages(cranPackages)
 
 biocPackages <- c(
+  "clusterProfiler",
   "Rsubread",
   "rtracklayer",
   "SummarizedExperiment",
