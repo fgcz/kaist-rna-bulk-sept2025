@@ -16,7 +16,7 @@ for FASTQ in $TRIMMED_FASTQS/*_trimmed_R1.fastq.gz
     --sjdbOverhang 150 --outFilterType BySJout --outFilterMatchNmin 30 \
     --outFilterMismatchNmax 10 --outFilterMismatchNoverLmax 0.05 \
     --outMultimapperOrder Random --alignSJDBoverhangMin 1 \
-    --alignSJoverhangMin 8 --alignIntronMax 100000 --alignMatesGapMax 100000 \
+    --alignSJoverhangMin 8 --alignIntronMax 1000 --alignMatesGapMax 1000 \
     --outFilterMultimapNmax 50 --chimSegmentMin 15 \
     --chimJunctionOverhangMin 15 --chimScoreMin 15 --chimScoreSeparation 10 \
     --outSAMstrandField intronMotif --alignEndsProtrude 3 ConcordantPair \
