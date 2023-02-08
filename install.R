@@ -16,7 +16,6 @@ remotes::install_version("ggplot2", version = "3.4.0", repos = "http://cran.us.r
 remotes::install_version("gson", version = "0.0.7", repos = "http://cran.us.r-project.org")
 
 cranPackages <- c(
-  "ggplot2",
   "tidyverse",
   "plotly",
   "pheatmap"
