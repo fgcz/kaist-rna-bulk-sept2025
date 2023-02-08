@@ -1,0 +1,36 @@
+---
+title: "Part 4: Differential Expression and Pathway Enrichment"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-location: left
+    toc-depth: 3
+    title-block-banner: "#00A7FF"
+css: style.css
+editor: visual
+bibliography: references.bib
+---
+
+# Mapping with STAR
+
+For this section, we will be aligning our processed fastqs using STAR [@dobin2012].
+
+```{bash}
+CURR_DIR=$(pwd)
+cd ../..
+
+# Download the data
+FASTP_OUTDIR=results/1_qc/fastp_downsampled
+mkdir -p $FASTP_OUTDIR
+cd $FASTP_OUTDIR
+echo "Depositing data in "$FASTP_OUTDIR
+curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/yeast_fastp_downsampled_for_STAR.tar
+
+# Extract data
+tar -xvf yeast_fastp_downsampled_for_STAR.tar
+rm -f yeast_fastp_downsampled_for_STAR.tar
+
+# back home
+cd $CURR_DIR
+```
