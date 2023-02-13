@@ -16,7 +16,9 @@ bibliography: references.bib
 
 For this section, we will be aligning our processed fastqs using STAR [@dobin2012].
 
-First, let's download our dataset for this section. If you haven't already, please delete all fastp generated data from the previous section. Don't worry, we will download it at a later point again from the FGCZ server.
+## Downloading test data
+
+First, let's download our dataset for this section. If you haven't already, please delete all fastp generated data from the previous section. Don't worry, we will download it at a later point again from the FGCZ server. Then, let's download our test data for this section: fastp-processed files which have been downsampled by 10X to speed up alignment.
 
 ```{bash}
 CURR_DIR=$(pwd)
@@ -36,3 +38,63 @@ rm -f yeast_fastp_downsampled_for_STAR.tar
 # back home
 cd $CURR_DIR
 ```
+
+Now that the data has been downloaded, let's see exactly what we are dealing with. To this end, run the following cell. It calls [seqkit](https://bioinf.shenwei.me/seqkit/usage/) to output some stats about the fastq files.
+
+```{bash}
+/opt/seqkit stats ../../results/1_qc/fastp_downsampled/20191112.A-G*
+```
+
+### Exercise #1
+
+1.  How many reads does each sample have? How does this compare to the input fastq files?
+
+2.  Is the minimum length of each read in the fastq files expected?
+
+## Running STAR
+
+```{bash}
+CURR_DIR=$(pwd)
+cd ../..
+
+TRIMMED_FASTQS=results/1_qc/fastp_downsampled
+OUTPUT_DIR=results/2_mapping/STAR_alignment
+mkdir -p $OUTPUT_DIR
+
+# Start processing with fastp
+for FASTQ in $TRIMMED_FASTQS/*_trimmed_R1.fastq.gz
+  do SAMPLE_NAME=$(basename ${FASTQ%_R1.fastq.gz})
+  echo $FASTQ
+  
+  # First do alignment with STAR using a pre-built index
+  time /opt/STAR \
+    --genomeDir data/supplementary-files/Ensembl_R64_genes_STARIndex \
+    --outFileNamePrefix $OUTPUT_DIR/$SAMPLE_NAME"_" \
+    --readFilesIn $FASTQ --twopassMode None --runThreadN 4 \
+    --sjdbOverhang 150 --outFilterType BySJout --outFilterMatchNmin 30 \
+    --outFilterMismatchNmax 10 --outFilterMismatchNoverLmax 0.05 \
+    --outMultimapperOrder Random --alignSJDBoverhangMin 1 \
+    --alignSJoverhangMin 8 --alignIntronMax 1000 --alignMatesGapMax 1000 \
+    --outFilterMultimapNmax 50 --chimSegmentMin 15 \
+    --chimJunctionOverhangMin 15 --chimScoreMin 15 --chimScoreSeparation 10 \
+    --outSAMstrandField intronMotif --alignEndsProtrude 3 ConcordantPair \
+    --outSAMattributes All --outStd BAM_Unsorted --outSAMtype BAM Unsorted \
+    --outSAMattrRGline ID:GE4 SM:GE4 --readFilesCommand zcat > $OUTPUT_DIR/$SAMPLE_NAME.out.bam
+  
+  # Sort and index
+  samtools sort -l 9 -m 2625M -@ 4 $OUTPUT_DIR/$SAMPLE_NAME.out.bam -o $OUTPUT_DIR/$SAMPLE_NAME.bam
+  rm -f $OUTPUT_DIR/$SAMPLE_NAME.out.bam
+  samtools index $OUTPUT_DIR/$SAMPLE_NAME.bam
+  
+  # “Guess” how RNA-seq sequencing were configured
+  infer_experiment.py -r data/supplementary-files/Ensembl_R64_genes/genes.bed \
+    -i $OUTPUT_DIR/$SAMPLE_NAME.bam -s 200000 > $OUTPUT_DIR/$SAMPLE_NAME"_inferred.txt"
+done
+
+rm -rf $TRIMMED_FASTQS
+
+# Back home
+cd $CURR_DIR
+```
+
+## Alignment QC
