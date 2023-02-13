@@ -16,6 +16,8 @@ bibliography: references.bib
 
 For this section, we will be aligning our processed fastqs using STAR [@dobin2012].
 
+First, let's download our dataset for this section. If you haven't already, please delete all fastp generated data from the previous section. Don't worry, we will download it at a later point again from the FGCZ server.
+
 ```{bash}
 CURR_DIR=$(pwd)
 cd ../..
