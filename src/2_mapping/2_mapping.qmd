@@ -42,7 +42,7 @@ cd $CURR_DIR
 Now that the data has been downloaded, let's see exactly what we are dealing with. To this end, run the following cell. It calls [seqkit](https://bioinf.shenwei.me/seqkit/usage/) to output some stats about the fastq files.
 
 ```{bash}
-/opt/seqkit stats ../../results/1_qc/fastp_downsampled/20191112.A-G*
+/opt/seqkit stats ../../results/1_qc/fastp_downsampled/*fastq.gz
 ```
 
 ### Exercise #1
@@ -51,7 +51,16 @@ Now that the data has been downloaded, let's see exactly what we are dealing wit
 
 2.  Is the minimum length of each read in the fastq files expected?
 
+::: {.callout-tip collapse="true"}
+## Solutions
+
+1.  As expected, each sample has around a tenth of the input reads of our initial sequencing data. 500'000 to 1'000'000 may seem like little considering the general recommendation of 20M for bulk RNA-seq, but it is enough to actually get reasonable results for yeast.
+2.  Yes, we specified a minimum length of 30bp when we ran fastp, which is what we see in the seqkit output.
+:::
+
 ## Running STAR
+
+We are now ready to run the STAR aligner on our inputs. This part can take a while (\~15 minutes), so look over commands in the meantime.
 
 ```{bash}
 CURR_DIR=$(pwd)
@@ -63,7 +72,7 @@ mkdir -p $OUTPUT_DIR
 
 # Start processing with fastp
 for FASTQ in $TRIMMED_FASTQS/*_trimmed_R1.fastq.gz
-  do SAMPLE_NAME=$(basename ${FASTQ%_R1.fastq.gz})
+  do SAMPLE_NAME=$(basename ${FASTQ%_trimmed_R1.fastq.gz})
   echo $FASTQ
   
   # First do alignment with STAR using a pre-built index
@@ -79,7 +88,8 @@ for FASTQ in $TRIMMED_FASTQS/*_trimmed_R1.fastq.gz
     --chimJunctionOverhangMin 15 --chimScoreMin 15 --chimScoreSeparation 10 \
     --outSAMstrandField intronMotif --alignEndsProtrude 3 ConcordantPair \
     --outSAMattributes All --outStd BAM_Unsorted --outSAMtype BAM Unsorted \
-    --outSAMattrRGline ID:GE4 SM:GE4 --readFilesCommand zcat > $OUTPUT_DIR/$SAMPLE_NAME.out.bam
+    --outSAMattrRGline ID:$SAMPLE_NAME SM:$SAMPLE_NAME \
+    --readFilesCommand zcat > $OUTPUT_DIR/$SAMPLE_NAME.out.bam
   
   # Sort and index
   samtools sort -l 9 -m 2625M -@ 4 $OUTPUT_DIR/$SAMPLE_NAME.out.bam -o $OUTPUT_DIR/$SAMPLE_NAME.bam
@@ -97,4 +107,11 @@ rm -rf $TRIMMED_FASTQS
 cd $CURR_DIR
 ```
 
+### Exercise #2
+
+1.  Take a look at the files ending in "\_Log.final.out". Which sample has the highest percentage of primary alignments? Which has the lowest percentage?
+2.  What is the range of splices for the samples? Do you think these are real?
+
 ## Alignment QC
+
+Let's first take a look at the outputs.
