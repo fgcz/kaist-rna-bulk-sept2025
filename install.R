@@ -31,6 +31,7 @@ biocPackages <- c(
   "edgeR",
   "tximport",
   "EnhancedVolcano",
-  "WGCNA"
+  "WGCNA",
+  "org.Sc.sgd.db"
 )
 BiocManager::install(biocPackages)
