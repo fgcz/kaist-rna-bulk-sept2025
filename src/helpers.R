@@ -74,3 +74,10 @@ getGffAttributeField = function (x, field, attrsep = ";", valuesep="=") {
   x <- sub(paste0("\"{0,1}", attrsep, "$"), "", x)
   return(x)
 }
+
+correctDESeq2Output <- function(res, isValid) {
+  res$use <- !isValid
+  res$pvalue[is.na(res$pvalue)] <- 1
+  res$padj[isValid] <- p.adjust(res$pvalue[isValid], method = "fdr")
+  return(res)
+}
