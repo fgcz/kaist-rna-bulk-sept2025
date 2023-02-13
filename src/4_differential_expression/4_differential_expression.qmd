@@ -412,29 +412,49 @@ hmObj <- pheatmap(countsToPlot,
          fontsize=8)
 ```
 
-# Pathway Enrichment
+# Enrichment Analysis
+
+In this section, we would like to take our results from the differential expression and identify genes in the result which are functionally related. To this end, this so-called enrichment analysis can help us. As mentioned in the lecture, there are several tools in R that allow us to perform this analysis, but we will make use of clusterProfiler [@clusterProfiler]. Its documentation can be found [here](https://yulab-smu.top/biomedical-knowledge-mining-book/enrichment-overview.html). Its main strengths lie in a number of built-in visualisations we will find helpful in interpreting the data.
+
+## Review of Overrepresentation Analysis
+
+From the docs, overrepresentation analysis (ORA) "is a widely used approach to determine whether known biological functions or processes are over-represented (i.e. enriched) in experimentally-derived gene list", in our case, a list of differentially expressed genes. ORA should be primarily used when the effect size is large, i.e. when it is possible to use thresholding to attain a good sample of candidate genes.
+
+The p-values for each gene set in the analysis can be calculated using a hypergeometric distribution:
+
+$$
+p = 1 - \sum_{0}^{k-1}\frac{{M \choose i}{N-M \choose n-i}}{N \choose i}
+$$
+
+where $M$ are the genes assigned to the gene set, $N$ are all genes in our universe (i.e. all genes originally considered for the DE), $n$ is the number of genes of interest, and $k$ are the number of genes of interest which are assigned to the gene set.
+
+Testing whether a set of genes are significantly represented in a set of genes then corresponds to a one-sided Fisher's exact test.
+
+## Overrepresentation Analysis
+
+Since this is the case for our yeast experiment, using ORA this is the recommended way. First, let's split our genes into up-regulated and down-regulated.
 
 ```{r}
-library(clusterProfiler)
-
 # separate into 'up' and 'down' genes
-upGenesIndex <- res$log2FoldChange >= log2FCThresh & 
-  res$pvalue <= pvalThresh
-downGenesIndex <- res$log2FoldChange <= -log2FCThresh & 
-  res$pvalue <= pvalThresh
+isSig <- res$pvalue <= pvalThresh
+upGenesIndex <- res$log2FoldChange >= log2FCThresh & isSig
+downGenesIndex <- res$log2FoldChange <= -log2FCThresh & isSig
 upGenesIndex[!isValid] <- FALSE
 downGenesIndex[!isValid] <- FALSE
 upGenes <- rownames(res)[upGenesIndex]
 downGenes <- rownames(res)[downGenesIndex]
 validGenes <- rownames(res)[isValid]
+```
 
-ego <- enrichGO(gene          = upGenes,
-                universe      = validGenes,
-                OrgDb         = "org.Sc.sgd.db",
-                ont           = "BP",
-                pAdjustMethod = "BH",
-                pvalueCutoff  = 0.01,
-                qvalueCutoff  = 0.05,
-        readable      = TRUE)
-head(ego)
+```{r}
+ego <- clusterProfiler::enrichGO(gene = downGenes,
+                                 universe = validGenes, 
+                                 OrgDb = "org.Sc.sgd.db", 
+                                 keyType = "ENSEMBL", 
+                                 ont = "BP", 
+                                 pAdjustMethod = "BH", 
+                                 pvalueCutoff = 0.01, 
+                                 qvalueCutoff = 0.05,
+                                 readable = FALSE)
+clusterProfiler::dotplot(ego)
 ```

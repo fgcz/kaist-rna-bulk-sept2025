@@ -124,6 +124,7 @@ div.csl-indent {
 <link href="4_differential_expression_files/libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet">
 <script src="4_differential_expression_files/libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -170,8 +171,13 @@ div.csl-indent {
   <li><a href="#volcano-plot" id="toc-volcano-plot" class="nav-link" data-scroll-target="#volcano-plot">Volcano Plot</a></li>
   <li><a href="#exercise-3" id="toc-exercise-3" class="nav-link" data-scroll-target="#exercise-3">Exercise #3</a></li>
   </ul></li>
+  <li><a href="#clustering-of-significant-features" id="toc-clustering-of-significant-features" class="nav-link" data-scroll-target="#clustering-of-significant-features">Clustering of Significant Features</a></li>
   </ul></li>
-  <li><a href="#pathway-enrichment" id="toc-pathway-enrichment" class="nav-link" data-scroll-target="#pathway-enrichment">Pathway Enrichment</a></li>
+  <li><a href="#enrichment-analysis" id="toc-enrichment-analysis" class="nav-link" data-scroll-target="#enrichment-analysis">Enrichment Analysis</a>
+  <ul class="collapse">
+  <li><a href="#review-of-overrepresentation-analysis" id="toc-review-of-overrepresentation-analysis" class="nav-link" data-scroll-target="#review-of-overrepresentation-analysis">Review of Overrepresentation Analysis</a></li>
+  <li><a href="#overrepresentation-analysis" id="toc-overrepresentation-analysis" class="nav-link" data-scroll-target="#overrepresentation-analysis">Overrepresentation Analysis</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -229,7 +235,7 @@ div.csl-indent {
                                  Dload  Upload   Total   Spent    Left  Speed
 
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 4760k  100 4760k    0     0  25.5M      0 --:--:-- --:--:-- --:--:-- 25.5M
+100 4760k  100 4760k    0     0  23.7M      0 --:--:-- --:--:-- --:--:-- 23.7M
 G1.h5
 G1.json
 G1.txt
@@ -461,8 +467,8 @@ colData names(1): Condition</code></pre>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(toPlot, <span class="at">x=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim1</span><span class="st">`</span>, <span class="at">y=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim2</span><span class="st">`</span>, <span class="at">z=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim3</span><span class="st">`</span>, <span class="at">color=</span><span class="sc">~</span>Condition, <span class="at">colors=</span><span class="st">"Set1"</span>, <span class="at">type=</span><span class="st">'scatter3d'</span>, <span class="at">mode=</span><span class="st">'markers+text'</span>, <span class="at">text=</span><span class="sc">~</span>Sample, <span class="at">textposition =</span> <span class="st">"top right"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  plotly<span class="sc">::</span><span class="fu">layout</span>(<span class="at">title=</span><span class="st">"Classical MDS"</span>, <span class="at">scene=</span><span class="fu">list</span>(<span class="at">xaxis=</span><span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim1'</span>), <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim2'</span>), <span class="at">zaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim3'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="htmlwidget-33816508a9fda8a132c1" style="width:100%;height:464px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-33816508a9fda8a132c1">{"x":{"visdat":{"10610a0c4b":["function () ","plotlyVisDat"]},"cur_data":"10610a0c4b","attrs":{"10610a0c4b":{"x":{},"y":{},"z":{},"mode":"markers+text","text":{},"textposition":"top right","color":{},"colors":"Set1","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Classical MDS","scene":{"xaxis":{"title":"Leading logFC dim1"},"yaxis":{"title":"Leading logFC dim2"},"zaxis":{"title":"Leading logFC dim3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-0.37608837817204,-0.362126628145731,-0.323681703130708,-0.348981167623267],"y":[0.274948059131787,-0.0961810490299608,-0.448285246947217,0.208070151631864],"z":[0.263889951267472,-0.512079641746123,0.215206107974928,0.0929623249093178],"mode":"markers+text","text":["G1","G2","G3","G4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"Glucose","marker":{"color":"rgba(228,26,28,1)","line":{"color":"rgba(228,26,28,1)"}},"textfont":{"color":"rgba(228,26,28,1)"},"error_y":{"color":"rgba(228,26,28,1)"},"error_x":{"color":"rgba(228,26,28,1)"},"line":{"color":"rgba(228,26,28,1)"},"frame":null},{"x":[0.379931940391863,0.361639973571027,0.364209290132452,0.305096672976402],"y":[-0.431251708255777,-0.34748921528266,0.494975557157824,0.345213451594143],"z":[0.0306516058939538,0.0969269604123899,0.44717311925359,-0.634730427965528],"mode":"markers+text","text":["GE1","GE2","GE3","GE4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"GlycEth","marker":{"color":"rgba(55,126,184,1)","line":{"color":"rgba(55,126,184,1)"}},"textfont":{"color":"rgba(55,126,184,1)"},"error_y":{"color":"rgba(55,126,184,1)"},"error_x":{"color":"rgba(55,126,184,1)"},"line":{"color":"rgba(55,126,184,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-8fb78df3cd6075163561" style="width:100%;height:464px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8fb78df3cd6075163561">{"x":{"visdat":{"13133c7acfa0":["function () ","plotlyVisDat"]},"cur_data":"13133c7acfa0","attrs":{"13133c7acfa0":{"x":{},"y":{},"z":{},"mode":"markers+text","text":{},"textposition":"top right","color":{},"colors":"Set1","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Classical MDS","scene":{"xaxis":{"title":"Leading logFC dim1"},"yaxis":{"title":"Leading logFC dim2"},"zaxis":{"title":"Leading logFC dim3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-0.37608837817204,-0.362126628145731,-0.323681703130708,-0.348981167623267],"y":[0.274948059131788,-0.0961810490299617,-0.448285246947218,0.208070151631864],"z":[0.263889951267472,-0.512079641746125,0.215206107974929,0.0929623249093179],"mode":"markers+text","text":["G1","G2","G3","G4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"Glucose","marker":{"color":"rgba(228,26,28,1)","line":{"color":"rgba(228,26,28,1)"}},"textfont":{"color":"rgba(228,26,28,1)"},"error_y":{"color":"rgba(228,26,28,1)"},"error_x":{"color":"rgba(228,26,28,1)"},"line":{"color":"rgba(228,26,28,1)"},"frame":null},{"x":[0.379931940391863,0.361639973571027,0.364209290132452,0.305096672976402],"y":[-0.431251708255777,-0.34748921528266,0.494975557157824,0.345213451594142],"z":[0.0306516058939537,0.0969269604123896,0.447173119253589,-0.634730427965528],"mode":"markers+text","text":["GE1","GE2","GE3","GE4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"GlycEth","marker":{"color":"rgba(55,126,184,1)","line":{"color":"rgba(55,126,184,1)"}},"textfont":{"color":"rgba(55,126,184,1)"},"error_y":{"color":"rgba(55,126,184,1)"},"error_x":{"color":"rgba(55,126,184,1)"},"line":{"color":"rgba(55,126,184,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -564,25 +570,7 @@ Solutions
 <pre><code>fitting model and testing</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">results</span>(dds)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>log2 fold change (MLE): Condition GlycEth vs Glucose 
-Wald test p-value: Condition GlycEth vs Glucose 
-DataFrame with 6600 rows and 6 columns
-           baseMean log2FoldChange     lfcSE      stat      pvalue        padj
-          &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;
-Q0010      0.133925        0.75709  3.524951   0.21478 8.29939e-01          NA
-Q0017      0.000000             NA        NA        NA          NA          NA
-Q0032      0.000000             NA        NA        NA          NA          NA
-Q0045     17.543419        3.23652  0.714457   4.53003 5.89741e-06 6.29461e-05
-Q0050     48.426998        3.39134  0.441980   7.67306 1.67941e-14 5.11523e-13
-...             ...            ...       ...       ...         ...         ...
-YPR201W    28.24256       1.008524  0.505255  1.996067 4.59266e-02 1.39954e-01
-YPR202W    42.04438       0.892940  0.517929  1.724061 8.46969e-02 2.20445e-01
-YPR203W    31.35051      -1.030423  0.624919 -1.648889 9.91703e-02 2.47837e-01
-YPR204C-A   2.53859      -0.773100  1.337551 -0.577997 5.63266e-01 7.61032e-01
-YPR204W   986.30147       0.886455  0.170717  5.192551 2.07432e-07 2.97066e-06</code></pre>
-</div>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">correctDESeq2Output</span>(res, isValid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout-note callout callout-style-simple">
 <div class="callout-body d-flex">
@@ -604,13 +592,19 @@ YPR204W   986.30147       0.886455  0.170717  5.192551 2.07432e-07 2.97066e-06</
 </div>
 </div>
 </div>
+<p>Let’s set some thresholds that we will use going forward to filter the DE result. Namely, we will set the p-value, log2-fold, and adjusted p-value thresholds above/below which we will consider genes to be differentially expressed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>pvalThresh <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>padjThresh <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>log2FCThresh <span class="ot">&lt;-</span> <span class="fl">0.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>Next, let’s take a closer look at the results.</p>
 <section id="exercise-2" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-2">Exercise #2</h3>
 <ol type="1">
 <li>What are the columns of the object?</li>
 <li>What was the method used for p-value correction?</li>
-<li>How many significantly-expressed genes are there assuming we consider genes differentially expressed if <code>p &lt;= 0.01</code> and <code>log2FoldChange &gt;= 0.5</code> ?</li>
+<li>How many significantly-expressed genes are there assuming we consider genes differentially expressed if <code>p &lt;= pvalThresh</code> and <code>log2FoldChange &gt;= log2FCThresh</code> ?</li>
 </ol>
 <div class="callout-tip callout callout-style-simple callout-captioned">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -626,12 +620,14 @@ Solutions
 <div class="callout-body-container callout-body">
 <ol type="1">
 <li><p>The columns most interesting to us are pvalue, padj (adjusted p-value), and log2FoldChange. Some other columns include <code>lfcSE</code>, which gives the standard error of the <code>log2FoldChange</code> and <code>stat</code>, which gives the Wald statistic. See ?results for more information.</p></li>
-<li><p>BH (Benjamin-Hochberg)</p></li>
+<li><p>BH (Benjamin-Hochberg), otherwise known as the false discovery ratex</p></li>
 <li><p>Execute the following:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">abs</span>(res<span class="sc">$</span>log2FoldChange) <span class="sc">&gt;=</span> <span class="fl">0.5</span> <span class="sc">&amp;</span> res<span class="sc">$</span>pvalue <span class="sc">&lt;=</span> <span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">abs</span>(res<span class="sc">$</span>log2FoldChange) <span class="sc">&gt;=</span> log2FCThresh <span class="sc">&amp;</span> </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>      res<span class="sc">$</span>pvalue <span class="sc">&lt;=</span> pvalThresh <span class="sc">&amp;</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>      isValid, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] NA</code></pre>
+<pre><code>[1] 1407</code></pre>
 </div>
 </div></li>
 </ol>
@@ -649,10 +645,10 @@ Solutions
 <pre><code>
 out of 6369 with nonzero total read count
 adjusted p-value &lt; 0.1
-LFC &gt; 0 (up)       : 948, 15%
-LFC &lt; 0 (down)     : 902, 14%
-outliers [1]       : 1, 0.016%
-low counts [2]     : 124, 1.9%
+LFC &gt; 0 (up)       : 964, 15%
+LFC &lt; 0 (down)     : 920, 14%
+outliers [1]       : 0, 0%
+low counts [2]     : 356, 5.6%
 (mean count &lt; 0)
 [1] see 'cooksCutoff' argument of ?results
 [2] see 'independentFiltering' argument of ?results</code></pre>
@@ -680,7 +676,7 @@ low counts [2]     : 0, 0%
 <div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotMA</span>(res, <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.</p>
@@ -690,7 +686,7 @@ low counts [2]     : 0, 0%
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Condition_GlycEth_vs_Glucose"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>resLFC <span class="ot">&lt;-</span> <span class="fu">lfcShrink</span>(dds, <span class="at">coef=</span>resultsName, <span class="at">type=</span><span class="st">"normal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>resLFC <span class="ot">&lt;-</span> <span class="fu">correctDESeq2Output</span>(<span class="fu">lfcShrink</span>(dds, <span class="at">coef=</span>resultsName, <span class="at">type=</span><span class="st">"normal"</span>), isValid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>using 'normal' for LFC shrinkage, the Normal prior from Love et al (2014).
 
@@ -700,7 +696,7 @@ Reference: https://doi.org/10.1093/bioinformatics/bty895</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotMA</span>(resLFC, <span class="at">ylim=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <section id="volcano-plot" class="level3">
@@ -711,7 +707,7 @@ Reference: https://doi.org/10.1093/bioinformatics/bty895</code></pre>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">lab=</span><span class="fu">rownames</span>(res),</span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">x =</span> <span class="st">'log2FoldChange'</span>, <span class="at">y =</span> <span class="st">'pvalue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="384"></p>
+<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="384"></p>
 </div>
 </div>
 <p>Take a look at the output. Each spot in the scatter plot represents a gene with its corresponding position on the plot determined by the p-value and log-fold change. It additionally plots threshold lines and colors the genes based on which areas of the volcano plot the genes fall. Everything in the red areas passes both the log-fold and p-value thresholds. It additionally plots the names of some of the top genes.</p>
@@ -747,7 +743,7 @@ Reference: https://doi.org/10.1093/bioinformatics/bty895</code></pre>
 <span id="cb61-28"><a href="#cb61-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">'log2FoldChange'</span>,</span>
 <span id="cb61-29"><a href="#cb61-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">'pvalue'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="576"></p>
+<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="576"></p>
 </div>
 </div>
 </section>
@@ -787,7 +783,7 @@ Solutions
 replace the existing one.</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Two of the three genes are extremely down-regulated in the Glucose+Ethanol condition relative to Glucose. We don’t expect changing the thresholds to have much affect on this.</p></li>
@@ -797,43 +793,87 @@ replace the existing one.</code></pre>
 </div>
 </section>
 </section>
-</section>
-<section id="pathway-enrichment" class="level1">
-<h1>Pathway Enrichment</h1>
+<section id="clustering-of-significant-features" class="level2">
+<h2 class="anchored" data-anchor-id="clustering-of-significant-features">Clustering of Significant Features</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(clusterProfiler)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate vsd count matrix again</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>vsd <span class="ot">&lt;-</span> <span class="fu">assay</span>(DESeq2<span class="sc">::</span><span class="fu">vst</span>(dds))</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="co"># First, we center the matrix</span></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>vsdCentered <span class="ot">&lt;-</span> <span class="fu">sweep</span>(vsd, <span class="dv">1</span>, <span class="fu">rowMeans</span>(vsd))</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify DE genes</span></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>topGenesIndex <span class="ot">&lt;-</span> <span class="fu">abs</span>(res<span class="sc">$</span>log2FoldChange) <span class="sc">&gt;=</span> log2FCThresh <span class="sc">&amp;</span> </span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>  res<span class="sc">$</span>pvalue <span class="sc">&lt;=</span> pvalThresh</span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>topGenesIndex[<span class="sc">!</span>isValid] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>topGenes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res)[topGenesIndex]</span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a><span class="co"># subset counts</span></span>
+<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a>countsToPlot <span class="ot">&lt;-</span> vsdCentered[topGenes,]</span>
+<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Clustering of high variance features</span></span>
+<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a>hmObj <span class="ot">&lt;-</span> <span class="fu">pheatmap</span>(countsToPlot, </span>
+<span id="cb64-17"><a href="#cb64-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">clustering_method=</span><span class="st">"ward.D2"</span>,</span>
+<span id="cb64-18"><a href="#cb64-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">scale =</span> <span class="st">"row"</span>, <span class="at">cluster_rows =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb64-19"><a href="#cb64-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">show_rownames =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb64-20"><a href="#cb64-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">cutree_rows =</span> <span class="dv">6</span>, <span class="at">cutree_cols =</span> <span class="dv">2</span>,</span>
+<span id="cb64-21"><a href="#cb64-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">treeheight_row =</span> <span class="dv">50</span>, <span class="at">treeheight_col =</span> <span class="dv">50</span>,</span>
+<span id="cb64-22"><a href="#cb64-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">annotation_col =</span> meta,</span>
+<span id="cb64-23"><a href="#cb64-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">fontsize_row =</span> <span class="dv">8</span>, <span class="at">fontsize_col =</span> <span class="dv">9</span>,</span>
+<span id="cb64-24"><a href="#cb64-24" aria-hidden="true" tabindex="-1"></a>         <span class="at">annotation_legend =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb64-25"><a href="#cb64-25" aria-hidden="true" tabindex="-1"></a>         <span class="at">fontsize=</span><span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="enrichment-analysis" class="level1">
+<h1>Enrichment Analysis</h1>
+<p>In this section, we would like to take our results from the differential expression and identify genes in the result which are functionally related. To this end, this so-called enrichment analysis can help us. As mentioned in the lecture, there are several tools in R that allow us to perform this analysis, but we will make use of clusterProfiler <span class="citation" data-cites="clusterProfiler">(<a href="#ref-clusterProfiler" role="doc-biblioref">Wu et al. 2021</a>)</span>. Its documentation can be found <a href="https://yulab-smu.top/biomedical-knowledge-mining-book/enrichment-overview.html">here</a>. Its main strengths lie in a number of built-in visualisations we will find helpful in interpreting the data.</p>
+<section id="review-of-overrepresentation-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="review-of-overrepresentation-analysis">Review of Overrepresentation Analysis</h2>
+<p>From the docs, overrepresentation analysis (ORA) “is a widely used approach to determine whether known biological functions or processes are over-represented (i.e.&nbsp;enriched) in experimentally-derived gene list”, in our case, a list of differentially expressed genes. ORA should be primarily used when the effect size is large, i.e.&nbsp;when it is possible to use thresholding to attain a good sample of candidate genes.</p>
+<p>The p-values for each gene set in the analysis can be calculated using a hypergeometric distribution:</p>
+<p><span class="math display">\[
+p = 1 - \sum_{0}^{k-1}\frac{{M \choose i}{N-M \choose n-i}}{N \choose i}
+\]</span></p>
+<p>where <span class="math inline">\(M\)</span> are the genes assigned to the gene set, <span class="math inline">\(N\)</span> are all genes in our universe (i.e.&nbsp;all genes originally considered for the DE), <span class="math inline">\(n\)</span> is the number of genes of interest, and <span class="math inline">\(k\)</span> are the number of genes of interest which are assigned to the gene set.</p>
+<p>Testing whether a set of genes are significantly represented in a set of genes then corresponds to a one-sided Fisher’s exact test.</p>
+</section>
+<section id="overrepresentation-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="overrepresentation-analysis">Overrepresentation Analysis</h2>
+<p>Since this is the case for our yeast experiment, using ORA this is the recommended way. First, let’s split our genes into up-regulated and down-regulated.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># separate into 'up' and 'down' genes</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>isSig <span class="ot">&lt;-</span> res<span class="sc">$</span>pvalue <span class="sc">&lt;=</span> pvalThresh</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>upGenesIndex <span class="ot">&lt;-</span> res<span class="sc">$</span>log2FoldChange <span class="sc">&gt;=</span> log2FCThresh <span class="sc">&amp;</span> isSig</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>downGenesIndex <span class="ot">&lt;-</span> res<span class="sc">$</span>log2FoldChange <span class="sc">&lt;=</span> <span class="sc">-</span>log2FCThresh <span class="sc">&amp;</span> isSig</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>upGenesIndex[<span class="sc">!</span>isValid] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>downGenesIndex[<span class="sc">!</span>isValid] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>upGenes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res)[upGenesIndex]</span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>downGenes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res)[downGenesIndex]</span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>validGenes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res)[isValid]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>ego <span class="ot">&lt;-</span> clusterProfiler<span class="sc">::</span><span class="fu">enrichGO</span>(<span class="at">gene =</span> downGenes,</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">universe =</span> validGenes, </span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">OrgDb =</span> <span class="st">"org.Sc.sgd.db"</span>, </span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">keyType =</span> <span class="st">"ENSEMBL"</span>, </span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">ont =</span> <span class="st">"BP"</span>, </span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pAdjustMethod =</span> <span class="st">"BH"</span>, </span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">pvalueCutoff =</span> <span class="fl">0.01</span>, </span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">qvalueCutoff =</span> <span class="fl">0.05</span>,</span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">readable =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>clusterProfiler v4.6.0  For help: https://yulab-smu.top/biomedical-knowledge-mining-book/
-
-If you use clusterProfiler in published research, please cite:
-T Wu, E Hu, S Xu, M Chen, P Guo, Z Dai, T Feng, L Zhou, W Tang, L Zhan, X Fu, S Liu, X Bo, and G Yu. clusterProfiler 4.0: A universal enrichment tool for interpreting omics data. The Innovation. 2021, 2(3):100141</code></pre>
+<pre><code></code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'clusterProfiler'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following object is masked from 'package:purrr':
-
-    simplify</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following object is masked from 'package:IRanges':
-
-    slice</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following object is masked from 'package:S4Vectors':
-
-    rename</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following object is masked from 'package:stats':
-
-    filter</code></pre>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>clusterProfiler<span class="sc">::</span><span class="fu">dotplot</span>(ego)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
+</section>
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
@@ -842,6 +882,9 @@ Blighe, Kevin, Sharmila Rana, and Myles Lewis. 2022. <span>“EnhancedVolcano: P
 </div>
 <div id="ref-DESeq2" class="csl-entry" role="doc-biblioentry">
 Love, Michael I., Wolfgang Huber, and Simon Anders. 2014. <span>“Moderated Estimation of Fold Change and Dispersion for RNA-Seq Data with DESeq2”</span> 15: 550. <a href="https://doi.org/10.1186/s13059-014-0550-8">https://doi.org/10.1186/s13059-014-0550-8</a>.
+</div>
+<div id="ref-clusterProfiler" class="csl-entry" role="doc-biblioentry">
+Wu, Tianzhi, Erqiang Hu, Shuangbin Xu, Meijun Chen, Pingfan Guo, Zehan Dai, Tingze Feng, et al. 2021. <span>“clusterProfiler 4.0: A Universal Enrichment Tool for Interpreting Omics Data”</span> 2: 100141. <a href="https://doi.org/10.1016/j.xinn.2021.100141">https://doi.org/10.1016/j.xinn.2021.100141</a>.
 </div>
 </div></section></div></main>
 <!-- /main column -->
