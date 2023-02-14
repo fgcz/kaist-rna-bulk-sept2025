@@ -111,6 +111,16 @@ cd $CURR_DIR
 
 1.  Take a look at the files ending in "\_Log.final.out". Which sample has the highest percentage of primary alignments? Which has the lowest percentage?
 2.  What is the range of splices for the samples? Do you think these are real?
+3.  (Challenge) Find the answers to the above two questions programmatically.
+
+::: {.callout-tip collapse="true"}
+## Solutions
+
+```{r}
+library(tidyverse)
+starLogFiles <- Sys.glob("../../results/2_mapping/STAR_alignment/*_Log.final.out")
+```
+:::
 
 ## Alignment QC
 
