@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Part 4: Differential Expression and Pathway Enrichment</title>
+<title>Part 2: Mapping</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -125,7 +125,7 @@ div.csl-indent {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Part 4: Differential Expression and Pathway Enrichment</h1>
+      <h1 class="title">Part 2: Mapping</h1>
                       </div>
   </div>
     
@@ -153,7 +153,15 @@ div.csl-indent {
   <ul class="collapse">
   <li><a href="#exercise-2" id="toc-exercise-2" class="nav-link" data-scroll-target="#exercise-2">Exercise #2</a></li>
   </ul></li>
-  <li><a href="#alignment-qc" id="toc-alignment-qc" class="nav-link" data-scroll-target="#alignment-qc">Alignment QC</a></li>
+  <li><a href="#alignment-qc" id="toc-alignment-qc" class="nav-link" data-scroll-target="#alignment-qc">Alignment QC</a>
+  <ul class="collapse">
+  <li><a href="#tin-score" id="toc-tin-score" class="nav-link" data-scroll-target="#tin-score">TIN Score</a></li>
+  <li><a href="#gene-body-plots" id="toc-gene-body-plots" class="nav-link" data-scroll-target="#gene-body-plots">Gene Body Plots</a></li>
+  <li><a href="#read-duplication" id="toc-read-duplication" class="nav-link" data-scroll-target="#read-duplication">Read Duplication</a></li>
+  <li><a href="#gc-content" id="toc-gc-content" class="nav-link" data-scroll-target="#gc-content">GC Content</a></li>
+  <li><a href="#bam-stats" id="toc-bam-stats" class="nav-link" data-scroll-target="#bam-stats">Bam Stats</a></li>
+  <li><a href="#exercise-3" id="toc-exercise-3" class="nav-link" data-scroll-target="#exercise-3">Exercise #3</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -194,12 +202,15 @@ div.csl-indent {
                                  Dload  Upload   Total   Spent    Left  Speed
 
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-  1  518M    1 6224k    0     0  27.0M      0  0:00:19 --:--:--  0:00:19 26.8M
- 20  518M   20  104M    0     0  85.4M      0  0:00:06  0:00:01  0:00:05 85.3M
- 42  518M   42  223M    0     0   100M      0  0:00:05  0:00:02  0:00:03  100M
- 67  518M   67  352M    0     0   109M      0  0:00:04  0:00:03  0:00:01  109M
- 89  518M   89  466M    0     0   110M      0  0:00:04  0:00:04 --:--:--  110M
-100  518M  100  518M    0     0   111M      0  0:00:04  0:00:04 --:--:--  115M
+  0  518M    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+ 10  518M   10 55.2M    0     0  51.6M      0  0:00:10  0:00:01  0:00:09 51.5M
+ 23  518M   23  123M    0     0  59.6M      0  0:00:08  0:00:02  0:00:06 59.5M
+ 33  518M   33  175M    0     0  57.0M      0  0:00:09  0:00:03  0:00:06 57.0M
+ 46  518M   46  243M    0     0  59.8M      0  0:00:08  0:00:04  0:00:04 59.8M
+ 63  518M   63  328M    0     0  64.7M      0  0:00:08  0:00:05  0:00:03 65.6M
+ 79  518M   79  410M    0     0  67.6M      0  0:00:07  0:00:06  0:00:01 71.1M
+ 94  518M   94  492M    0     0  69.6M      0  0:00:07  0:00:07 --:--:-- 73.7M
+100  518M  100  518M    0     0  69.7M      0  0:00:07  0:00:07 --:--:-- 78.7M
 G1_trimmed_R1.fastq.gz
 G2_trimmed_R1.fastq.gz
 G3_trimmed_R1.fastq.gz
@@ -254,7 +265,7 @@ Solutions
 </section>
 <section id="running-star" class="level2">
 <h2 class="anchored" data-anchor-id="running-star">Running STAR</h2>
-<p>We are now ready to run the STAR aligner on our inputs. This part can take a while (~15 minutes), so look over commands in the meantime.</p>
+<p>We are now ready to run the STAR aligner on our inputs. Note that an import step has already been done for us, namely the creation of the STAR index directory. How to generate this directory be found <a href="https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html#running-star">here</a>. Alignment with STAR can (despite its purported speed) take a while, around ~15 minutes for all samples, so look over commands in the meantime.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="va">CURR_DIR</span><span class="op">=</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../..</span>
@@ -301,58 +312,58 @@ Solutions
 <div class="cell-output cell-output-stdout">
 <pre><code>results/1_qc/fastp_downsampled/G1_trimmed_R1.fastq.gz
 
-real    0m56.869s
-user    1m32.094s
-sys 0m3.575s
+real    1m0.643s
+user    1m35.613s
+sys 0m3.768s
 Reading reference gene model data/supplementary-files/Ensembl_R64_genes/genes.bed ... Done
 Loading SAM/BAM file ...  Total 200000 usable reads were sampled
 results/1_qc/fastp_downsampled/G2_trimmed_R1.fastq.gz
 
-real    0m33.619s
-user    0m54.377s
-sys 0m1.938s
+real    0m34.811s
+user    0m55.199s
+sys 0m1.997s
 Reading reference gene model data/supplementary-files/Ensembl_R64_genes/genes.bed ... Done
 Loading SAM/BAM file ...  Total 200000 usable reads were sampled
 results/1_qc/fastp_downsampled/G3_trimmed_R1.fastq.gz
 
-real    0m49.040s
-user    1m20.951s
-sys 0m2.545s
+real    0m50.340s
+user    1m21.676s
+sys 0m2.370s
 Reading reference gene model data/supplementary-files/Ensembl_R64_genes/genes.bed ... Done
 Loading SAM/BAM file ...  Total 200000 usable reads were sampled
 results/1_qc/fastp_downsampled/G4_trimmed_R1.fastq.gz
 
-real    0m46.886s
-user    1m12.872s
-sys 0m2.564s
+real    0m49.306s
+user    1m15.251s
+sys 0m2.304s
 Reading reference gene model data/supplementary-files/Ensembl_R64_genes/genes.bed ... Done
 Loading SAM/BAM file ...  Total 200000 usable reads were sampled
 results/1_qc/fastp_downsampled/GE1_trimmed_R1.fastq.gz
 
-real    0m37.790s
-user    1m1.553s
-sys 0m2.336s
+real    0m38.219s
+user    1m1.731s
+sys 0m2.065s
 Reading reference gene model data/supplementary-files/Ensembl_R64_genes/genes.bed ... Done
 Loading SAM/BAM file ...  Total 200000 usable reads were sampled
 results/1_qc/fastp_downsampled/GE2_trimmed_R1.fastq.gz
 
-real    0m30.103s
-user    0m47.655s
-sys 0m1.676s
+real    0m31.198s
+user    0m49.086s
+sys 0m1.708s
 Reading reference gene model data/supplementary-files/Ensembl_R64_genes/genes.bed ... Done
 Loading SAM/BAM file ...  Total 200000 usable reads were sampled
 results/1_qc/fastp_downsampled/GE3_trimmed_R1.fastq.gz
 
-real    0m32.177s
-user    0m51.250s
-sys 0m2.065s
+real    0m32.929s
+user    0m51.894s
+sys 0m2.099s
 Reading reference gene model data/supplementary-files/Ensembl_R64_genes/genes.bed ... Done
 Loading SAM/BAM file ...  Total 200000 usable reads were sampled
 results/1_qc/fastp_downsampled/GE4_trimmed_R1.fastq.gz
 
-real    1m15.463s
-user    2m7.279s
-sys 0m3.380s
+real    1m17.571s
+user    2m8.582s
+sys 0m3.660s
 Reading reference gene model data/supplementary-files/Ensembl_R64_genes/genes.bed ... Done
 Loading SAM/BAM file ...  Total 200000 usable reads were sampled</code></pre>
 </div>
@@ -453,8 +464,159 @@ Solutions
 </section>
 <section id="alignment-qc" class="level2">
 <h2 class="anchored" data-anchor-id="alignment-qc">Alignment QC</h2>
-<p>We have already performed a few QC steps in the above section. Let’s now explore these outputs a bit further using the python-package <a href="https://rseqc.sourceforge.net/">RSeQC</a>. This package contains a number of useful standalone python scripts for running general QC of alignment data, with an emphasis on RNAseq data. In fact, we already used one of these scripts above.</p>
+<p>We have already performed a few QC steps in the above section. Let’s now explore these outputs a bit further using the python-package <a href="https://rseqc.sourceforge.net/">RSeQC</a>. This package contains a number of useful standalone python scripts for running general QC of alignment data, with an emphasis on RNAseq data. In fact, we already used one of these scripts above to infer the strandedness of the experiment.</p>
+<p>Only a handful of samples will be run for each program at a time to cut-down on processing time.</p>
+<section id="tin-score" class="level3">
+<h3 class="anchored" data-anchor-id="tin-score">TIN Score</h3>
+<p>First, let’s calculate the TIN for a few samples. This score, short for <em>transcript integrity number</em>, is analogous to RIN and measures RNA integrity at the transcript level, rather than at the sample level. Each transcript gets an associated TIN score $0 TIN $. We can however also summarise these TIN scores across a sample by taking the median to get a sample-level quality measure.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="va">PROJ_DIR</span><span class="op">=</span>../../</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="va">OUTPUT_DIR</span><span class="op">=</span><span class="va">$PROJ_DIR</span>/results/2_mapping/rseqc_analysis</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="va">BAM_DIR</span><span class="op">=</span><span class="va">$PROJ_DIR</span>/results/2_mapping/STAR_alignment</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$OUTPUT_DIR</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> BAM_FILE <span class="kw">in</span> <span class="va">$BAM_DIR</span>/GE2.bam <span class="va">$BAM_DIR</span>/GE4.bam<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="va">SAMPLE_NAME</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">${BAM_FILE</span><span class="op">%</span>.bam<span class="va">})</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="va">$SAMPLE_NAME</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="ex">tin.py</span> <span class="at">-r</span> <span class="va">$PROJ_DIR</span>/data/supplementary-files/Ensembl_R64_genes/genes.bed <span class="dt">\</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> <span class="va">$BAM_FILE</span> <span class="dv">2</span><span class="op">&gt;</span> <span class="va">$OUTPUT_DIR</span>/<span class="va">$SAMPLE_NAME</span><span class="st">".tin.err"</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mv</span> ./<span class="va">$SAMPLE_NAME</span><span class="st">".tin.xls"</span> <span class="va">$OUTPUT_DIR</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mv</span> ./<span class="va">$SAMPLE_NAME</span><span class="st">".summary.txt"</span> <span class="va">$OUTPUT_DIR</span>/<span class="va">$SAMPLE_NAME</span><span class="st">".tin.summary.txt"</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GE2
+GE4</code></pre>
+</div>
+</div>
+<p>Take a look at the files ending in “.tin.summary.txt” in the output directory for the medTIN scores.</p>
+</section>
+<section id="gene-body-plots" class="level3">
+<h3 class="anchored" data-anchor-id="gene-body-plots">Gene Body Plots</h3>
+<p>This function generates gene-body plots given the bam file and the annotation in bed format.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="va">PROJ_DIR</span><span class="op">=</span>../../</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="va">OUTPUT_DIR</span><span class="op">=</span><span class="va">$PROJ_DIR</span>/results/2_mapping/rseqc_analysis</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="va">BAM_DIR</span><span class="op">=</span><span class="va">$PROJ_DIR</span>/results/2_mapping/STAR_alignment</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$OUTPUT_DIR</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="ex">geneBody_coverage.py</span> <span class="at">-r</span> <span class="va">$PROJ_DIR</span>/data/supplementary-files/Ensembl_R64_genes/genes.bed <span class="dt">\</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">-i</span> <span class="va">$BAM_DIR</span>/G1.bam,<span class="va">$BAM_DIR</span>/GE2.bam,<span class="va">$BAM_DIR</span>/GE4.bam <span class="dt">\</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">-o</span> <span class="va">$OUTPUT_DIR</span>/example <span class="dv">2</span><span class="op">&gt;</span> <span class="va">$OUTPUT_DIR</span>/example.geneBody.err</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>null device 
+          1 
+null device 
+          1 </code></pre>
+</div>
+</div>
+<p>Take a look at the output pdfs. Note the heatmaps are organised from sample with lowest skew at the top to sample with the highest skew at the bottom.</p>
+</section>
+<section id="read-duplication" class="level3">
+<h3 class="anchored" data-anchor-id="read-duplication">Read Duplication</h3>
+<p>This script attempts to quantify the level of duplication present in the bam file. There are more sophisticated <a href="https://bioconductor.org/packages/release/bioc/vignettes/dupRadar/inst/doc/dupRadar.html">visualisations</a> and <a href="https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-">quantifications</a> for determining duplication rate in sequence alignment, but this is a simple alternative. It quantifies duplicates using two methods: 1) reads with the same sequence 2) reads with the same starting position in genome and the same splicing.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="va">PROJ_DIR</span><span class="op">=</span>../../</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="va">OUTPUT_DIR</span><span class="op">=</span><span class="va">$PROJ_DIR</span>/results/2_mapping/rseqc_analysis</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="va">BAM_DIR</span><span class="op">=</span><span class="va">$PROJ_DIR</span>/results/2_mapping/STAR_alignment</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$OUTPUT_DIR</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> BAM_FILE <span class="kw">in</span> <span class="va">$BAM_DIR</span>/GE2.bam <span class="va">$BAM_DIR</span>/GE4.bam<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="va">SAMPLE_NAME</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">${BAM_FILE</span><span class="op">%</span>.bam<span class="va">})</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="va">$SAMPLE_NAME</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="ex">read_duplication.py</span> <span class="dt">\</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> <span class="va">$BAM_FILE</span> <span class="at">-o</span> <span class="va">$OUTPUT_DIR</span>/<span class="va">$SAMPLE_NAME</span> <span class="dv">2</span><span class="op">&gt;</span> <span class="va">$OUTPUT_DIR</span>/<span class="va">$SAMPLE_NAME</span><span class="st">".dup.err"</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GE2
+null device 
+          1 
+GE4
+null device 
+          1 </code></pre>
+</div>
+</div>
+<p>If the sequencing quality is low, we would expect the number of duplicates quantified by the first method to lower than the second and vice versa.</p>
+</section>
+<section id="gc-content" class="level3">
+<h3 class="anchored" data-anchor-id="gc-content">GC Content</h3>
+<p>This script calculates the GC content based on the reads. If the GC content deviates too much than the usual distribution for this species, then it might be indicative that certain genes are over-represented.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="va">PROJ_DIR</span><span class="op">=</span>../../</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="va">OUTPUT_DIR</span><span class="op">=</span><span class="va">$PROJ_DIR</span>/results/2_mapping/rseqc_analysis</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="va">BAM_DIR</span><span class="op">=</span><span class="va">$PROJ_DIR</span>/results/2_mapping/STAR_alignment</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$OUTPUT_DIR</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> BAM_FILE <span class="kw">in</span> <span class="va">$BAM_DIR</span>/GE2.bam <span class="va">$BAM_DIR</span>/GE4.bam<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="va">SAMPLE_NAME</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">${BAM_FILE</span><span class="op">%</span>.bam<span class="va">})</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="va">$SAMPLE_NAME</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="ex">read_GC.py</span> <span class="dt">\</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> <span class="va">$BAM_FILE</span> <span class="at">-o</span> <span class="va">$OUTPUT_DIR</span>/<span class="va">$SAMPLE_NAME</span> <span class="dv">2</span><span class="op">&gt;</span> <span class="va">$OUTPUT_DIR</span>/<span class="va">$SAMPLE_NAME</span><span class="st">".GC.err"</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GE2
+null device 
+          1 
+GE4
+null device 
+          1 </code></pre>
+</div>
+</div>
+</section>
+<section id="bam-stats" class="level3">
+<h3 class="anchored" data-anchor-id="bam-stats">Bam Stats</h3>
+<p>This script generates some summary stats in line with the “_Log.final.out” output files we have looked at before. Compare some of the numbers to ensure they are the same.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="va">PROJ_DIR</span><span class="op">=</span>../../</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="va">OUTPUT_DIR</span><span class="op">=</span><span class="va">$PROJ_DIR</span>/results/2_mapping/rseqc_analysis</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="va">BAM_DIR</span><span class="op">=</span><span class="va">$PROJ_DIR</span>/results/2_mapping/STAR_alignment</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$OUTPUT_DIR</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> BAM_FILE <span class="kw">in</span> <span class="va">$BAM_DIR</span>/GE2.bam <span class="va">$BAM_DIR</span>/GE4.bam<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="va">SAMPLE_NAME</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">${BAM_FILE</span><span class="op">%</span>.bam<span class="va">})</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="va">$SAMPLE_NAME</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="ex">bam_stat.py</span> <span class="dt">\</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> <span class="va">$BAM_FILE</span> <span class="op">&gt;</span> <span class="va">$OUTPUT_DIR</span>/<span class="va">$SAMPLE_NAME</span><span class="st">".stat.txt"</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GE2
+Load BAM file ...  Done
+GE4
+Load BAM file ...  Done</code></pre>
+</div>
+</div>
+<p>Beware the standard output here is piped to a file and this script does not generate any outputs by itself.</p>
+</section>
+<section id="exercise-3" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3">Exercise #3</h3>
+<ol type="1">
+<li>Which of the above methods is expected to look different had used the full data rather than these sub-sampled fastqs? Assume the subsampling of reads from the original trimmed fastqs was random.</li>
+<li>Looking at just these outputs, does it look like we were able to remove issues related to sample GE4?</li>
+</ol>
+<div class="callout-note callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solutions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>We only expect the read duplication plot to significantly change, since we are less likely to have reads which overlap completely either in sequence or alignment the less reads are present in the sample.</li>
+<li>Going off just these QC outputs, it appears as though trimming has largely removed problematic sequences from the sample. Otherwise, the percentage of uniquely aligning sequences would have presumably been lower, we’d have a higher mismatch rate, etc.</li>
+</ol>
+</div>
+</div>
+</div>
 
+</section>
 </section>
 </section>
 

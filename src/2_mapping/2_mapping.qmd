@@ -153,7 +153,7 @@ Only a handful of samples will be run for each program at a time to cut-down on 
 
 ### TIN Score
 
-First, let's calculate the TIN (score
+First, let's calculate the TIN for a few samples. This score, short for *transcript integrity number*, is analogous to RIN and measures RNA integrity at the transcript level, rather than at the sample level. Each transcript gets an associated TIN score \$0 \leq TIN \leq 100\$. We can however also summarise these TIN scores across a sample by taking the median to get a sample-level quality measure.
 
 ```{bash}
 PROJ_DIR=../../
@@ -172,7 +172,11 @@ for BAM_FILE in $BAM_DIR/GE2.bam $BAM_DIR/GE4.bam; do
 done
 ```
 
+Take a look at the files ending in ".tin.summary.txt" in the output directory for the medTIN scores.
+
 ### Gene Body Plots
+
+This function generates gene-body plots given the bam file and the annotation in bed format.
 
 ```{bash}
 PROJ_DIR=../../
@@ -185,7 +189,11 @@ geneBody_coverage.py -r $PROJ_DIR/data/supplementary-files/Ensembl_R64_genes/gen
   -o $OUTPUT_DIR/example 2> $OUTPUT_DIR/example.geneBody.err
 ```
 
+Take a look at the output pdfs. Note the heatmaps are organised from sample with lowest skew at the top to sample with the highest skew at the bottom.
+
 ### Read Duplication
+
+This script attempts to quantify the level of duplication present in the bam file. There are more sophisticated [visualisations](https://bioconductor.org/packages/release/bioc/vignettes/dupRadar/inst/doc/dupRadar.html) and [quantifications](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-) for determining duplication rate in sequence alignment, but this is a simple alternative. It quantifies duplicates using two methods: 1) reads with the same sequence 2) reads with the same starting position in genome and the same splicing.
 
 ```{bash}
 PROJ_DIR=../../
@@ -202,7 +210,11 @@ for BAM_FILE in $BAM_DIR/GE2.bam $BAM_DIR/GE4.bam; do
 done
 ```
 
+If the sequencing quality is low, we would expect the number of duplicates quantified by the first method to lower than the second and vice versa.
+
 ### GC Content
+
+This script calculates the GC content based on the reads. If the GC content deviates too much than the usual distribution for this species, then it might be indicative that certain genes are over-represented.
 
 ```{bash}
 PROJ_DIR=../../
@@ -219,7 +231,35 @@ for BAM_FILE in $BAM_DIR/GE2.bam $BAM_DIR/GE4.bam; do
 done
 ```
 
+### Bam Stats
+
+This script generates some summary stats in line with the "\_Log.final.out" output files we have looked at before. Compare some of the numbers to ensure they are the same.
+
+```{bash}
+PROJ_DIR=../../
+OUTPUT_DIR=$PROJ_DIR/results/2_mapping/rseqc_analysis
+BAM_DIR=$PROJ_DIR/results/2_mapping/STAR_alignment
+mkdir -p $OUTPUT_DIR
+
+for BAM_FILE in $BAM_DIR/GE2.bam $BAM_DIR/GE4.bam; do
+  SAMPLE_NAME=$(basename ${BAM_FILE%.bam})
+  echo $SAMPLE_NAME
+  
+  bam_stat.py \
+    -i $BAM_FILE > $OUTPUT_DIR/$SAMPLE_NAME".stat.txt"
+done
+```
+
+Beware the standard output here is piped to a file and this script does not generate any outputs by itself.
+
 ### Exercise #3
 
-1.  Which of the above methods is expected to look different had used the full data rather than these sub-sampled fastqs?
-2.  
+1.  Which of the above methods is expected to look different had used the full data rather than these sub-sampled fastqs? Assume the subsampling of reads from the original trimmed fastqs was random.
+2.  Looking at just these outputs, does it look like we were able to remove issues related to sample GE4?
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Solutions
+
+1.  We only expect the read duplication plot to significantly change, since we are less likely to have reads which overlap completely either in sequence or alignment the less reads are present in the sample.
+2.  Going off just these QC outputs, it appears as though trimming has largely removed problematic sequences from the sample. Otherwise, the percentage of uniquely aligning sequences would have presumably been lower, we'd have a higher mismatch rate, etc.
+:::
