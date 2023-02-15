@@ -446,6 +446,8 @@ downGenes <- rownames(res)[downGenesIndex]
 validGenes <- rownames(res)[isValid]
 ```
 
+Now, we can call the `enrichGO` function within clusterProfiler on these gene subsets using one of the three gene ontologies as a reference. We will also use the two build-in plotting functions, `dotplot` and `cnetplot` .
+
 ```{r}
 ego <- clusterProfiler::enrichGO(gene = downGenes,
                                  universe = validGenes, 
@@ -457,4 +459,5 @@ ego <- clusterProfiler::enrichGO(gene = downGenes,
                                  qvalueCutoff = 0.05,
                                  readable = FALSE)
 clusterProfiler::dotplot(ego)
+clusterProfiler::cnetplot(ego)
 ```

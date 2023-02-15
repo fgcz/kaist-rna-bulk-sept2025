@@ -235,31 +235,31 @@ div.csl-indent {
                                  Dload  Upload   Total   Spent    Left  Speed
 
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 4760k  100 4760k    0     0  23.7M      0 --:--:-- --:--:-- --:--:-- 23.7M
-G1.h5
-G1.json
-G1.txt
-G2.h5
-G2.json
-G2.txt
-G3.h5
-G3.json
-G3.txt
-G4.h5
-G4.json
-G4.txt
-GE1.h5
-GE1.json
-GE1.txt
-GE2.h5
-GE2.json
-GE2.txt
-GE3.h5
-GE3.json
-GE3.txt
-GE4.h5
-GE4.json
-GE4.txt</code></pre>
+100 4760k  100 4760k    0     0  28.5M      0 --:--:-- --:--:-- --:--:-- 28.6M
+./G1.h5
+./G1.json
+./G1.txt
+./G2.h5
+./G2.json
+./G2.txt
+./G3.h5
+./G3.json
+./G3.txt
+./G4.h5
+./G4.json
+./G4.txt
+./GE1.h5
+./GE1.json
+./GE1.txt
+./GE2.h5
+./GE2.json
+./GE2.txt
+./GE3.h5
+./GE3.json
+./GE3.txt
+./GE4.h5
+./GE4.json
+./GE4.txt</code></pre>
 </div>
 </div>
 <p>First, let’s create our meta-information frame and instantiate some variables we will use later.</p>
@@ -467,8 +467,8 @@ colData names(1): Condition</code></pre>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(toPlot, <span class="at">x=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim1</span><span class="st">`</span>, <span class="at">y=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim2</span><span class="st">`</span>, <span class="at">z=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim3</span><span class="st">`</span>, <span class="at">color=</span><span class="sc">~</span>Condition, <span class="at">colors=</span><span class="st">"Set1"</span>, <span class="at">type=</span><span class="st">'scatter3d'</span>, <span class="at">mode=</span><span class="st">'markers+text'</span>, <span class="at">text=</span><span class="sc">~</span>Sample, <span class="at">textposition =</span> <span class="st">"top right"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  plotly<span class="sc">::</span><span class="fu">layout</span>(<span class="at">title=</span><span class="st">"Classical MDS"</span>, <span class="at">scene=</span><span class="fu">list</span>(<span class="at">xaxis=</span><span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim1'</span>), <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim2'</span>), <span class="at">zaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim3'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="htmlwidget-8fb78df3cd6075163561" style="width:100%;height:464px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-8fb78df3cd6075163561">{"x":{"visdat":{"13133c7acfa0":["function () ","plotlyVisDat"]},"cur_data":"13133c7acfa0","attrs":{"13133c7acfa0":{"x":{},"y":{},"z":{},"mode":"markers+text","text":{},"textposition":"top right","color":{},"colors":"Set1","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Classical MDS","scene":{"xaxis":{"title":"Leading logFC dim1"},"yaxis":{"title":"Leading logFC dim2"},"zaxis":{"title":"Leading logFC dim3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[-0.37608837817204,-0.362126628145731,-0.323681703130708,-0.348981167623267],"y":[0.274948059131788,-0.0961810490299617,-0.448285246947218,0.208070151631864],"z":[0.263889951267472,-0.512079641746125,0.215206107974929,0.0929623249093179],"mode":"markers+text","text":["G1","G2","G3","G4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"Glucose","marker":{"color":"rgba(228,26,28,1)","line":{"color":"rgba(228,26,28,1)"}},"textfont":{"color":"rgba(228,26,28,1)"},"error_y":{"color":"rgba(228,26,28,1)"},"error_x":{"color":"rgba(228,26,28,1)"},"line":{"color":"rgba(228,26,28,1)"},"frame":null},{"x":[0.379931940391863,0.361639973571027,0.364209290132452,0.305096672976402],"y":[-0.431251708255777,-0.34748921528266,0.494975557157824,0.345213451594142],"z":[0.0306516058939537,0.0969269604123896,0.447173119253589,-0.634730427965528],"mode":"markers+text","text":["GE1","GE2","GE3","GE4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"GlycEth","marker":{"color":"rgba(55,126,184,1)","line":{"color":"rgba(55,126,184,1)"}},"textfont":{"color":"rgba(55,126,184,1)"},"error_y":{"color":"rgba(55,126,184,1)"},"error_x":{"color":"rgba(55,126,184,1)"},"line":{"color":"rgba(55,126,184,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-29b59fe15fd8e2de7c7f" style="width:100%;height:464px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-29b59fe15fd8e2de7c7f">{"x":{"visdat":{"355128d3de40":["function () ","plotlyVisDat"]},"cur_data":"355128d3de40","attrs":{"355128d3de40":{"x":{},"y":{},"z":{},"mode":"markers+text","text":{},"textposition":"top right","color":{},"colors":"Set1","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Classical MDS","scene":{"xaxis":{"title":"Leading logFC dim1"},"yaxis":{"title":"Leading logFC dim2"},"zaxis":{"title":"Leading logFC dim3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0.374018545923314,0.366935045727654,0.32417313014928,0.345780671985087],"y":[0.317667863888915,-0.137888999338216,-0.443034642913488,0.213320752868456],"z":[0.226483279085005,-0.494145348664776,0.244144662004347,0.0942086871299505],"mode":"markers+text","text":["G1","G2","G3","G4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"Glucose","marker":{"color":"rgba(228,26,28,1)","line":{"color":"rgba(228,26,28,1)"}},"textfont":{"color":"rgba(228,26,28,1)"},"error_y":{"color":"rgba(228,26,28,1)"},"error_x":{"color":"rgba(228,26,28,1)"},"line":{"color":"rgba(228,26,28,1)"},"frame":null},{"x":[-0.378801166433371,-0.360361689911518,-0.366245571597156,-0.305498965843289],"y":[-0.414373639016015,-0.337249386061851,0.526473095072404,0.275084955499797],"z":[0.0678563560137697,0.139513967946987,0.39637373968433,-0.674435343199615],"mode":"markers+text","text":["GE1","GE2","GE3","GE4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"GlycEth","marker":{"color":"rgba(55,126,184,1)","line":{"color":"rgba(55,126,184,1)"}},"textfont":{"color":"rgba(55,126,184,1)"},"error_y":{"color":"rgba(55,126,184,1)"},"error_x":{"color":"rgba(55,126,184,1)"},"line":{"color":"rgba(55,126,184,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -627,7 +627,7 @@ Solutions
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>      res<span class="sc">$</span>pvalue <span class="sc">&lt;=</span> pvalThresh <span class="sc">&amp;</span></span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>      isValid, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1407</code></pre>
+<pre><code>[1] 1371</code></pre>
 </div>
 </div></li>
 </ol>
@@ -643,12 +643,12 @@ Solutions
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-out of 6369 with nonzero total read count
+out of 6359 with nonzero total read count
 adjusted p-value &lt; 0.1
-LFC &gt; 0 (up)       : 964, 15%
-LFC &lt; 0 (down)     : 920, 14%
+LFC &gt; 0 (up)       : 958, 15%
+LFC &lt; 0 (down)     : 888, 14%
 outliers [1]       : 0, 0%
-low counts [2]     : 356, 5.6%
+low counts [2]     : 243, 3.8%
 (mean count &lt; 0)
 [1] see 'cooksCutoff' argument of ?results
 [2] see 'independentFiltering' argument of ?results</code></pre>
@@ -661,12 +661,12 @@ low counts [2]     : 356, 5.6%
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res05)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-out of 6369 with nonzero total read count
+out of 6359 with nonzero total read count
 adjusted p-value &lt; 0.05
-LFC &gt; 0 (up)       : 798, 13%
-LFC &lt; 0 (down)     : 731, 11%
-outliers [1]       : 1, 0.016%
-low counts [2]     : 0, 0%
+LFC &gt; 0 (up)       : 780, 12%
+LFC &lt; 0 (down)     : 708, 11%
+outliers [1]       : 3, 0.047%
+low counts [2]     : 123, 1.9%
 (mean count &lt; 0)
 [1] see 'cooksCutoff' argument of ?results
 [2] see 'independentFiltering' argument of ?results</code></pre>
@@ -854,6 +854,7 @@ p = 1 - \sum_{0}^{k-1}\frac{{M \choose i}{N-M \choose n-i}}{N \choose i}
 <span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>downGenes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res)[downGenesIndex]</span>
 <span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>validGenes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res)[isValid]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Now, we can call the <code>enrichGO</code> function within clusterProfiler on these gene subsets using one of the three gene ontologies as a reference. We will also use the two build-in plotting functions, <code>dotplot</code> and <code>cnetplot</code> .</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>ego <span class="ot">&lt;-</span> clusterProfiler<span class="sc">::</span><span class="fu">enrichGO</span>(<span class="at">gene =</span> downGenes,</span>
 <span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">universe =</span> validGenes, </span>
@@ -870,6 +871,14 @@ p = 1 - \sum_{0}^{k-1}\frac{{M \choose i}{N-M \choose n-i}}{N \choose i}
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>clusterProfiler<span class="sc">::</span><span class="fu">dotplot</span>(ego)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="4_differential_expression_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>clusterProfiler<span class="sc">::</span><span class="fu">cnetplot</span>(ego)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: ggrepel: 23 unlabeled data points (too many overlaps). Consider
+increasing max.overlaps</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-27-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
