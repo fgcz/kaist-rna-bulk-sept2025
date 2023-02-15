@@ -293,7 +293,7 @@ plot_ly(toPlot, x = ~Sample, y = ~`Fraction of features above threshold`, type="
 
 ## Filtering Counts
 
-Before continuing, we should filter out genes which are lowly expressed or absent, which we do this on a per-group basis (think about why this might be). Next, we generate normalised counts using "Variance Stabilisation" as provided in the DESeq2 package. As per the documentation, this function calculates a variance stabilizing transformation (VST) from the fitted dispersion-mean relation(s) and then transforms the count data (normalized by division by the size factors or normalization factors), yielding a matrix of values which now have constant variance along the range of mean values (homoskedastic)[@DESeq2]. There are other functions we could use, such as `rlog` which is less sensitive to size factors, but VST works best in the general case.
+Before continuing, we should filter out genes which are lowly expressed or absent, which we do this on a per-group basis (think about why this might be). Next, we generate normalised counts using "Variance Stabilisation" as provided in the DESeq2 package. As per the documentation, this function calculates a variance stabilizing transformation (VST) from the fitted dispersion-mean relation(s) and then transforms the count data (normalized by division by the size factors or normalization factors), yielding a matrix of values which now have constant variance along the range of mean values (homoskedastic)[@DESeq2]. There are other functions we could use, such as `rlog` which is less sensitive to size factors, but VST works well in the general case.
 
 ```{r}
 # First filter genes which are at expressed below threshold in less than half the samples within a group
@@ -323,7 +323,15 @@ head(as.data.frame(vsdSE))
 
 ## Dimensionality Reduction
 
+We now have a count matrix of with the following dimensions: 8 x 6'600. In other words, we have represented each sample by a vector of 6'600 features. In order adequately QC our samples, one important aspect is determining how similar or dissimilar one vector of genes from a specific sample is that of another. However, considering 6'600 dimensions directly is not something that humans are generally capable of doing. This is where dimensionality reduction comes in. We would ideally like to *reduce* the given *dimensions* (a 6'600-dimensional space), down to a 2- or 3-dimensional space.
+
+Two approaches, which are in fact related, are PCA (*principal component analysis*) and MDS (*multidimensional scaling*).
+
 ### PCA
+
+PCA is a linear dimensionality reduction technique which, in essence, tries to find a rotation of the data in order to maximise the variance. This is a common method for dimensionality reduction across many different disciplines within Computer Science and beyond. We will use the built-in R-method `prcomp` below to calculate the principal components and manually calculate the variance explained by each component.
+
+Additionally, we will plot a 'scree' plot, which aims to visualise the variance explained by each principal component.
 
 ```{r}
 # Run PCA
@@ -345,6 +353,8 @@ varExp_df %>%
   theme_bw() + ylim(c(0,100))
 ```
 
+Let's now plot the first and second principal components in 2-dimensions.
+
 ```{r}
 plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Set1",
         type="scatter", mode="markers") %>%
@@ -352,6 +362,8 @@ plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Se
 ```
 
 ### Multi-dimensional scaling (MDS)
+
+Multi-dimensional scaling is another dimensionality reduction which aims to best reconstruct pairwise distances between a set of points given a set of distances. Given certain mathematical conditions, MDS is in fact equivalent to PCA.
 
 ```{r}
 mds <- limma::plotMDS(vsdSE, plot=FALSE)
