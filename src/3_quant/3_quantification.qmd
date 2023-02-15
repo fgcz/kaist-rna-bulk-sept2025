@@ -327,7 +327,7 @@ head(as.data.frame(vsdSE))
 
 ```{r}
 # Run PCA
-pcDat  <- prcomp(t(vsdSE), scale. = TRUE)
+pcDat  <- prcomp(t(vsdSE), scale. = FALSE)
 
 # Calculate explained variance
 varExp <- (100*pcDat$sdev^2)/sum(pcDat$sdev^2)
