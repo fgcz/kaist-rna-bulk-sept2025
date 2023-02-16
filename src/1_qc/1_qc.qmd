@@ -112,6 +112,32 @@ Assuming we are not carrying on with manual execution of fastp in the next secti
 rm -rf ../../data/tmp/yeast_fastq_full
 ```
 
+## Exersise #2
+
+Take a look at the outputs in the "results/1_qc/fastqc" and "results/1_qc/multiqc" directory to answer the following questions.
+
+1.  Did the pooling work well?
+2.  What could be an explanation for the decrease in quality towards the ends of the reads?
+3.  How does the per-base sequence content look for each sample?
+4.  Do you think it makes sense to sequence longer based on these data?
+5.  What would be a good method of preprocessing?
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Solutions
+
+1.  There were most likely some problems with the pooling. GE4 appears to be over-represented while other samples are comparatively underrepresented. This could be due to the sequencer type: some Illumina instruments can prefer shorter fragments during bridge amplification.
+2.  This is a multi-faceted issue. It is a general artifact of Illumina sequencers on one hand, related towards the speed of sequencing and the longevity of the reagents. We sequenced on the NextSeq, which has a maximum read length of 150. On another, adapter content towards the 3' end of the read can negatively affect the performance.
+3.  It looks as expected. GE4 however has an increase in the amount of Gs towards the end of the read. This is most likely due to very short fragment lengths (or adapter dimers) and the sequencer beginning to read past the adapter.
+4.  No, the adapter content is already quite high for most of the samples. Sequencing longer fragments would not be worth the investment, most likely.
+5.  Trimming off the adapter and removing the first few bases off the 5' end would remove most of the marking of bad quality from these samples, especially GE4.
+:::
+
+# FastqScreen
+
+[FastqScreen](https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/_build/html/index.html) is a tool which aligns fastq files to a database of different genomes to determine from where the data originate. This can be used for a variety of purposes, such as for metagenomic characterisation, but we will use it as a QC tool to determine any potential sources of contamination.
+
+Unfortunately, executing `fastq_screen` can take a significant amount of time even on a larger amount of resources than we have available in the course, so we will simply look at the results. Let's download these now.
+
 # Preprocessing with `fastp`
 
 In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp[@chen2018]. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does, but **do not execute it**. Depending on the resources, fastp can take a long time to execute for this number of samples (\~1 hr in this case), so we opt to rather download the outputs for use in the next chapter.
