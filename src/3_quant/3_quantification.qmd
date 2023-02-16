@@ -202,7 +202,7 @@ rm -rf ../../results/1_qc/fastp/
 # Write your code here
 ```
 
-::: {.callout-note appearance="simple" collapse="true"}
+::: {.callout-tip appearance="simple" collapse="true"}
 ### Solutions
 
 1.  Kallisto and featureCounts perform similarly quickly. Keep in mind however, that featureCounts requires .bam files which we generated in a previous step with STAR, while Kallisto works on the fastqs themselves. Alignment with STAR can take a long time (remember we didn't even use the full fastqs for the STAR alignment), especially with large genomes.
@@ -363,7 +363,9 @@ plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Se
 
 ### Multi-dimensional scaling (MDS)
 
-Multi-dimensional scaling is another dimensionality reduction which aims to best reconstruct pairwise distances between a set of points given a set of distances. Given certain mathematical conditions, MDS is in fact equivalent to PCA.
+Multi-dimensional scaling is another dimensionality reduction which aims to best reconstruct pairwise distances between a set of points given a set of distances. Since in the case of RNA-seq we are given the data vectors directly rather than the distance matrices, methods must calculate the distance matrix first upon which the MDS algorithm is then performed. PCA is used in the process to produce a reduced dimensionality projection from the similarities.
+
+Here, we use limma [@limma] to calculate the MDS and use plotly to visualise the pairwise distances in 3-dimensions.
 
 ```{r}
 mds <- limma::plotMDS(vsdSE, plot=FALSE)
@@ -374,6 +376,31 @@ toPlot <- cbind(meta %>% rownames_to_column("Sample"), mdsOut)
 plot_ly(toPlot, x=~`Leading logFC dim1`, y=~`Leading logFC dim2`, z=~`Leading logFC dim3`, color=~Condition, colors="Set1", type='scatter3d', mode='markers+text', text=~Sample, textposition = "top right") %>%
   plotly::layout(title="Classical MDS", scene=list(xaxis=list(title = 'Leading logFC dim1'), yaxis = list(title = 'Leading logFC dim2'), zaxis = list(title = 'Leading logFC dim3')))
 ```
+
+::: {.callout-note appearance="simple" collapse="true"}
+#### PCA vs MDS
+
+The following image and linked StackedOverflow post explains well the difference between the two methods.
+
+[![](https://i.stack.imgur.com/WvnU7.png){fig-alt="Visual explanation of the difference between PCA and MDS" fig-align="center"}](https://stats.stackexchange.com/questions/14002/whats-the-difference-between-principal-component-analysis-and-multidimensional)
+:::
+
+### Exercise #2
+
+1.  How many genes are used by the function `plotMDS` as inputs. What kind of genes are these?
+2.  Change the above function call so that all genes in the count matrix are used as input.
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Solutions
+
+1.  By default, the top 500 genes are used.
+
+2.  We must change the `top` argument in order to include all necessary genes.
+
+    ```{r, eval=FALSE}
+    mds <- limma::plotMDS(vsdSE, top=nrow(vsdSE), plot=FALSE)
+    ```
+:::
 
 ## Correlation Plots
 
