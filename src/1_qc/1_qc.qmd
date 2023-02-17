@@ -1,9 +1,13 @@
 ---
-title: "Part 1: Quality Control"
+title: "Part 2: Mapping"
 format:
   html:
     embed-resources: true
-    css: ../style.css
+    toc: true
+    toc-location: left
+    toc-depth: 3
+    title-block-banner: "#00A7FF"
+css: style.css
 editor: visual
 bibliography: references.bib
 ---
@@ -136,7 +140,29 @@ Take a look at the outputs in the "results/1_qc/fastqc" and "results/1_qc/multiq
 
 [FastqScreen](https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/_build/html/index.html) is a tool which aligns fastq files to a database of different genomes to determine from where the data originate. This can be used for a variety of purposes, such as for metagenomic characterisation, but we will use it as a QC tool to determine any potential sources of contamination.
 
-Unfortunately, executing `fastq_screen` can take a significant amount of time even on a larger amount of resources than we have available in the course, so we will simply look at the results. Let's download these now.
+Unfortunately, executing `fastq_screen` can take a significant amount of time even on a larger amount of resources than we have available in the course, so we will simply look at the results. The application is installed, however, and you can take a look at the arguments it would take if we were to execute it ourselves.
+
+```{bash}
+#| class-output: scrolling
+/opt/fastq_screen_v0.14.0/fastq_screen -h
+```
+
+Let's download these results now.
+
+```{bash}
+CURR_DIR=$(pwd)
+cd ../..
+
+# Make directories
+OUTPUT_DIR=results/1_qc/fastq_screen
+mkdir -p $OUTPUT_DIR
+cd $OUTPUT_DIR
+
+curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/yeast_fastq_screen.html
+
+# Back home
+cd $CURR_DIR
+```
 
 # Preprocessing with `fastp`
 
