@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.613">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Part 2: Mapping</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="1_qc_files/libs/clipboard/clipboard.min.js"></script>
+<script src="1_qc_files/libs/quarto-html/quarto.js"></script>
+<script src="1_qc_files/libs/quarto-html/popper.min.js"></script>
+<script src="1_qc_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="1_qc_files/libs/quarto-html/anchor.min.js"></script>
+<link href="1_qc_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="1_qc_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="1_qc_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="1_qc_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="1_qc_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<style>
+    .quarto-title-block .quarto-title-banner {
+      background: #00A7FF;
+    }
+    </style>
+
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Part 2: Mapping</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#downloading-the-data" id="toc-downloading-the-data" class="nav-link" data-scroll-target="#downloading-the-data">Downloading the data</a></li>
+  <li><a href="#exercise-1" id="toc-exercise-1" class="nav-link" data-scroll-target="#exercise-1">Exercise #1</a></li>
+  </ul></li>
+  <li><a href="#fastqc-multiqc" id="toc-fastqc-multiqc" class="nav-link" data-scroll-target="#fastqc-multiqc">FastQC &amp; MultiQC</a>
+  <ul class="collapse">
+  <li><a href="#exersise-2" id="toc-exersise-2" class="nav-link" data-scroll-target="#exersise-2">Exersise #2</a></li>
+  </ul></li>
+  <li><a href="#fastqscreen" id="toc-fastqscreen" class="nav-link" data-scroll-target="#fastqscreen">FastqScreen</a>
+  <ul class="collapse">
+  <li><a href="#exercise-3" id="toc-exercise-3" class="nav-link" data-scroll-target="#exercise-3">Exercise #3</a></li>
+  </ul></li>
+  <li><a href="#preprocessing-with-fastp" id="toc-preprocessing-with-fastp" class="nav-link" data-scroll-target="#preprocessing-with-fastp">Preprocessing with <code>fastp</code></a>
+  <ul class="collapse">
+  <li><a href="#exercise-4" id="toc-exercise-4" class="nav-link" data-scroll-target="#exercise-4">Exercise #4</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>({</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Welcome to our introductory RNA-seq course.</p>
+<p>In this part of the course, we will be primarily working with yeast samples, initially sequenced and analyzed at the Functional Genomics Center Zürich. We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.</p>
+<section id="downloading-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="downloading-the-data">Downloading the data</h2>
+<p>First, let’s download the data. The script will download a tar file containing our fastq files, decompress it, and deposit the files into the folder <code>data/tmp/yeast_fastq_full</code>. To execute this script, press on the green arrow button (for all such bash scripts, we first switch to the root directory i.e.&nbsp;<code>/home/rstudio/work/rna-seq-course-feb2023</code> , so the locations of all output files is clearer).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">CURR_DIR</span><span class="op">=</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../..</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># First we make a directory to house our data</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="va">YEAST_DIR</span><span class="op">=</span>data/tmp/yeast_fastq_full</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$YEAST_DIR</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the data</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$YEAST_DIR</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-O</span> https://fgcz-gstore.uzh.ch/public/RNASeqCourse/yeast_full.tar</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract data</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> <span class="at">-xvf</span> yeast_full.tar</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-f</span> yeast_full.tar</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Back home</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$CURR_DIR</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0 6180M    0  400k    0     0  7692k      0  0:13:42 --:--:--  0:13:42 7547k
+  2 6180M    2  156M    0     0   148M      0  0:00:41  0:00:01  0:00:40  148M
+  4 6180M    4  305M    0     0   148M      0  0:00:41  0:00:02  0:00:39  148M
+  7 6180M    7  453M    0     0   148M      0  0:00:41  0:00:03  0:00:38  148M
+  8 6180M    8  530M    0     0   130M      0  0:00:47  0:00:04  0:00:43  130M
+  9 6180M    9  558M    0     0   109M      0  0:00:56  0:00:05  0:00:51  110M
+  9 6180M    9  580M    0     0  90.0M      0  0:01:08  0:00:06  0:01:02 78.5M
+  9 6180M    9  588M    0     0  76.8M      0  0:01:20  0:00:07  0:01:13 50.6M
+  9 6180M    9  608M    0     0  74.6M      0  0:01:22  0:00:08  0:01:14 30.3M
+ 10 6180M   10  624M    0     0  67.9M      0  0:01:30  0:00:09  0:01:21 18.3M
+ 10 6180M   10  656M    0     0  64.8M      0  0:01:35  0:00:10  0:01:25 19.5M
+ 10 6180M   10  672M    0     0  59.7M      0  0:01:43  0:00:11  0:01:32 19.2M
+ 12 6180M   12  773M    0     0  64.0M      0  0:01:36  0:00:12  0:01:24 41.7M
+ 12 6180M   12  786M    0     0  58.4M      0  0:01:45  0:00:13  0:01:32 33.6M
+ 12 6180M   12  799M    0     0  56.1M      0  0:01:50  0:00:14  0:01:36 34.6M
+ 13 6180M   13  818M    0     0  52.9M      0  0:01:56  0:00:15  0:01:41 30.4M
+ 13 6180M   13  837M    0     0  52.1M      0  0:01:58  0:00:16  0:01:42 34.3M
+ 13 6180M   13  859M    0     0  50.2M      0  0:02:02  0:00:17  0:01:45 17.2M
+ 14 6180M   14  868M    0     0  47.5M      0  0:02:09  0:00:18  0:01:51 17.0M
+ 14 6180M   14  882M    0     0  45.0M      0  0:02:17  0:00:19  0:01:58 15.5M
+ 14 6180M   14  908M    0     0  45.2M      0  0:02:16  0:00:20  0:01:56 19.5M
+ 15 6180M   15  943M    0     0  44.5M      0  0:02:18  0:00:21  0:01:57 20.5M
+ 15 6180M   15  965M    0     0  42.5M      0  0:02:25  0:00:22  0:02:03 18.9M
+ 16 6180M   16 1004M    0     0  43.5M      0  0:02:21  0:00:23  0:01:58 28.4M
+ 16 6180M   16 1050M    0     0  43.6M      0  0:02:21  0:00:24  0:01:57 37.5M
+ 17 6180M   17 1071M    0     0  42.2M      0  0:02:26  0:00:25  0:02:01 30.6M
+ 17 6180M   17 1086M    0     0  40.7M      0  0:02:31  0:00:26  0:02:05 26.0M
+ 17 6180M   17 1100M    0     0  40.5M      0  0:02:32  0:00:27  0:02:05 30.3M
+ 18 6180M   18 1136M    0     0  40.5M      0  0:02:32  0:00:28  0:02:04 26.2M
+ 18 6180M   18 1165M    0     0  40.1M      0  0:02:33  0:00:29  0:02:04 23.1M
+ 19 6180M   19 1177M    0     0  38.5M      0  0:02:40  0:00:30  0:02:10 20.6M
+ 19 6180M   19 1177M    0     0  37.4M      0  0:02:45  0:00:31  0:02:14 18.8M
+ 19 6180M   19 1202M    0     0  37.5M      0  0:02:44  0:00:32  0:02:12 20.6M
+ 19 6180M   19 1209M    0     0  36.4M      0  0:02:49  0:00:33  0:02:16 14.2M
+ 20 6180M   20 1242M    0     0  35.9M      0  0:02:51  0:00:34  0:02:17 13.9M
+ 20 6180M   20 1283M    0     0  36.5M      0  0:02:49  0:00:35  0:02:14 23.0M
+ 21 6180M   21 1305M    0     0  36.1M      0  0:02:51  0:00:36  0:02:15 27.4M
+ 22 6180M   22 1381M    0     0  37.1M      0  0:02:46  0:00:37  0:02:09 34.8M
+ 23 6180M   23 1452M    0     0  38.1M      0  0:02:42  0:00:38  0:02:04 49.6M
+ 24 6180M   24 1498M    0     0  38.3M      0  0:02:41  0:00:39  0:02:02 56.7M
+ 24 6180M   24 1515M    0     0  37.6M      0  0:02:44  0:00:40  0:02:04 45.3M
+ 24 6180M   24 1530M    0     0  37.2M      0  0:02:45  0:00:41  0:02:04 45.4M
+ 25 6180M   25 1580M    0     0  37.5M      0  0:02:44  0:00:42  0:02:02 40.9M
+ 26 6180M   26 1630M    0     0  37.8M      0  0:02:43  0:00:43  0:02:00 35.6M
+ 27 6180M   27 1677M    0     0  38.0M      0  0:02:42  0:00:44  0:01:58 35.5M
+ 27 6180M   27 1705M    0     0  37.7M      0  0:02:43  0:00:45  0:01:58 38.9M
+ 27 6180M   27 1724M    0     0  37.3M      0  0:02:45  0:00:46  0:01:59 38.0M
+ 28 6180M   28 1744M    0     0  37.0M      0  0:02:46  0:00:47  0:01:59 32.6M
+ 28 6180M   28 1752M    0     0  36.2M      0  0:02:50  0:00:48  0:02:02 23.4M
+ 28 6180M   28 1752M    0     0  35.5M      0  0:02:53  0:00:49  0:02:04 14.4M
+ 29 6180M   29 1800M    0     0  35.8M      0  0:02:52  0:00:50  0:02:02 18.5M
+ 29 6180M   29 1842M    0     0  36.0M      0  0:02:51  0:00:51  0:02:00 23.7M
+ 31 6180M   31 1918M    0     0  36.8M      0  0:02:47  0:00:52  0:01:55 34.8M
+ 31 6180M   31 1946M    0     0  36.6M      0  0:02:48  0:00:53  0:01:55 40.7M
+ 32 6180M   32 2008M    0     0  36.8M      0  0:02:47  0:00:54  0:01:53 48.9M
+ 32 6180M   32 2014M    0     0  36.5M      0  0:02:48  0:00:55  0:01:53 44.7M
+ 32 6180M   32 2036M    0     0  36.0M      0  0:02:51  0:00:56  0:01:55 36.2M
+ 33 6180M   33 2046M    0     0  35.8M      0  0:02:52  0:00:57  0:01:55 25.3M
+ 33 6180M   33 2052M    0     0  35.2M      0  0:02:55  0:00:58  0:01:57 20.5M
+ 33 6180M   33 2060M    0     0  34.7M      0  0:02:58  0:00:59  0:01:59 10.6M
+ 33 6180M   33 2083M    0     0  34.7M      0  0:02:58  0:01:00  0:01:58 13.8M
+ 34 6180M   34 2116M    0     0  34.6M      0  0:02:58  0:01:01  0:01:57 17.5M
+ 35 6180M   35 2209M    0     0  35.5M      0  0:02:53  0:01:02  0:01:51 32.8M
+ 36 6180M   36 2226M    0     0  35.3M      0  0:02:55  0:01:03  0:01:52 35.9M
+ 36 6180M   36 2240M    0     0  34.7M      0  0:02:57  0:01:04  0:01:53 35.4M
+ 36 6180M   36 2263M    0     0  34.7M      0  0:02:57  0:01:05  0:01:52 35.8M
+ 36 6180M   36 2279M    0     0  34.4M      0  0:02:59  0:01:06  0:01:53 32.3M
+ 37 6180M   37 2309M    0     0  34.4M      0  0:02:59  0:01:07  0:01:52 20.0M
+ 38 6180M   38 2369M    0     0  34.8M      0  0:02:57  0:01:08  0:01:49 28.5M
+ 39 6180M   39 2431M    0     0  35.1M      0  0:02:55  0:01:09  0:01:46 40.1M
+ 39 6180M   39 2443M    0     0  34.8M      0  0:02:57  0:01:10  0:01:47 35.9M
+ 39 6180M   39 2462M    0     0  34.6M      0  0:02:58  0:01:11  0:01:47 37.0M
+ 40 6180M   40 2477M    0     0  34.3M      0  0:02:59  0:01:12  0:01:47 33.7M
+ 40 6180M   40 2495M    0     0  34.0M      0  0:03:01  0:01:13  0:01:48 24.0M
+ 41 6180M   41 2564M    0     0  34.6M      0  0:02:58  0:01:14  0:01:44 27.3M
+ 42 6180M   42 2605M    0     0  34.7M      0  0:02:58  0:01:15  0:01:43 32.4M
+ 42 6180M   42 2617M    0     0  34.3M      0  0:03:00  0:01:16  0:01:44 29.7M
+ 42 6180M   42 2635M    0     0  34.1M      0  0:03:00  0:01:17  0:01:43 31.4M
+ 42 6180M   42 2645M    0     0  33.8M      0  0:03:02  0:01:18  0:01:44 31.1M
+ 43 6180M   43 2705M    0     0  34.2M      0  0:03:00  0:01:19  0:01:41 28.0M
+ 43 6180M   43 2715M    0     0  33.8M      0  0:03:02  0:01:20  0:01:42 21.7M
+ 44 6180M   44 2736M    0     0  33.6M      0  0:03:03  0:01:21  0:01:42 23.6M
+ 44 6180M   44 2750M    0     0  33.4M      0  0:03:04  0:01:22  0:01:42 22.6M
+ 44 6180M   44 2762M    0     0  33.2M      0  0:03:06  0:01:23  0:01:43 23.3M
+ 44 6180M   44 2778M    0     0  33.0M      0  0:03:07  0:01:24  0:01:43 14.5M
+ 45 6180M   45 2793M    0     0  32.7M      0  0:03:08  0:01:25  0:01:43 15.3M
+ 45 6180M   45 2804M    0     0  32.5M      0  0:03:09  0:01:26  0:01:43 14.3M
+ 46 6180M   46 2861M    0     0  32.7M      0  0:03:08  0:01:27  0:01:41 21.8M
+ 47 6180M   47 2933M    0     0  33.3M      0  0:03:05  0:01:28  0:01:37 34.7M
+ 48 6180M   48 2984M    0     0  33.5M      0  0:03:04  0:01:29  0:01:35 41.7M
+ 48 6180M   48 3004M    0     0  33.3M      0  0:03:05  0:01:30  0:01:35 43.3M
+ 48 6180M   48 3022M    0     0  33.1M      0  0:03:06  0:01:31  0:01:35 42.8M
+ 49 6180M   49 3032M    0     0  32.9M      0  0:03:07  0:01:32  0:01:35 35.3M
+ 49 6180M   49 3065M    0     0  32.9M      0  0:03:07  0:01:33  0:01:34 26.5M
+ 50 6180M   50 3096M    0     0  32.6M      0  0:03:09  0:01:34  0:01:35 19.3M
+ 50 6180M   50 3099M    0     0  32.6M      0  0:03:09  0:01:35  0:01:34 19.2M
+ 50 6180M   50 3118M    0     0  32.4M      0  0:03:10  0:01:36  0:01:34 18.9M
+ 50 6180M   50 3149M    0     0  32.4M      0  0:03:10  0:01:37  0:01:33 23.1M
+ 51 6180M   51 3184M    0     0  32.4M      0  0:03:10  0:01:38  0:01:32 23.7M
+ 52 6180M   52 3221M    0     0  32.4M      0  0:03:10  0:01:39  0:01:31 28.6M
+ 52 6180M   52 3231M    0     0  32.2M      0  0:03:11  0:01:40  0:01:31 26.3M
+ 52 6180M   52 3246M    0     0  32.0M      0  0:03:12  0:01:41  0:01:31 25.4M
+ 52 6180M   52 3255M    0     0  31.8M      0  0:03:14  0:01:42  0:01:32 20.5M
+ 53 6180M   53 3288M    0     0  31.9M      0  0:03:13  0:01:43  0:01:30 20.8M
+ 53 6180M   53 3302M    0     0  31.7M      0  0:03:14  0:01:44  0:01:30 16.5M
+ 53 6180M   53 3319M    0     0  31.4M      0  0:03:16  0:01:45  0:01:31 15.7M
+ 53 6180M   53 3326M    0     0  31.3M      0  0:03:17  0:01:46  0:01:31 16.2M
+ 54 6180M   54 3370M    0     0  31.4M      0  0:03:16  0:01:47  0:01:29 24.0M
+ 54 6180M   54 3384M    0     0  31.2M      0  0:03:18  0:01:48  0:01:30 17.7M
+ 55 6180M   55 3411M    0     0  31.2M      0  0:03:17  0:01:49  0:01:28 21.8M
+ 55 6180M   55 3434M    0     0  31.0M      0  0:03:18  0:01:50  0:01:28 23.6M
+ 55 6180M   55 3451M    0     0  31.0M      0  0:03:18  0:01:51  0:01:27 25.1M
+ 56 6180M   56 3464M    0     0  30.7M      0  0:03:21  0:01:52  0:01:29 16.6M
+ 56 6180M   56 3466M    0     0  30.6M      0  0:03:21  0:01:53  0:01:28 17.7M
+ 56 6180M   56 3504M    0     0  30.6M      0  0:03:21  0:01:54  0:01:27 18.2M
+ 56 6180M   56 3520M    0     0  30.5M      0  0:03:22  0:01:55  0:01:27 18.5M
+ 57 6180M   57 3553M    0     0  30.5M      0  0:03:22  0:01:56  0:01:26 20.1M
+ 57 6180M   57 3562M    0     0  30.4M      0  0:03:23  0:01:57  0:01:26 22.0M
+ 58 6180M   58 3626M    0     0  30.7M      0  0:03:21  0:01:58  0:01:23 32.2M
+ 58 6180M   58 3632M    0     0  30.3M      0  0:03:23  0:01:59  0:01:24 23.6M
+ 58 6180M   58 3639M    0     0  30.2M      0  0:03:24  0:02:00  0:01:24 23.6M
+ 59 6180M   59 3666M    0     0  30.2M      0  0:03:24  0:02:01  0:01:23 23.1M
+ 59 6180M   59 3675M    0     0  30.1M      0  0:03:25  0:02:02  0:01:23 23.1M
+ 59 6180M   59 3698M    0     0  30.0M      0  0:03:25  0:02:03  0:01:22 14.0M
+ 60 6180M   60 3756M    0     0  30.2M      0  0:03:24  0:02:04  0:01:20 27.8M
+ 61 6180M   61 3825M    0     0  30.5M      0  0:03:22  0:02:05  0:01:17 37.5M
+ 62 6180M   62 3849M    0     0  30.4M      0  0:03:23  0:02:06  0:01:17 33.8M
+ 62 6180M   62 3880M    0     0  30.5M      0  0:03:22  0:02:07  0:01:15 40.9M
+ 62 6180M   62 3883M    0     0  30.3M      0  0:03:23  0:02:08  0:01:15 37.1M
+ 62 6180M   62 3891M    0     0  30.1M      0  0:03:25  0:02:09  0:01:16 26.6M
+ 63 6180M   63 3902M    0     0  29.9M      0  0:03:26  0:02:10  0:01:16 15.1M
+ 63 6180M   63 3921M    0     0  29.8M      0  0:03:26  0:02:11  0:01:15 15.2M
+ 64 6180M   64 3977M    0     0  30.0M      0  0:03:25  0:02:12  0:01:13 17.6M
+ 64 6180M   64 3993M    0     0  30.0M      0  0:03:25  0:02:13  0:01:12 22.2M
+ 65 6180M   65 4027M    0     0  30.0M      0  0:03:25  0:02:14  0:01:11 27.0M
+ 65 6180M   65 4055M    0     0  30.0M      0  0:03:25  0:02:15  0:01:10 31.1M
+ 66 6180M   66 4108M    0     0  30.1M      0  0:03:24  0:02:16  0:01:08 37.7M
+ 66 6180M   66 4129M    0     0  30.1M      0  0:03:25  0:02:17  0:01:08 33.7M
+ 67 6180M   67 4153M    0     0  30.0M      0  0:03:25  0:02:18  0:01:07 32.0M
+ 68 6180M   68 4242M    0     0  30.5M      0  0:03:22  0:02:19  0:01:03 43.9M
+ 68 6180M   68 4258M    0     0  30.4M      0  0:03:23  0:02:20  0:01:03 40.7M
+ 69 6180M   69 4285M    0     0  30.3M      0  0:03:23  0:02:21  0:01:02 35.0M
+ 69 6180M   69 4297M    0     0  30.2M      0  0:03:24  0:02:22  0:01:02 33.7M
+ 69 6180M   69 4311M    0     0  30.1M      0  0:03:25  0:02:23  0:01:02 30.5M
+ 70 6180M   70 4334M    0     0  30.0M      0  0:03:25  0:02:24  0:01:01 17.5M
+ 70 6180M   70 4362M    0     0  30.0M      0  0:03:25  0:02:25  0:01:00 20.8M
+ 70 6180M   70 4379M    0     0  29.9M      0  0:03:26  0:02:26  0:01:00 19.1M
+ 71 6180M   71 4422M    0     0  30.0M      0  0:03:25  0:02:27  0:00:58 25.0M
+ 73 6180M   73 4521M    0     0  30.5M      0  0:03:22  0:02:28  0:00:54 42.7M
+ 73 6180M   73 4535M    0     0  30.3M      0  0:03:23  0:02:29  0:00:54 39.3M
+ 73 6180M   73 4538M    0     0  30.2M      0  0:03:24  0:02:30  0:00:54 34.0M
+ 73 6180M   73 4554M    0     0  30.1M      0  0:03:24  0:02:31  0:00:53 35.2M
+ 73 6180M   73 4572M    0     0  30.0M      0  0:03:25  0:02:32  0:00:53 28.7M
+ 74 6180M   74 4587M    0     0  29.8M      0  0:03:26  0:02:33  0:00:53 12.1M
+ 74 6180M   74 4587M    0     0  29.7M      0  0:03:27  0:02:34  0:00:53 10.6M
+ 74 6180M   74 4625M    0     0  29.8M      0  0:03:27  0:02:35  0:00:52 18.0M
+ 77 6180M   77 4795M    0     0  30.6M      0  0:03:21  0:02:36  0:00:45 45.6M
+ 77 6180M   77 4806M    0     0  30.5M      0  0:03:22  0:02:37  0:00:45 47.6M
+ 78 6180M   78 4822M    0     0  30.5M      0  0:03:22  0:02:38  0:00:44 51.6M
+ 78 6180M   78 4837M    0     0  30.4M      0  0:03:23  0:02:39  0:00:44 51.5M
+ 78 6180M   78 4860M    0     0  30.3M      0  0:03:23  0:02:40  0:00:43 46.7M
+ 79 6180M   79 4897M    0     0  30.4M      0  0:03:23  0:02:41  0:00:42 21.7M
+ 79 6180M   79 4922M    0     0  30.3M      0  0:03:23  0:02:42  0:00:41 23.8M
+ 79 6180M   79 4940M    0     0  30.2M      0  0:03:23  0:02:43  0:00:40 23.7M
+ 80 6180M   80 4993M    0     0  30.4M      0  0:03:23  0:02:44  0:00:39 31.5M
+ 81 6180M   81 5021M    0     0  30.3M      0  0:03:23  0:02:45  0:00:38 30.8M
+ 81 6180M   81 5039M    0     0  30.3M      0  0:03:23  0:02:46  0:00:37 28.3M
+ 81 6180M   81 5062M    0     0  30.2M      0  0:03:23  0:02:47  0:00:36 27.7M
+ 82 6180M   82 5107M    0     0  30.3M      0  0:03:23  0:02:48  0:00:35 32.9M
+ 83 6180M   83 5143M    0     0  30.4M      0  0:03:23  0:02:49  0:00:34 29.4M
+ 83 6180M   83 5155M    0     0  30.3M      0  0:03:23  0:02:50  0:00:33 28.2M
+ 83 6180M   83 5177M    0     0  30.2M      0  0:03:24  0:02:51  0:00:33 25.8M
+ 85 6180M   85 5265M    0     0  30.5M      0  0:03:22  0:02:52  0:00:30 39.8M
+ 85 6180M   85 5287M    0     0  30.5M      0  0:03:22  0:02:53  0:00:29 36.4M
+ 86 6180M   86 5355M    0     0  30.7M      0  0:03:21  0:02:54  0:00:27 42.0M
+ 86 6180M   86 5366M    0     0  30.6M      0  0:03:21  0:02:55  0:00:26 42.0M
+ 87 6180M   87 5386M    0     0  30.5M      0  0:03:21  0:02:56  0:00:25 45.0M
+ 87 6180M   87 5413M    0     0  30.5M      0  0:03:22  0:02:57  0:00:25 30.0M
+ 87 6180M   87 5427M    0     0  30.3M      0  0:03:23  0:02:58  0:00:25 25.5M
+ 87 6180M   87 5430M    0     0  30.3M      0  0:03:23  0:02:59  0:00:24 15.3M
+ 88 6180M   88 5447M    0     0  30.2M      0  0:03:24  0:03:00  0:00:24 16.1M
+ 88 6180M   88 5462M    0     0  30.1M      0  0:03:24  0:03:01  0:00:23 15.2M
+ 88 6180M   88 5479M    0     0  30.0M      0  0:03:25  0:03:02  0:00:23 12.7M
+ 89 6180M   89 5515M    0     0  30.1M      0  0:03:25  0:03:03  0:00:22 19.5M
+ 89 6180M   89 5525M    0     0  30.0M      0  0:03:25  0:03:04  0:00:21 18.9M
+ 89 6180M   89 5551M    0     0  29.9M      0  0:03:26  0:03:05  0:00:21 20.9M
+ 90 6180M   90 5592M    0     0  30.0M      0  0:03:25  0:03:06  0:00:19 24.8M
+ 90 6180M   90 5614M    0     0  30.0M      0  0:03:25  0:03:07  0:00:18 28.0M
+ 93 6180M   93 5752M    0     0  30.4M      0  0:03:22  0:03:08  0:00:14 40.2M
+ 93 6180M   93 5752M    0     0  30.3M      0  0:03:23  0:03:09  0:00:14 42.3M
+ 93 6180M   93 5759M    0     0  30.2M      0  0:03:24  0:03:10  0:00:14 38.8M
+ 93 6180M   93 5772M    0     0  30.2M      0  0:03:24  0:03:11  0:00:13 37.6M
+ 93 6180M   93 5792M    0     0  30.1M      0  0:03:24  0:03:12  0:00:12 36.0M
+ 94 6180M   94 5824M    0     0  30.0M      0  0:03:25  0:03:13  0:00:12 15.1M
+ 94 6180M   94 5824M    0     0  29.9M      0  0:03:26  0:03:14  0:00:12 14.8M
+ 94 6180M   94 5845M    0     0  29.9M      0  0:03:26  0:03:15  0:00:11 18.5M
+ 94 6180M   94 5861M    0     0  29.8M      0  0:03:26  0:03:16  0:00:10 17.7M
+ 94 6180M   94 5868M    0     0  29.7M      0  0:03:27  0:03:17  0:00:10 15.1M
+ 95 6180M   95 5906M    0     0  29.8M      0  0:03:27  0:03:18  0:00:09 18.8M
+ 96 6180M   96 5933M    0     0  29.7M      0  0:03:27  0:03:19  0:00:08 22.4M
+ 96 6180M   96 5944M    0     0  29.6M      0  0:03:28  0:03:20  0:00:08 17.2M
+ 96 6180M   96 5980M    0     0  29.6M      0  0:03:28  0:03:21  0:00:07 21.3M
+ 96 6180M   96 5988M    0     0  29.6M      0  0:03:28  0:03:22  0:00:06 23.3M
+ 97 6180M   97 6002M    0     0  29.5M      0  0:03:29  0:03:23  0:00:06 19.1M
+ 97 6180M   97 6026M    0     0  29.5M      0  0:03:29  0:03:24  0:00:05 18.8M
+ 97 6180M   97 6033M    0     0  29.3M      0  0:03:30  0:03:25  0:00:05 19.7M
+ 97 6180M   97 6033M    0     0  29.2M      0  0:03:31  0:03:26  0:00:05 11.3M
+ 97 6180M   97 6043M    0     0  29.1M      0  0:03:31  0:03:27  0:00:04 11.0M
+ 98 6180M   98 6061M    0     0  29.1M      0  0:03:32  0:03:28  0:00:04 11.4M
+ 98 6180M   98 6085M    0     0  29.1M      0  0:03:32  0:03:29  0:00:03 11.7M
+ 98 6180M   98 6093M    0     0  28.9M      0  0:03:33  0:03:30  0:00:03 11.2M
+ 98 6180M   98 6102M    0     0  28.9M      0  0:03:33  0:03:31  0:00:02 14.4M
+ 99 6180M   99 6128M    0     0  28.8M      0  0:03:34  0:03:32  0:00:02 16.1M
+ 99 6180M   99 6147M    0     0  28.8M      0  0:03:34  0:03:33  0:00:01 17.7M
+100 6180M  100 6180M    0     0  28.9M      0  0:03:33  0:03:33 --:--:-- 20.3M
+20191112.A-G1_R1.fastq.gz
+20191112.A-G2_R1.fastq.gz
+20191112.A-G3_R1.fastq.gz
+20191112.A-G4_R1.fastq.gz
+20191112.A-GE1_R1.fastq.gz
+20191112.A-GE2_R1.fastq.gz
+20191112.A-GE3_R1.fastq.gz
+20191112.A-GE4_R1.fastq.gz
+dataset.tsv</code></pre>
+</div>
+</div>
+<p>The data should be downloaded into <code>data/tmp/yeast_fastq_full/</code>. To check this, run</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> ../../data/tmp/yeast_fastq_full</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>total 6.1G
+-rw-r--r-- 1 rstudio users 938M Jan 18 07:32 20191112.A-G1_R1.fastq.gz
+-rw-r--r-- 1 rstudio users 560M Jan 18 07:33 20191112.A-G2_R1.fastq.gz
+-rw-r--r-- 1 rstudio users 793M Jan 18 07:36 20191112.A-G3_R1.fastq.gz
+-rw-r--r-- 1 rstudio users 748M Jan 18 07:38 20191112.A-G4_R1.fastq.gz
+-rw-r--r-- 1 rstudio users 626M Jan 18 07:39 20191112.A-GE1_R1.fastq.gz
+-rw-r--r-- 1 rstudio users 491M Jan 18 07:40 20191112.A-GE2_R1.fastq.gz
+-rw-r--r-- 1 rstudio users 529M Jan 18 07:42 20191112.A-GE3_R1.fastq.gz
+-rw-r--r-- 1 rstudio users 1.5G Jan 18 07:45 20191112.A-GE4_R1.fastq.gz
+-rwxr-x--- 1 rstudio users 2.4K Jan 18 13:17 dataset.tsv</code></pre>
+</div>
+</div>
+<p>You should see 9 files in this directory. 8 files ending in fastq.gz and one “dataset.tsv” file. The “dataset.tsv” file gives some details about the samples. Let’s load this file now in R to see how it looks like.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="st">"../../data/tmp/yeast_fastq_full/dataset.tsv"</span>) <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 20
+  Name  Condit…¹ Read1…² Species Fragm…³ Sampl…⁴ Tube …⁵ Sampl…⁶ Plate…⁷ LibCo…⁸
+  &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;     &lt;int&gt;   &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;lgl&gt;     &lt;int&gt;
+1 G1    Glucose  p3005/… n/a           0     200 p3005_… bfs_20… NA            0
+2 G2    Glucose  p3005/… n/a           0     200 p3005_… bfs_20… NA            0
+3 G3    Glucose  p3005/… n/a           0     200 p3005_… bfs_20… NA            0
+4 G4    Glucose  p3005/… n/a           0     200 p3005_… bfs_20… NA            0
+5 GE1   GlycEth  p3005/… n/a           0     200 p3005_… bfs_20… NA            0
+6 GE2   GlycEth  p3005/… n/a           0     200 p3005_… bfs_20… NA            0
+7 GE3   GlycEth  p3005/… n/a           0     200 p3005_… bfs_20… NA            0
+8 GE4   GlycEth  p3005/… n/a           0     200 p3005_… bfs_20… NA            0
+# … with 10 more variables: `LibConc_qPCR [Characteristic]` &lt;int&gt;,
+#   `RIN [Characteristic]` &lt;int&gt;, Adapter1 &lt;chr&gt;, strandMode &lt;chr&gt;,
+#   LibraryPrepKit &lt;chr&gt;, EnrichmentMethod &lt;chr&gt;,
+#   `InputAmount [Characteristic]` &lt;int&gt;, `Order Id [B-Fabric]` &lt;int&gt;,
+#   `PlateName [Characteristic]` &lt;chr&gt;, `Read Count` &lt;int&gt;, and abbreviated
+#   variable names ¹​`Condition [Factor]`, ²​`Read1 [File]`,
+#   ³​`FragmentSize [Characteristic]`, ⁴​`SampleConc [Characteristic]`, …</code></pre>
+</div>
+</div>
+</section>
+<section id="exercise-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1">Exercise #1</h2>
+<ol type="1">
+<li><p>How many groups of samples are there?</p></li>
+<li><p>What Library Prep Kit was used?</p></li>
+<li><p>What is the read count? Is this what we expect for RNA-seq?</p></li>
+<li><p>Is there information about the strandedness of the libraries?</p></li>
+</ol>
+<div class="callout-note callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solutions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p>2 groups: Glucose and GlycEth (i.e.&nbsp;Glucose+Ethanol)</p></li>
+<li><p>Lexogen mRNA Stranded Kit</p></li>
+<li><p>The samples vary between 5M to just under 20M reads. In general, we seek to get around 20M samples for bulk RNA-seq of human and mouse samples. Given that these are yeast samples and the corresponding genome is significantly smaller, even 5M reads is enough to get good results (see Count QC in chapter 3).</p></li>
+<li><p>The libraries are anti-sense.</p></li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="fastqc-multiqc" class="level1">
+<h1>FastQC &amp; MultiQC</h1>
+<p>First, let’s run FastQC. This tool was developed by Babraham Bioinformatics <span class="citation" data-cites="Andrews:2010tn">(<a href="#ref-Andrews:2010tn" role="doc-biblioref">Andrews 2010</a>)</span> and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC <span class="citation" data-cites="ewels2016">(<a href="#ref-ewels2016" role="doc-biblioref">Ewels et al. 2016</a>)</span> which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. Let’s run these tools now. This process takes about 10 minutes on 8 cores.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="va">CURR_DIR</span><span class="op">=</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../..</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Make directories</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="va">PROCESSED_FASTQC</span><span class="op">=</span>results/1_qc/fastqc</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="va">PROCESSED_MULTIQC</span><span class="op">=</span>results/1_qc/multiqc</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$PROCESSED_FASTQC</span> <span class="va">$PROCESSED_MULTIQC</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Process with FastQC</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="ex">/opt/FastQC/fastqc</span> <span class="at">--extract</span> <span class="at">-o</span> <span class="va">$PROCESSED_FASTQC</span> <span class="dt">\</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">-t</span> 8 <span class="at">-a</span> data/supplementary-files/adapter_list.txt <span class="at">--kmers</span> 7 <span class="dt">\</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  data/tmp/yeast_fastq_full/<span class="pp">*</span>fastq.gz</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine result with multiqc</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="ex">multiqc</span> <span class="at">--outdir</span> <span class="va">$PROCESSED_MULTIQC</span> <span class="va">$PROCESSED_FASTQC</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Back home</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$CURR_DIR</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="scrolling"><code>Started analysis of 20191112.A-G1_R1.fastq.gz
+Started analysis of 20191112.A-G2_R1.fastq.gz
+Started analysis of 20191112.A-G3_R1.fastq.gz
+Started analysis of 20191112.A-G4_R1.fastq.gz
+Started analysis of 20191112.A-GE1_R1.fastq.gz
+Started analysis of 20191112.A-GE2_R1.fastq.gz
+Started analysis of 20191112.A-GE3_R1.fastq.gz
+Started analysis of 20191112.A-GE4_R1.fastq.gz
+Approx 5% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 5% complete for 20191112.A-G2_R1.fastq.gz
+Approx 5% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 5% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 5% complete for 20191112.A-G4_R1.fastq.gz
+Approx 5% complete for 20191112.A-G3_R1.fastq.gz
+Approx 5% complete for 20191112.A-G1_R1.fastq.gz
+Approx 10% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 10% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 10% complete for 20191112.A-G2_R1.fastq.gz
+Approx 10% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 10% complete for 20191112.A-G4_R1.fastq.gz
+Approx 15% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 5% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 15% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 10% complete for 20191112.A-G3_R1.fastq.gz
+Approx 15% complete for 20191112.A-G2_R1.fastq.gz
+Approx 15% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 20% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 10% complete for 20191112.A-G1_R1.fastq.gz
+Approx 20% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 15% complete for 20191112.A-G4_R1.fastq.gz
+Approx 15% complete for 20191112.A-G3_R1.fastq.gz
+Approx 20% complete for 20191112.A-G2_R1.fastq.gz
+Approx 25% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 20% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 25% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 25% complete for 20191112.A-G2_R1.fastq.gz
+Approx 20% complete for 20191112.A-G4_R1.fastq.gz
+Approx 30% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 15% complete for 20191112.A-G1_R1.fastq.gz
+Approx 10% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 25% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 30% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 20% complete for 20191112.A-G3_R1.fastq.gz
+Approx 35% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 30% complete for 20191112.A-G2_R1.fastq.gz
+Approx 35% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 25% complete for 20191112.A-G4_R1.fastq.gz
+Approx 30% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 20% complete for 20191112.A-G1_R1.fastq.gz
+Approx 40% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 25% complete for 20191112.A-G3_R1.fastq.gz
+Approx 35% complete for 20191112.A-G2_R1.fastq.gz
+Approx 40% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 35% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 45% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 15% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 30% complete for 20191112.A-G4_R1.fastq.gz
+Approx 45% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 40% complete for 20191112.A-G2_R1.fastq.gz
+Approx 30% complete for 20191112.A-G3_R1.fastq.gz
+Approx 25% complete for 20191112.A-G1_R1.fastq.gz
+Approx 50% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 40% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 50% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 35% complete for 20191112.A-G4_R1.fastq.gz
+Approx 45% complete for 20191112.A-G2_R1.fastq.gz
+Approx 55% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 55% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 35% complete for 20191112.A-G3_R1.fastq.gz
+Approx 45% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 30% complete for 20191112.A-G1_R1.fastq.gz
+Approx 50% complete for 20191112.A-G2_R1.fastq.gz
+Approx 60% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 20% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 40% complete for 20191112.A-G4_R1.fastq.gz
+Approx 60% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 50% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 65% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 40% complete for 20191112.A-G3_R1.fastq.gz
+Approx 55% complete for 20191112.A-G2_R1.fastq.gz
+Approx 65% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 45% complete for 20191112.A-G4_R1.fastq.gz
+Approx 35% complete for 20191112.A-G1_R1.fastq.gz
+Approx 70% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 55% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 60% complete for 20191112.A-G2_R1.fastq.gz
+Approx 70% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 45% complete for 20191112.A-G3_R1.fastq.gz
+Approx 75% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 25% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 50% complete for 20191112.A-G4_R1.fastq.gz
+Approx 65% complete for 20191112.A-G2_R1.fastq.gz
+Approx 60% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 75% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 40% complete for 20191112.A-G1_R1.fastq.gz
+Approx 80% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 50% complete for 20191112.A-G3_R1.fastq.gz
+Approx 70% complete for 20191112.A-G2_R1.fastq.gz
+Approx 55% complete for 20191112.A-G4_R1.fastq.gz
+Approx 65% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 80% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 85% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 45% complete for 20191112.A-G1_R1.fastq.gz
+Approx 85% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 75% complete for 20191112.A-G2_R1.fastq.gz
+Approx 70% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 30% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 55% complete for 20191112.A-G3_R1.fastq.gz
+Approx 90% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 60% complete for 20191112.A-G4_R1.fastq.gz
+Approx 90% complete for 20191112.A-GE3_R1.fastq.gz
+Approx 80% complete for 20191112.A-G2_R1.fastq.gz
+Approx 95% complete for 20191112.A-GE2_R1.fastq.gz
+Approx 75% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 50% complete for 20191112.A-G1_R1.fastq.gz
+Approx 60% complete for 20191112.A-G3_R1.fastq.gz
+Approx 65% complete for 20191112.A-G4_R1.fastq.gz
+Approx 95% complete for 20191112.A-GE3_R1.fastq.gz
+Analysis complete for 20191112.A-GE2_R1.fastq.gz
+Approx 85% complete for 20191112.A-G2_R1.fastq.gz
+Approx 80% complete for 20191112.A-GE1_R1.fastq.gz
+Analysis complete for 20191112.A-GE3_R1.fastq.gz
+Approx 35% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 65% complete for 20191112.A-G3_R1.fastq.gz
+Approx 90% complete for 20191112.A-G2_R1.fastq.gz
+Approx 70% complete for 20191112.A-G4_R1.fastq.gz
+Approx 55% complete for 20191112.A-G1_R1.fastq.gz
+Approx 85% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 95% complete for 20191112.A-G2_R1.fastq.gz
+Approx 75% complete for 20191112.A-G4_R1.fastq.gz
+Approx 70% complete for 20191112.A-G3_R1.fastq.gz
+Approx 90% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 60% complete for 20191112.A-G1_R1.fastq.gz
+Analysis complete for 20191112.A-G2_R1.fastq.gz
+Approx 40% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 95% complete for 20191112.A-GE1_R1.fastq.gz
+Approx 80% complete for 20191112.A-G4_R1.fastq.gz
+Approx 75% complete for 20191112.A-G3_R1.fastq.gz
+Approx 65% complete for 20191112.A-G1_R1.fastq.gz
+Analysis complete for 20191112.A-GE1_R1.fastq.gz
+Approx 85% complete for 20191112.A-G4_R1.fastq.gz
+Approx 80% complete for 20191112.A-G3_R1.fastq.gz
+Approx 45% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 70% complete for 20191112.A-G1_R1.fastq.gz
+Approx 90% complete for 20191112.A-G4_R1.fastq.gz
+Approx 85% complete for 20191112.A-G3_R1.fastq.gz
+Approx 95% complete for 20191112.A-G4_R1.fastq.gz
+Approx 75% complete for 20191112.A-G1_R1.fastq.gz
+Approx 90% complete for 20191112.A-G3_R1.fastq.gz
+Approx 50% complete for 20191112.A-GE4_R1.fastq.gz
+Analysis complete for 20191112.A-G4_R1.fastq.gz
+Approx 80% complete for 20191112.A-G1_R1.fastq.gz
+Approx 95% complete for 20191112.A-G3_R1.fastq.gz
+Analysis complete for 20191112.A-G3_R1.fastq.gz
+Approx 55% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 85% complete for 20191112.A-G1_R1.fastq.gz
+Approx 90% complete for 20191112.A-G1_R1.fastq.gz
+Approx 60% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 95% complete for 20191112.A-G1_R1.fastq.gz
+Approx 65% complete for 20191112.A-GE4_R1.fastq.gz
+Analysis complete for 20191112.A-G1_R1.fastq.gz
+Approx 70% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 75% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 80% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 85% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 90% complete for 20191112.A-GE4_R1.fastq.gz
+Approx 95% complete for 20191112.A-GE4_R1.fastq.gz
+Analysis complete for 20191112.A-GE4_R1.fastq.gz
+
+  /// MultiQC 🔍 | v1.14
+
+|           multiqc | Search path : /home/rstudio/work/rna-seq-course-feb2023/results/1_qc/fastqc
+|         searching | ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 152/152  
+|            fastqc | Found 8 reports
+|           multiqc | Compressing plot data
+|           multiqc | Report      : results/1_qc/multiqc/multiqc_report.html
+|           multiqc | Data        : results/1_qc/multiqc/multiqc_data
+|           multiqc | MultiQC complete</code></pre>
+</div>
+</div>
+<p>Assuming we are not carrying on with manual execution of fastp in the next section, run the following block to delete the raw data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> ../../data/tmp/yeast_fastq_full</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="exersise-2" class="level2">
+<h2 class="anchored" data-anchor-id="exersise-2">Exersise #2</h2>
+<p>Take a look at the outputs in the “results/1_qc/fastqc” and “results/1_qc/multiqc” directory to answer the following questions.</p>
+<ol type="1">
+<li>Did the pooling work well?</li>
+<li>What could be an explanation for the decrease in quality towards the ends of the reads?</li>
+<li>How does the per-base sequence content look for each sample?</li>
+<li>Do you think it makes sense to sequence longer based on these data?</li>
+<li>What would be a good method of preprocessing?</li>
+</ol>
+<div class="callout-note callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solutions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>There were most likely some problems with the pooling. GE4 appears to be over-represented while other samples are comparatively underrepresented. This could be due to the sequencer type: some Illumina instruments can prefer shorter fragments during bridge amplification.</li>
+<li>This is a multi-faceted issue. It is a general artifact of Illumina sequencers on one hand, related towards the speed of sequencing and the longevity of the reagents. We sequenced on the NextSeq, which has a maximum read length of 150. On another, adapter content towards the 3’ end of the read can negatively affect the performance.</li>
+<li>It looks as expected. GE4 however has an increase in the amount of Gs towards the end of the read. This is most likely due to very short fragment lengths (or adapter dimers) and the sequencer beginning to read past the adapter.</li>
+<li>No, the adapter content is already quite high for most of the samples. Sequencing longer fragments would not be worth the investment, most likely.</li>
+<li>Trimming off the adapter and removing the first few bases off the 5’ end would remove most of the marking of bad quality from these samples, especially GE4.</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="fastqscreen" class="level1">
+<h1>FastqScreen</h1>
+<p><a href="https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/_build/html/index.html">FastqScreen</a> is a tool which aligns fastq files to a database of different genomes to determine from where the data originate. This can be used for a variety of purposes, such as for metagenomic characterisation, but we will use it as a QC tool to determine any potential sources of contamination.</p>
+<p>Unfortunately, executing <code>fastq_screen</code> can take a significant amount of time even on a larger amount of resources than we have available in the course, so we will simply look at the results. The application is installed, however, and you can take a look at the arguments it would take if we were to execute it ourselves.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/opt/fastq_screen_v0.14.0/fastq_screen</span> <span class="at">-h</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre class="scrolling"><code>    
+FastQ Screen - Map sequences against multiple genomes
+
+www.bioinformatics.babraham.ac.uk/projects/fastq_screen
+Contact: steven.wingett@babraham.ac.uk
+
+Synopsis
+
+  fastq_screen [OPTIONS]... [FastQ FILE]...
+
+Function
+
+  FastQ Screen is intended to be used as part of a QC pipeline.
+  It allows you to take a sequence dataset and search it
+  against a set of bowtie databases.  It will then generate
+  both a text and a graphical summary of the results to see if
+  the sequence dataset contains the kind of sequences you expect.
+
+Options
+
+ --add_genome &lt;text&gt;  Edits the file 'fastq_screen.conf' (in the folder where
+                      this script is saved) to add a new genome. Specify the 
+                      additional genome as a comma separated list:
+                      'Database name','Genome path and basename','Notes'
+
+ --aligner &lt;func&gt;     Specify the aligner to use for the mapping. Valid 
+                      arguments are 'bowtie', bowtie2' (default) or 'bwa'.  
+                      Bowtie maps with parameters -k 2, Bowtie 2 with 
+                      parameters -k 2 --very-fast-local and BWA with mem -a.  
+                      Local aligners such as BWA or Bowtie2 will be better 
+                      at detecting the origin of chimeric reads. 
+
+ --bisulfite          Process bisulfite libraries. The path to the 
+                      bisulfite aligner (Bismark) may be specified in the 
+                      configuration file. Bismark runs in non-directional 
+                      mode. Either conventional or bisulfite libraries may
+                      be processed, but not both simultaneously. The 
+                      --bisulfite option cannot be used in conjunction with 
+                      --bwa.
+
+ --bowtie &lt;text&gt;      Specify extra parameters to be passed to Bowtie. 
+                      These parameters should be quoted to clearly 
+                      delimit bowtie parameters from fastq_screen 
+                      parameters. You should not try to use this option 
+                      to override the normal search or reporting options 
+                      for bowtie which are set automatically but it might 
+                      be useful to allow reads to be trimmed before
+                      alignment etc.
+
+ --bowtie2 &lt;text&gt;     Specify extra parameters to be passed to Bowtie 2. 
+                      These parameters should be quoted to clearly 
+                      delimit Bowtie 2 parameters from FastQ Screen 
+                      parameters. You should not try to use this option 
+                      to override the normal search or reporting options 
+                      for bowtie which are set automatically but it might 
+                      be useful to allow reads to be trimmed before
+                      alignment etc.  
+
+ --bwa &lt;text&gt;         Specify extra parameters to be passed to BWA. 
+                      These parameters should be quoted to clearly 
+                      delimit BWA parameters from FastQ Screen 
+                      parameters. You should not try to use this option 
+                      to override the normal search or reporting options 
+                      for BWA which are set automatically but it might 
+                      be useful to allow reads to be trimmed before
+                      alignment etc. 
+
+ --conf &lt;path&gt;        Manually specify a location for the configuration.
+ 
+ --filter &lt;text&gt;      Produce a FASTQ file containing reads mapping to 
+                      specified genomes. Pass the argument a string of
+                      characters (0, 1, 2, 3, -), in which each character 
+                      corresponds to a reference genome (in the order the 
+                      reference genome occurs in the configuration file).  
+                      Below gives an explanation of each character.     
+                      0: Read does not map
+                      1: Read maps uniquely
+                      2: Read multi-maps
+                      3: Read maps (one or more times)
+                      4: Passes filter 0 or filter 1
+                      5: Passes filter 0 or filter 2
+                      -: Do not apply filter to this genome
+                
+                      Consider mapping to three genomes (A, B and C), the 
+                      string '003' produces a file in which reads do not 
+                      map to genomes A or B, but map (once or more) to 
+                      genome C.  The string '--1' would generate a file in 
+                      which reads uniquely map to genome C. Whether reads 
+                      map to genome A or B would be ignored.
+                      
+                      A read needs to pass all the genome filters to be
+                      considered valid (unless --pass specified).
+               
+                      When --filter is used in conjuction with --tag, FASTQ
+                      files shall be mapped, tagged and then filtered. If
+                      the --tag option is not selected however, the input 
+                      FASTQ file should have been previously tagged.
+                
+ --force              Do not terminate if output files already exist,
+                      instead overwrite the files.
+ 
+ --get_genomes        Download pre-indexed Bowtie2 genomes for a range of
+                      commonly studied species and sequences. If used with
+                      --bisulfite, Bismark bisulfite Bowtie2 indices will
+                      be downloaded instead.                      
+                      
+ --help               Print program help and exit.
+
+ --illumina1_3        Assume that the quality values are in encoded in
+                      Illumina v1.3 format. Defaults to Sanger format
+                      if this flag is not specified.
+
+ --inverse            Inverts the --filter results i.e. reads that pass
+                      the --filter parameter will not pass when 
+                      --filter --inverse are specified together, and vice
+                      versa.                      
+
+ --nohits             Writes to a file the sequences that did not map to 
+                      any of the specified genomes. This option is 
+                      equivalent to specifying --tag --filter 0000 (number
+                      of zeros corresponds to the number of genomes
+                      screened).  By default the whole input file will be
+                      mapped, unless overridden by --subset.                
+
+ --outdir &lt;text&gt;      Specify a directory in which to save output files.
+                      If no directory is specified then output files
+                      are saved in the current working directory.
+                      
+ --pass &lt;int&gt;         Used in conjunction with --filter. By default all
+                      genome filters must be passed for a read to pass
+                      the --filter option.  However, a minimum number 
+                      of genome filters may be specified that a read
+                      needs pass to be considered to pass the --filter
+                      option. (--pass 1 effecitively acts as an OR
+                      boolean operator for the genome filters.)                   
+                      
+ --quiet              Suppress all progress reports on stderr and only
+                      report errors.
+
+ --subset &lt;int&gt;       Don't use the whole sequence file, but create a 
+                      temporary dataset of this specified number of 
+                      reads. The dataset created will be of 
+                      approximately (within a factor of 2) of this size. 
+                      If the real dataset is smaller than twice the 
+                      specified size then the whole dataset will be used. 
+                      Subsets will be taken evenly from throughout the 
+                      whole original dataset. By Default FastQ Screen 
+                      runs with this parameter set to 100000. To process
+                      an entire dataset however, adjust --subset to 0.
+
+--tag                 Label each FASTQ read header with a tag listing to 
+                      which genomes the read did, or did not align. The 
+                      first read in the output FASTQ file will list the 
+                      full genome names along with a score denoting 
+                      whether the read did not align (0), aligned 
+                      uniquely to the specified genome (1), or aligned 
+                      more than once (2). In subsequent reads the 
+                      genome names are omitted and only the score is 
+                      printed, in the same order as the first line.
+
+                      This option results in the he whole file being 
+                      processed unless overridden explicitly by the user 
+                      with the --subset parameter 
+
+--threads &lt;int&gt;       Specify across how many threads bowtie will be
+                      allowed to run. Overrides the default value set
+                      in the configuration file
+
+--top &lt;int&gt;/&lt;int,int&gt; Don't use the whole sequence file, but create a 
+                      temporary dataset of the specified number of 
+                      reads taken from the top of the original file. It is
+                      also possible to specify the number of lines to skip
+                      before beginning the selection e.g. 
+                      --top 100000,5000000 skips the first five million 
+                      reads and selects the subsequent one hundred thousand 
+                      reads. While this option is usually faster than 
+                      comparable --subset operations, it does not prevent 
+                      biases arising from non-uniform distribution of 
+                      reads in the original FastQ file. This option should 
+                      only be used when minimising processing time is of 
+                      highest priority. 
+
+--version             Print the program version and exit.
+
+2019 Babraham Institute, Cambridge, UK </code></pre>
+</div>
+</div>
+<p>Let’s download these results now.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="va">CURR_DIR</span><span class="op">=</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../..</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Make directories</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="va">OUTPUT_DIR</span><span class="op">=</span>results/1_qc/fastq_screen</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$OUTPUT_DIR</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$OUTPUT_DIR</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-O</span> https://fgcz-gstore.uzh.ch/public/RNASeqCourse/yeast_fastq_screen.html</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Back home</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$CURR_DIR</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 6947k  100 6947k    0     0  76.2M      0 --:--:-- --:--:-- --:--:-- 77.0M</code></pre>
+</div>
+</div>
+<p>Open the downloaded html file which has been placed within <code>results/1_qc/fastq_screen</code>.</p>
+<section id="exercise-3" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-3">Exercise #3</h2>
+<ol type="1">
+<li>Which sample has the lowest rate of alignment to adapter sequence? Which has the highest?</li>
+<li>Which organism next to yeast has the highest hit for the samples?</li>
+</ol>
+<div class="callout-note callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solutions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>GE3 has the lowest rate of alignment to adapter sequence while GE4 has the highest rate. This is consistent with the fastqc result as well, where we saw a similar pattern for GE4.</li>
+<li>The second highest hit for all samples is Bacillus cereus. This is a bacterium found commonly in the environment and the hits here are in all likelihood not simply by chance. The mapping rate is fairly low so we don’t expect this degree of contamination to have much impact on the samples.</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="preprocessing-with-fastp" class="level1">
+<h1>Preprocessing with <code>fastp</code></h1>
+<p>In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp<span class="citation" data-cites="chen2018">(<a href="#ref-chen2018" role="doc-biblioref">Chen et al. 2018</a>)</span>. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does, but <strong>do not execute it</strong>. Depending on the resources, fastp can take a long time to execute for this number of samples (~1 hr in this case), so we opt to rather download the outputs for use in the next chapter.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="va">CURR_DIR</span><span class="op">=</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../..</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="va">FASTP_OUTDIR</span><span class="op">=</span>results/1_qc/fastp</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$FASTP_OUTDIR</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Start processing with fastp</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> FASTQ <span class="kw">in</span> data/tmp/yeast_fastq_full/<span class="pp">*</span>_R1.fastq.gz</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">do</span> <span class="va">SAMPLE_NAME</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">${FASTQ</span><span class="op">%</span>_R1.fastq.gz<span class="va">})</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="va">$SAMPLE_NAME</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="ex">/opt/fastp</span> <span class="at">--in1</span> <span class="va">$FASTQ</span> <span class="dt">\</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">--out1</span> <span class="va">$FASTP_OUTDIR</span>/<span class="va">$SAMPLE_NAME</span><span class="st">"_trimmed_R1.fastq.gz"</span> <span class="dt">\</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">--thread</span> 4 <span class="at">--trim_front1</span> 4 <span class="at">--trim_tail1</span> 0 <span class="dt">\</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">--adapter_fasta</span> data/supplementary-files/allIllumina-forTrimmomatic-20160202.fa <span class="dt">\</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">--max_len1</span> 0 <span class="at">--max_len2</span> 0 <span class="at">--trim_poly_x</span> <span class="at">--average_qual</span> 20 <span class="dt">\</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">--poly_x_min_len</span> 10 <span class="at">--length_required</span> 30 <span class="at">--compression</span> 2 <span class="dt">\</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span><span class="op">&gt;</span> <span class="va">$FASTP_OUTDIR</span>/<span class="va">$SAMPLE_NAME</span><span class="st">"_preprocessing.log"</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span> <span class="at">-f</span> <span class="va">$FASTQ</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Back home</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$CURR_DIR</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="exercise-4" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-4">Exercise #4</h2>
+<ol type="1">
+<li>What issues if any that you noticed in the FastQC output would be solved by using fastp with the arguments provided?</li>
+<li>Which sequences are provided for trimming?</li>
+<li>How could the sequence of operations of fastp affect trimming?</li>
+</ol>
+<div class="callout-note callout callout-style-simple callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solutions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p>The adapter content in some of the samples</p></li>
+<li><p>The file with all sequences considered to be adapter provided here <code>data/supplementary-files/allIllumina-forTrimmomatic-20160202.fa</code> . This list is not exhaustive and may need to be expanded if your library prep in question uses an adapter not in the list.</p></li>
+<li><p>According to the documentation on GitHub, fastp performs trimming in the following order:</p>
+<pre class="text"><code>1, UMI preprocessing (--umi)
+2, global trimming at front (--trim_front)
+3, global trimming at tail (--trim_tail)
+4, quality pruning at 5' (--cut_front)
+5, quality pruning by sliding window (--cut_right)
+6, quality pruning at 3' (--cut_tail)
+7, trim polyG (--trim_poly_g, enabled by default for NovaSeq/NextSeq data)
+8, trim adapter by overlap analysis (enabled by default for PE data)
+9, trim adapter by adapter sequence (--adapter_sequence, --adapter_sequence_r2. For PE data, this step is skipped if last step succeeded)
+10, trim polyX (--trim_poly_x)
+11, trim to max length (---max_len)</code></pre>
+<p>This sequence of steps might not work for every application. As an example: If we know we need to trim bases after the 5’ adapter, as might be the case in some types of library prep, one round of fastp processing will not be enough. We would need to run fastp once to perform adapter trimming and then run fastp again to trim off the remaining sequences at the 5’.</p></li>
+</ol>
+</div>
+</div>
+</div>
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-Andrews:2010tn" class="csl-entry" role="doc-biblioentry">
+Andrews, S. 2010. <span>“FASTQC. A Quality Control Tool for High Throughput Sequence Data.”</span>
+</div>
+<div id="ref-chen2018" class="csl-entry" role="doc-biblioentry">
+Chen, Shifu, Yanqing Zhou, Yaru Chen, and Jia Gu. 2018. <span>“Fastp: An Ultra-Fast All-in-One FASTQ Preprocessor.”</span> <em>Bioinformatics</em> 34 (17): i884–90. <a href="https://doi.org/10.1093/bioinformatics/bty560">https://doi.org/10.1093/bioinformatics/bty560</a>.
+</div>
+<div id="ref-ewels2016" class="csl-entry" role="doc-biblioentry">
+Ewels, Philip, Måns Magnusson, Sverker Lundin, and Max Käller. 2016. <span>“MultiQC: Summarize Analysis Results for Multiple Tools and Samples in a Single Report.”</span> <em>Bioinformatics</em> 32 (19): 3047–48. <a href="https://doi.org/10.1093/bioinformatics/btw354">https://doi.org/10.1093/bioinformatics/btw354</a>.
+</div>
+</div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

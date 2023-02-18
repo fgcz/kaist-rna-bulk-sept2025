@@ -29,6 +29,7 @@ In this part of the course, we will be primarily working with yeast samples, ini
 First, let's download the data. The script will download a tar file containing our fastq files, decompress it, and deposit the files into the folder `data/tmp/yeast_fastq_full`. To execute this script, press on the green arrow button (for all such bash scripts, we first switch to the root directory i.e. `/home/rstudio/work/rna-seq-course-feb2023` , so the locations of all output files is clearer).
 
 ```{bash}
+#| class-output: scrolling
 CURR_DIR=$(pwd)
 cd ../..
 
@@ -164,6 +165,20 @@ curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/yeast_fastq_screen.html
 cd $CURR_DIR
 ```
 
+Open the downloaded html file which has been placed within `results/1_qc/fastq_screen`.
+
+## Exercise #3
+
+1.  Which sample has the lowest rate of alignment to adapter sequence? Which has the highest?
+2.  Which organism next to yeast has the highest hit for the samples?
+
+::: {.callout-note collapse="true" appearance="simple"}
+## Solutions
+
+1.  GE3 has the lowest rate of alignment to adapter sequence while GE4 has the highest rate. This is consistent with the fastqc result as well, where we saw a similar pattern for GE4.
+2.  The second highest hit for all samples is Bacillus cereus. This is a bacterium found commonly in the environment and the hits here are in all likelihood not simply by chance. The mapping rate is fairly low so we don't expect this degree of contamination to have much impact on the samples.
+:::
+
 # Preprocessing with `fastp`
 
 In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp[@chen2018]. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does, but **do not execute it**. Depending on the resources, fastp can take a long time to execute for this number of samples (\~1 hr in this case), so we opt to rather download the outputs for use in the next chapter.
@@ -193,7 +208,7 @@ done
 cd $CURR_DIR
 ```
 
-## Exercise #3
+## Exercise #4
 
 1.  What issues if any that you noticed in the FastQC output would be solved by using fastp with the arguments provided?
 2.  Which sequences are provided for trimming?
