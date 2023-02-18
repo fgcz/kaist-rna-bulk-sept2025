@@ -40,3 +40,5 @@ src/4_differential_expression/4_differential_expression_files/figure-html/unname
 src/2_mapping/2_mapping_files/libs/bootstrap/bootstrap.min.css filter=lfs diff=lfs merge=lfs -text
 src/2_mapping/2_mapping_files/libs/bootstrap/bootstrap-icons.woff filter=lfs diff=lfs merge=lfs -text
 src/4_differential_expression/4_differential_expression_files/figure-html/unnamed-chunk-27-2.png filter=lfs diff=lfs merge=lfs -text
+src/1_qc/1_qc_files/libs/bootstrap/bootstrap.min.css filter=lfs diff=lfs merge=lfs -text
+src/1_qc/1_qc_files/libs/bootstrap/bootstrap-icons.woff filter=lfs diff=lfs merge=lfs -text
