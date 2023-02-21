@@ -404,6 +404,12 @@ The following image and linked StackedOverflow post explains well the difference
 
 ## Correlation Plots
 
+We can also quantify the similarity between samples using correlations. This involves simply computing pairwise correlations between samples using the gene count vectors of each samples as inputs. The following methods this method as a basis.
+
+### By-Sample Dendogram and Correlations
+
+We can use hierarchical clustering using the pearson correlations as inputs. This will group samples together in a hierarchical fashion in a tree-like structure.
+
 ```{r}
 d <- as.dist(1-cor(vsdSE, use="complete.obs"))
 hc <- hclust(d, method="ward.D2")
@@ -411,6 +417,8 @@ WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 ```
 
 ### Correlation Heatmap
+
+Similarly, we can call `pheatmap` on the correlations to easily visualize the similarity between samples within and across conditions.
 
 ```{r}
 # Pearson correlation plot 
