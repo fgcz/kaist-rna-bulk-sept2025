@@ -177,6 +177,7 @@ div.csl-indent {
   <ul class="collapse">
   <li><a href="#review-of-overrepresentation-analysis" id="toc-review-of-overrepresentation-analysis" class="nav-link" data-scroll-target="#review-of-overrepresentation-analysis">Review of Overrepresentation Analysis</a></li>
   <li><a href="#overrepresentation-analysis" id="toc-overrepresentation-analysis" class="nav-link" data-scroll-target="#overrepresentation-analysis">Overrepresentation Analysis</a></li>
+  <li><a href="#exercise-4" id="toc-exercise-4" class="nav-link" data-scroll-target="#exercise-4">Exercise #4</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -235,7 +236,7 @@ div.csl-indent {
                                  Dload  Upload   Total   Spent    Left  Speed
 
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 4760k  100 4760k    0     0  28.5M      0 --:--:-- --:--:-- --:--:-- 28.6M
+100 4760k  100 4760k    0     0  37.1M      0 --:--:-- --:--:-- --:--:-- 37.1M
 ./G1.h5
 ./G1.json
 ./G1.txt
@@ -467,8 +468,8 @@ colData names(1): Condition</code></pre>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(toPlot, <span class="at">x=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim1</span><span class="st">`</span>, <span class="at">y=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim2</span><span class="st">`</span>, <span class="at">z=</span><span class="sc">~</span><span class="st">`</span><span class="at">Leading logFC dim3</span><span class="st">`</span>, <span class="at">color=</span><span class="sc">~</span>Condition, <span class="at">colors=</span><span class="st">"Set1"</span>, <span class="at">type=</span><span class="st">'scatter3d'</span>, <span class="at">mode=</span><span class="st">'markers+text'</span>, <span class="at">text=</span><span class="sc">~</span>Sample, <span class="at">textposition =</span> <span class="st">"top right"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  plotly<span class="sc">::</span><span class="fu">layout</span>(<span class="at">title=</span><span class="st">"Classical MDS"</span>, <span class="at">scene=</span><span class="fu">list</span>(<span class="at">xaxis=</span><span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim1'</span>), <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim2'</span>), <span class="at">zaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">'Leading logFC dim3'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="htmlwidget-29b59fe15fd8e2de7c7f" style="width:100%;height:464px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-29b59fe15fd8e2de7c7f">{"x":{"visdat":{"355128d3de40":["function () ","plotlyVisDat"]},"cur_data":"355128d3de40","attrs":{"355128d3de40":{"x":{},"y":{},"z":{},"mode":"markers+text","text":{},"textposition":"top right","color":{},"colors":"Set1","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Classical MDS","scene":{"xaxis":{"title":"Leading logFC dim1"},"yaxis":{"title":"Leading logFC dim2"},"zaxis":{"title":"Leading logFC dim3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0.374018545923314,0.366935045727654,0.32417313014928,0.345780671985087],"y":[0.317667863888915,-0.137888999338216,-0.443034642913488,0.213320752868456],"z":[0.226483279085005,-0.494145348664776,0.244144662004347,0.0942086871299505],"mode":"markers+text","text":["G1","G2","G3","G4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"Glucose","marker":{"color":"rgba(228,26,28,1)","line":{"color":"rgba(228,26,28,1)"}},"textfont":{"color":"rgba(228,26,28,1)"},"error_y":{"color":"rgba(228,26,28,1)"},"error_x":{"color":"rgba(228,26,28,1)"},"line":{"color":"rgba(228,26,28,1)"},"frame":null},{"x":[-0.378801166433371,-0.360361689911518,-0.366245571597156,-0.305498965843289],"y":[-0.414373639016015,-0.337249386061851,0.526473095072404,0.275084955499797],"z":[0.0678563560137697,0.139513967946987,0.39637373968433,-0.674435343199615],"mode":"markers+text","text":["GE1","GE2","GE3","GE4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"GlycEth","marker":{"color":"rgba(55,126,184,1)","line":{"color":"rgba(55,126,184,1)"}},"textfont":{"color":"rgba(55,126,184,1)"},"error_y":{"color":"rgba(55,126,184,1)"},"error_x":{"color":"rgba(55,126,184,1)"},"line":{"color":"rgba(55,126,184,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-014441003e3ce227f7f5" style="width:100%;height:464px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-014441003e3ce227f7f5">{"x":{"visdat":{"3bff67a5d9c8":["function () ","plotlyVisDat"]},"cur_data":"3bff67a5d9c8","attrs":{"3bff67a5d9c8":{"x":{},"y":{},"z":{},"mode":"markers+text","text":{},"textposition":"top right","color":{},"colors":"Set1","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Classical MDS","scene":{"xaxis":{"title":"Leading logFC dim1"},"yaxis":{"title":"Leading logFC dim2"},"zaxis":{"title":"Leading logFC dim3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0.374018545923314,0.366935045727654,0.32417313014928,0.345780671985087],"y":[0.317667863888915,-0.137888999338216,-0.443034642913488,0.213320752868456],"z":[0.226483279085005,-0.494145348664776,0.244144662004347,0.0942086871299505],"mode":"markers+text","text":["G1","G2","G3","G4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"Glucose","marker":{"color":"rgba(228,26,28,1)","line":{"color":"rgba(228,26,28,1)"}},"textfont":{"color":"rgba(228,26,28,1)"},"error_y":{"color":"rgba(228,26,28,1)"},"error_x":{"color":"rgba(228,26,28,1)"},"line":{"color":"rgba(228,26,28,1)"},"frame":null},{"x":[-0.378801166433371,-0.360361689911518,-0.366245571597156,-0.305498965843289],"y":[-0.414373639016015,-0.337249386061851,0.526473095072404,0.275084955499797],"z":[0.0678563560137697,0.139513967946987,0.39637373968433,-0.674435343199615],"mode":"markers+text","text":["GE1","GE2","GE3","GE4"],"textposition":["top right","top right","top right","top right"],"type":"scatter3d","name":"GlycEth","marker":{"color":"rgba(55,126,184,1)","line":{"color":"rgba(55,126,184,1)"}},"textfont":{"color":"rgba(55,126,184,1)"},"error_y":{"color":"rgba(55,126,184,1)"},"error_x":{"color":"rgba(55,126,184,1)"},"line":{"color":"rgba(55,126,184,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -868,19 +869,52 @@ p = 1 - \sum_{0}^{k-1}\frac{{M \choose i}{N-M \choose n-i}}{N \choose i}
 <div class="cell-output cell-output-stderr">
 <pre><code></code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>clusterProfiler<span class="sc">::</span><span class="fu">dotplot</span>(ego)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate log label mapping for cnet plot</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>log2RatioLabel <span class="ot">&lt;-</span> res<span class="sc">$</span>log2FoldChange[downGenesIndex]</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(log2RatioLabel) <span class="ot">&lt;-</span> downGenes</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>log2RatioLabel <span class="ot">&lt;-</span> <span class="fu">sort</span>(log2RatioLabel, <span class="at">decreasing=</span><span class="cn">TRUE</span>)</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot dotplot</span></span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>clusterProfiler<span class="sc">::</span><span class="fu">dotplot</span>(ego) <span class="sc">+</span></span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.01</span>, <span class="at">size =</span> <span class="dv">8</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="4_differential_expression_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>clusterProfiler<span class="sc">::</span><span class="fu">cnetplot</span>(ego)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot cnetplot</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>clusterProfiler<span class="sc">::</span><span class="fu">cnetplot</span>(ego, </span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">color.params =</span> <span class="fu">list</span>(<span class="at">foldChange =</span> log2RatioLabel),</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">cex.params =</span> <span class="fu">list</span>(<span class="at">gene_label =</span> <span class="fl">0.3</span>,</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">category_label =</span> <span class="fl">0.7</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: ggrepel: 23 unlabeled data points (too many overlaps). Consider
+<pre><code>Scale for size is already present.
+Adding another scale for size, which will replace the existing scale.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: ggrepel: 1 unlabeled data points (too many overlaps). Consider
 increasing max.overlaps</code></pre>
 </div>
 <div class="cell-output-display">
 <p><img src="4_differential_expression_files/figure-html/unnamed-chunk-27-2.png" class="img-fluid" width="672"></p>
 </div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot goplot</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>clusterProfiler<span class="sc">::</span><span class="fu">goplot</span>(ego,</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">cex.params =</span> <span class="fu">list</span>(<span class="at">category_label =</span> <span class="fl">0.2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: ggrepel: 29 unlabeled data points (too many overlaps). Consider
+increasing max.overlaps</code></pre>
 </div>
+<div class="cell-output-display">
+<p><img src="4_differential_expression_files/figure-html/unnamed-chunk-27-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="exercise-4" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-4">Exercise #4</h2>
+<ol type="1">
+<li>Try using the <code>setReadable</code> function to change the <code>ego</code> object such that the labels for the cnetplot are the gene names.</li>
+<li>Repeat the process above for the BP term, this time using the up-regulated genes.</li>
+<li>Try to run <code>enrichKEGG</code> from the clusterProfiler package.</li>
+</ol>
 
 </section>
 </section>

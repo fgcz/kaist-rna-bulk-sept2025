@@ -458,6 +458,29 @@ ego <- clusterProfiler::enrichGO(gene = downGenes,
                                  pvalueCutoff = 0.01, 
                                  qvalueCutoff = 0.05,
                                  readable = FALSE)
-clusterProfiler::dotplot(ego)
-clusterProfiler::cnetplot(ego)
+
+# Generate log label mapping for cnet plot
+log2RatioLabel <- res$log2FoldChange[downGenesIndex]
+names(log2RatioLabel) <- downGenes
+log2RatioLabel <- sort(log2RatioLabel, decreasing=TRUE)
+
+# Plot dotplot
+clusterProfiler::dotplot(ego) +
+  theme(axis.text.y = element_text(vjust = -0.01, size = 8))
+
+# Plot cnetplot
+clusterProfiler::cnetplot(ego, 
+                          color.params = list(foldChange = log2RatioLabel),
+                          cex.params = list(gene_label = 0.3,
+                                            category_label = 0.7))
+
+# Plot goplot
+clusterProfiler::goplot(ego,
+                        cex.params = list(category_label = 0.2))
 ```
+
+## Exercise #4
+
+1.  Try using the `setReadable` function to change the `ego` object such that the labels for the cnetplot are the gene names.
+2.  Repeat the process above for the BP term, this time using the up-regulated genes.
+3.  Try to run `enrichKEGG` from the clusterProfiler package.
