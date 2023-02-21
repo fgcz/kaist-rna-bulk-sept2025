@@ -14,6 +14,8 @@ bibliography: references.bib
 
 # Introduction to Bash
 
+(Adapted from LMU's shell scripting [notebook](https://cs.lmu.edu/~ray/notes/bash/))
+
 **Bash**, the Bourne-Again Shell, refers both to a particular Unix shell program and its associated scripting language. A shell is a command interpreter. Commands can be executable files or built-ins. Commands can be bundled together into a *script* which a shell program executes. How the commands are packaged and wired together, using variables, functions, and control-flow operators makes up the shell's *scripting language*.
 
 ```{bash}
