@@ -18,13 +18,20 @@ bibliography: references.bib
 
 **Bash**, the Bourne-Again Shell, refers both to a particular Unix shell program and its associated scripting language. A shell is a command interpreter. Commands can be executable files or built-ins. Commands can be bundled together into a *script* which a shell program executes. How the commands are packaged and wired together, using variables, functions, and control-flow operators makes up the shell's *scripting language*.
 
-A shell is a command interpreter. Commands can be executable files or built-ins. Commands can be bundled together into a *script* which a shell program executes. How the commands are packaged and wired together, using variables, functions, and control-flow operators makes up the shell's *scripting language*.
+You can think of bash in many ways as a file explorer. Instead of using a mouse to tell the computer where to go and what to do, you relay the instructions to the computer line-by-line with a tool called the **Terminal**.
 
 ## Navigation
 
 Bash is our primary tool for interacting with the terminal and importantly allows us to navigate through the computer's file system.
 
 Let's see some examples of commands you will find useful throughout the rest of the course.
+
+The command `echo` will simply return any text you give it.
+
+```{bash}
+echo Hello World
+echo We are learning bash!
+```
 
 `pwd` displays your current working directory (i.e. the directory that you're in)
 
@@ -79,16 +86,98 @@ Here, we again move up two directories, then into the data directory. Validate t
 
 ## Commands
 
-`cd` and `ls` are commands, and there are many more such commands in bash for performing various tasks. In fact, many more such commands exist and all of the tools in the first few sections of the practicals will be executed in the same way.
+`cd` and `ls` are commands, and there are many more such commands in bash for performing various tasks. In fact, many more such commands exist and all of the tools in the first few sections of the practicals will have corresponding executions on the command line.
 
 As an example, `realpath` specifies the **absolute path** of a given directory. This is the path relative to the **root** of the file system you are on and they will all start with `/`.
 
-Let's print the absolute path of the current workign directory.
+Let's print the absolute path of the current working directory.
 
 ```{bash}
 realpath .
 ```
 
 `pwd` already prints the absolute path of the current working directory, so the output of this command will be the same as running the above cell block.
+
+Many tools have special **options** which change the way the tool behaves. These are usually specified in bash using a single `-` or two dashes `--` if you want to use the longform alias.
+
+`ls` has two options which I find very useful.
+
+`-l` prints the output line-by-line and gives you some information about the size of each file and who has access to it.
+
+`-h` prints the `-l` output in a more human readable format (i.e. converting bytes into gigabtyes, megabytes, etc.)
+
+```{bash}
+cd ../../data
+ls -lh
+```
+
+## The root directory
+
+Let's see what's actually inside the root directory `/`
+
+```{bash}
+ls -lh /
+```
+
+There are a lot of different files and directories here required for the computer to work. In fact, it contains *all* the programs, data, and settings on your computer (so don't delete it). You may notice the `/home` directory, which is the directory in which all the course materials are located.
+
+I have additionally installed a number of different programs in `/opt`. Take a look at these now.
+
+```{bash}
+ls -lh /opt
+```
+
+## Variables
+
+We often want to save information for later use. Let's say for example that we want to keep a record of the current working directory, which we will then use later. This is where **variables** come in. Think of them as a bucket into which you can deposit information. We define variables by using the equal sign `=` . In order to *reference a variable*, we use the dollar sign `$` character in front of the variable name.
+
+Let's say we want to store the text "Hello World" inside a variable x and then print the text. We can also reassign the variable as many times as we want to a different text.
+
+```{bash}
+x="Hello World"
+echo $x
+echo $x
+x="Hello Bangaloru"
+echo $x
+```
+
+Bash primarily uses variables to store text output, but other programming languages use variables to store all kinds of information.
+
+## Loops
+
+Often, we would like to perform the same operation on multiple inputs. In the example below, we loop through the some words and print them line-by-line. A **for-loop** can help us with this. The different items are separated by a space. The **body** of a for-loop will be executed for every specified item.
+
+```{bash}
+for TEXT in "abc" "def" "I" "like" "programming"; do
+  echo $TEXT
+done
+```
+
+The above example is very simple, but for-loops allow us to do many useful things, such as executing the same command for a series of samples to process with a certain tool, for instance. We will see some examples of this in the later notebooks.
+
+## Executing script files
+
+Sometimes, we want to reuse a series of bash command for later use. In this case, we can place the files into a file ending in `.sh` and call `bash` as a command to execute the contents.
+
+First, create a file in the **current directory** containing the following lines and save it as a file called "test.sh"
+
+```{bash}
+echo "Hello World"
+cd ..
+ls -lh
+cd ..
+ls -lh
+sleep 2
+```
+
+Execute this file by typing the following.
+
+```{bash}
+bash test.sh
+```
+
+## Summary
+
+We have just skimmed the surface of what `bash` can do, and you should be able to understand the bash code in the rest of the module a little better now. Still, we encourage you to spend more time getting familiar with bash after this course because it will be instrumental in running not just these analyses, but many other tools and bioinformatic pipelines.
 
 # Introduction to R
