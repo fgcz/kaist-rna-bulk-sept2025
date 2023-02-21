@@ -18,16 +18,77 @@ bibliography: references.bib
 
 **Bash**, the Bourne-Again Shell, refers both to a particular Unix shell program and its associated scripting language. A shell is a command interpreter. Commands can be executable files or built-ins. Commands can be bundled together into a *script* which a shell program executes. How the commands are packaged and wired together, using variables, functions, and control-flow operators makes up the shell's *scripting language*.
 
-```{bash}
+A shell is a command interpreter. Commands can be executable files or built-ins. Commands can be bundled together into a *script* which a shell program executes. How the commands are packaged and wired together, using variables, functions, and control-flow operators makes up the shell's *scripting language*.
 
+## Navigation
+
+Bash is our primary tool for interacting with the terminal and importantly allows us to navigate through the computer's file system.
+
+Let's see some examples of commands you will find useful throughout the rest of the course.
+
+`pwd` displays your current working directory (i.e. the directory that you're in)
+
+```{bash}
+pwd
 ```
 
-```{bash}
-
-```
+`ls` prints the content of a specified directory
 
 ```{bash}
-
+ls .
 ```
+
+The `.` specifies that we would like to operate on the current directory. Since we are running these from a notebook, the working directory will be the same as that of the notebook (see the output of `pwd` above).
+
+Similarly, typing `..` means you want the shell to look up one directory in the hierarchy. This will be `/home/rstudio/work/rna-seq-course-feb2023/src` in our case.
+
+```{bash}
+ls ..
+```
+
+To change the directory, use the command `cd`
+
+```{bash}
+cd ..  # go up one directory
+ls .  # print the contents of the directory
+```
+
+::: {.callout-caution appearance="simple"}
+Beware that every ***code chunk*** (the blocks with the green arrow) is run *in isolation within a separate bash session*. This means that we effectively return to the original directory after execution of the code cell. You can test this by running the cell multiple times in a row. The output remains the same because we return to the original directory each time implicitly.
+
+Running the code in the tab below called "terminal" however *does* keep a memory of everything we have executed because it is running a single, uninterrupted session. In the same way as the code blocks above, if we were to terminate Renku and (and exit the bash session above), the next time we log in, we would automatically be placed into the project directory (by default) and not in the directory we were in before we closed the session.
+:::
+
+Let's move around a bit more.
+
+```{bash}
+cd ../..
+ls
+```
+
+The `/` character separates directories, so placing it between two `..` means we move up **2** directories instead of one.
+
+Let's navigate into the `data` directory in the root project directory.
+
+```{bash}
+cd ../../data
+ls
+```
+
+Here, we again move up two directories, then into the data directory. Validate this result by using the file explorer on the right.
+
+## Commands
+
+`cd` and `ls` are commands, and there are many more such commands in bash for performing various tasks. In fact, many more such commands exist and all of the tools in the first few sections of the practicals will be executed in the same way.
+
+As an example, `realpath` specifies the **absolute path** of a given directory. This is the path relative to the **root** of the file system you are on and they will all start with `/`.
+
+Let's print the absolute path of the current workign directory.
+
+```{bash}
+realpath .
+```
+
+`pwd` already prints the absolute path of the current working directory, so the output of this command will be the same as running the above cell block.
 
 # Introduction to R
