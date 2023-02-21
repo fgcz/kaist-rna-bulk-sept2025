@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.613">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Introduction to Bash and R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="0_intro_to_R_and_bash_files/libs/clipboard/clipboard.min.js"></script>
+<script src="0_intro_to_R_and_bash_files/libs/quarto-html/quarto.js"></script>
+<script src="0_intro_to_R_and_bash_files/libs/quarto-html/popper.min.js"></script>
+<script src="0_intro_to_R_and_bash_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="0_intro_to_R_and_bash_files/libs/quarto-html/anchor.min.js"></script>
+<link href="0_intro_to_R_and_bash_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="0_intro_to_R_and_bash_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="0_intro_to_R_and_bash_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="0_intro_to_R_and_bash_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="0_intro_to_R_and_bash_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<style>
+    .quarto-title-block .quarto-title-banner {
+      background: #00A7FF;
+    }
+    </style>
+
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Introduction to Bash and R</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-to-bash" id="toc-introduction-to-bash" class="nav-link active" data-scroll-target="#introduction-to-bash">Introduction to Bash</a>
+  <ul class="collapse">
+  <li><a href="#navigation" id="toc-navigation" class="nav-link" data-scroll-target="#navigation">Navigation</a></li>
+  <li><a href="#commands" id="toc-commands" class="nav-link" data-scroll-target="#commands">Commands</a></li>
+  </ul></li>
+  <li><a href="#introduction-to-r" id="toc-introduction-to-r" class="nav-link" data-scroll-target="#introduction-to-r">Introduction to R</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="introduction-to-bash" class="level1">
+<h1>Introduction to Bash</h1>
+<p>(Adapted from LMU’s shell scripting <a href="https://cs.lmu.edu/~ray/notes/bash/">notebook</a>)</p>
+<p><strong>Bash</strong>, the Bourne-Again Shell, refers both to a particular Unix shell program and its associated scripting language. A shell is a command interpreter. Commands can be executable files or built-ins. Commands can be bundled together into a <em>script</em> which a shell program executes. How the commands are packaged and wired together, using variables, functions, and control-flow operators makes up the shell’s <em>scripting language</em>.</p>
+<p>A shell is a command interpreter. Commands can be executable files or built-ins. Commands can be bundled together into a <em>script</em> which a shell program executes. How the commands are packaged and wired together, using variables, functions, and control-flow operators makes up the shell’s <em>scripting language</em>.</p>
+<section id="navigation" class="level2">
+<h2 class="anchored" data-anchor-id="navigation">Navigation</h2>
+<p>Bash is our primary tool for interacting with the terminal and importantly allows us to navigate through the computer’s file system.</p>
+<p>Let’s see some examples of commands you will find useful throughout the rest of the course.</p>
+<p><code>pwd</code> displays your current working directory (i.e.&nbsp;the directory that you’re in)</p>
+<pre class="{bash}"><code>pwd</code></pre>
+<p><code>ls</code> prints the content of a specified directory</p>
+<pre class="{bash}"><code>ls .</code></pre>
+<p>The <code>.</code> specifies that we would like to operate on the current directory. Since we are running these from a notebook, the working directory will be the same as that of the notebook (see the output of <code>pwd</code> above).</p>
+<p>Similarly, typing <code>..</code> means you want the shell to look up one directory in the hierarchy. This will be <code>/home/rstudio/work/rna-seq-course-feb2023/src</code> in our case.</p>
+<pre class="{bash}"><code>ls ..</code></pre>
+<p>To change the directory, use the command <code>cd</code></p>
+<pre class="{bash}"><code>cd ..  # go up one directory
+ls .  # print the contents of the directory</code></pre>
+<div class="callout-caution callout callout-style-simple">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>Beware that every <strong><em>code chunk</em></strong> (the blocks with the green arrow) is run <em>in isolation within a separate bash session</em>. This means that we effectively return to the original directory after execution of the code cell. You can test this by running the cell multiple times in a row. The output remains the same because we return to the original directory each time implicitly.</p>
+<p>Running the code in the tab below called “terminal” however <em>does</em> keep a memory of everything we have executed because it is running a single, uninterrupted session. In the same way as the code blocks above, if we were to terminate Renku and (and exit the bash session above), the next time we log in, we would automatically be placed into the project directory (by default) and not in the directory we were in before we closed the session.</p>
+</div>
+</div>
+</div>
+<p>Let’s move around a bit more.</p>
+<pre class="{bash}"><code>cd ../..
+ls</code></pre>
+<p>The <code>/</code> character separates directories, so placing it between two <code>..</code> means we move up <strong>2</strong> directories instead of one.</p>
+<p>Let’s navigate into the <code>data</code> directory in the root project directory.</p>
+<pre class="{bash}"><code>cd ../../data
+ls</code></pre>
+<p>Here, we again move up two directories, then into the data directory. Validate this result by using the file explorer on the right.</p>
+</section>
+<section id="commands" class="level2">
+<h2 class="anchored" data-anchor-id="commands">Commands</h2>
+<p><code>cd</code> and <code>ls</code> are commands, and there are many more such commands in bash for performing various tasks. In fact, many more such commands exist and all of the tools in the first few sections of the practicals will be executed in the same way.</p>
+<p>As an example, <code>realpath</code> specifies the <strong>absolute path</strong> of a given directory. This is the path relative to the <strong>root</strong> of the file system you are on and they will all start with <code>/</code>.</p>
+<p>Let’s print the absolute path of the current workign directory.</p>
+<pre class="{bash}"><code>realpath .</code></pre>
+<p><code>pwd</code> already prints the absolute path of the current working directory, so the output of this command will be the same as running the above cell block.</p>
+</section>
+</section>
+<section id="introduction-to-r" class="level1">
+<h1>Introduction to R</h1>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
