@@ -45,3 +45,4 @@ src/1_qc/1_qc_files/libs/bootstrap/bootstrap-icons.woff filter=lfs diff=lfs merg
 src/0_intro_to_R_and_bash/0_intro_to_R_and_bash_files/libs/bootstrap/bootstrap-icons.woff filter=lfs diff=lfs merge=lfs -text
 src/0_intro_to_R_and_bash/0_intro_to_R_and_bash_files/libs/bootstrap/bootstrap.min.css filter=lfs diff=lfs merge=lfs -text
 src/4_differential_expression/4_differential_expression_files/figure-html/unnamed-chunk-27-3.png filter=lfs diff=lfs merge=lfs -text
+src/3_quant/3_quantification_files/figure-html/unnamed-chunk-21-1.png filter=lfs diff=lfs merge=lfs -text
