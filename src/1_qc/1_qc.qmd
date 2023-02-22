@@ -189,9 +189,10 @@ cd ../..
 
 FASTP_OUTDIR=results/1_qc/fastp
 mkdir -p $FASTP_OUTDIR
+echo $(pwd)
 
 # Start processing with fastp
-for FASTQ in data/tmp/yeast_fastq_full/*_R1.fastq.gz
+for FASTQ in data/tmp/yeast_fastq_full/*_R1.fastq.gz;
   do SAMPLE_NAME=$(basename ${FASTQ%_R1.fastq.gz})
   echo $SAMPLE_NAME
   /opt/fastp --in1 $FASTQ \

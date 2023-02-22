@@ -29,7 +29,7 @@ Let's see some examples of commands you will find useful throughout the rest of 
 The command `echo` will simply return any text you give it.
 
 ```{bash}
-echo Hello World
+echo Hello World I am on CCAMP
 echo We are learning bash!
 ```
 
@@ -57,7 +57,7 @@ To change the directory, use the command `cd`
 
 ```{bash}
 cd ..  # go up one directory
-ls .  # print the contents of the directory
+ls ..  # print the contents of the directory
 ```
 
 ::: {.callout-caution appearance="simple"}
