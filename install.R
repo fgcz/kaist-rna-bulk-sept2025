@@ -18,7 +18,9 @@ remotes::install_version("gson", version = "0.0.7", repos = "http://cran.us.r-pr
 cranPackages <- c(
   "tidyverse",
   "plotly",
-  "pheatmap"
+  "pheatmap",
+  "patchwork",
+  "Seurat"
 )
 install.packages(cranPackages)
 
