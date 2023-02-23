@@ -211,7 +211,7 @@ rm -rf ../../results/1_qc/fastp/
 
     ```{r, eval=FALSE}
     fcG1 <- data.table::fread("../../results/3_quant/featureCounts/G1.txt")
-    kaG1 <- data.table::fread("../../results/3_quant/Kallisto/G1.txt")
+    kaG1 <- data.table::fread("../../results/3_quant/kallisto/20191112.A-G1.txt")
     all(sort(fcG1$Identifier) == sort(kaG1$target_id))  # Returns FALSE
     all(sort(fcG1$Identifier) == sort(unlist(str_remove(kaG1$target_id, "_mRNA"))))  # Returns TRUE
     ```

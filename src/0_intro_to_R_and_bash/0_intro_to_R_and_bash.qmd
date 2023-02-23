@@ -181,3 +181,38 @@ bash test.sh
 We have just skimmed the surface of what `bash` can do, and you should be able to understand the bash code in the rest of the module a little better now. Still, we encourage you to spend more time getting familiar with bash after this course because it will be instrumental in running not just these analyses, but many other tools and bioinformatic pipelines.
 
 # Introduction to R (to be filled out)
+
+```{r}
+print("Hello World")
+```
+
+```{r}
+x = 4
+x <- 4
+x + x
+```
+
+```{r}
+y <- x + x
+```
+
+```{r}
+4 / 2
+2 / 3
+```
+
+```{r}
+x <- c(1, 2, 3)
+```
+
+```{r}
+sumFn <- function(i) {
+  y <- i + i
+  return(y)
+}
+
+x <- 1:2000
+y <-as.numeric(x)
+
+sapply(x[1:1000], sumFn)
+```
