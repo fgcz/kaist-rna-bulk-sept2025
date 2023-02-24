@@ -20,6 +20,7 @@ cranPackages <- c(
   "plotly",
   "pheatmap",
   "patchwork",
+  "rgeos",
   "Seurat"
 )
 install.packages(cranPackages)
