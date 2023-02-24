@@ -1,0 +1,13 @@
+.scrolling {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.quarto-title-block .quarto-title-banner {
+  background-image: url(FGCZ.png);
+  background-size: 200px;
+  background-position: left;
+  background-repeat: no-repeat;
+  padding-left: 0px;
+  background-origin: content-box;
+}
