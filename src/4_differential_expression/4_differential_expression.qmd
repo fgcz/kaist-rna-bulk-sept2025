@@ -201,9 +201,9 @@ WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 
     ```{r, eval=FALSE}
     # First, we center the matrix
-    normCountsCentered <- sweep(normCounts, 1, rowMeans(normCounts))
+    normCountsCentered <- sweep(vsdSE, 1, rowMeans(vsdSE))
     # Identify high variance features
-    topGenes <- rownames(normCounts)[head(order(rowSds(normCounts, na.rm=TRUE),
+    topGenes <- rownames(vsdSE)[head(order(rowSds(vsdSE, na.rm=TRUE),
                                                 decreasing = TRUE), 2000)]
 
     countsToPlot <- normCountsCentered[topGenes,]
