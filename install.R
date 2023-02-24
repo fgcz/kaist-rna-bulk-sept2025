@@ -14,13 +14,13 @@ if (!require("BiocManager", quietly = TRUE)) {
 install.packages(c("remotes"))
 remotes::install_version("ggplot2", version = "3.4.0", repos = "http://cran.us.r-project.org")
 remotes::install_version("gson", version = "0.0.7", repos = "http://cran.us.r-project.org")
+remotes::install_version("rgeos", version = "0.6-1", repos = "http://cran.us.r-project.org")
 
 cranPackages <- c(
   "tidyverse",
   "plotly",
   "pheatmap",
   "patchwork",
-  "rgeos",
   "Seurat"
 )
 install.packages(cranPackages)
