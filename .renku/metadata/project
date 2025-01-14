@@ -27,12 +27,12 @@
     "@renku_data_type": "renku.domain_model.project.ProjectTemplateMetadata",
     "@renku_data_value": {
       "immutable_template_files": [],
-      "metadata": "{\"__template_source__\": \"https://github.com/SwissDataScienceCenter/renku-project-template\", \"__template_ref__\": \"0.3.5\", \"__template_id__\": \"R-minimal\", \"__namespace__\": \"falnoe\", \"__automated_update__\": true, \"__repository__\": \"https://renkulab.io/gitlab\", \"__sanitized_project_name__\": \"rna-seq-course-feb2023\", \"__project_slug__\": \"falnoe/rna-seq-course-feb2023\", \"__project_description__\": \"\", \"__renku_version__\": \"1.10.0\", \"name\": \"RNA-Seq Course Feb2023\", \"__name__\": \"RNA-Seq Course Feb2023\", \"__template_version__\": \"b4a335b6c14662ebd510438bfa9967df6d530332\"}",
-      "ssh_supported": false,
+      "metadata": "{\"__template_source__\": \"https://github.com/SwissDataScienceCenter/renku-project-template\", \"__template_ref__\": \"0.9.0\", \"__template_id__\": \"R-minimal\", \"__namespace__\": \"falnoe\", \"__automated_update__\": true, \"__repository__\": \"https://renkulab.io/gitlab\", \"__sanitized_project_name__\": \"rna-seq-course-feb2023\", \"__project_slug__\": \"falnoe/rna-seq-course-feb2023\", \"__project_description__\": \"\", \"__renku_version__\": \"2.9.2\", \"name\": \"RNA-Seq Course Feb2023\", \"__name__\": \"RNA-Seq Course Feb2023\", \"__template_version__\": \"c61f354efda7729cad3e8073be9c39019b8342e4\"}",
+      "ssh_supported": true,
       "template_id": "R-minimal",
-      "template_ref": "0.3.5",
+      "template_ref": "0.9.0",
       "template_source": "https://github.com/SwissDataScienceCenter/renku-project-template",
-      "template_version": "b4a335b6c14662ebd510438bfa9967df6d530332"
+      "template_version": "c61f354efda7729cad3e8073be9c39019b8342e4"
     }
   },
   "version": "10"
