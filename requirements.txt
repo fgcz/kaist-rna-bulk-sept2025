@@ -1,4 +1,3 @@
 # qc apps
 setuptools
 multiqc
-RSeQC
