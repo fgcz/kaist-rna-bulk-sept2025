@@ -36,11 +36,26 @@ FROM renku/renkulab-r:4.3.1-0.24.0
 
 USER root
 RUN apt-get update && \
-   apt-get install -y --no-install-recommends \
-   apt-utils \
-   vim \
-   libhdf5-dev \
-   libncurses5
+    apt-get install -y --no-install-recommends \
+    apt-utils \
+    vim \
+    libhdf5-dev \
+    libncurses5 \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    wget \
+    curl \
+    llvm \
+    libncursesw5-dev \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libffi-dev \
+    liblzma-dev
 
 ## install fastq screen
 RUN curl -LO http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/fastq_screen_v0.14.0.tar.gz
