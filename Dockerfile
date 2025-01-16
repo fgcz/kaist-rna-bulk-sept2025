@@ -84,7 +84,7 @@ ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
 USER ${NB_USER}
 
 # install conda dependencies
-RUN conda install -y -c bioconda samtools multiqc
+RUN conda install -y -c bioconda samtools
 
 # install the R dependencies
 COPY install.R /tmp/
