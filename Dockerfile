@@ -90,9 +90,9 @@ RUN python3 -m pip install --upgrade pip
 RUN pip install -U setuptools wheel
 COPY requirements.txt /tmp/
 RUN pip3 install -r /tmp/requirements.txt --no-cache-dir
-RUN git clone https://github.com/MultiQC/MultiQC.git && 
-    cd MultiQC && 
-    pip install . && 
+RUN git clone https://github.com/MultiQC/MultiQC.git && \
+    cd MultiQC && \
+    pip install . && \
     cd ..
 
 # install conda dependencies
