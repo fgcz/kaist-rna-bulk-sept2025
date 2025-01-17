@@ -87,6 +87,7 @@ USER ${NB_USER}
 RUN python3 -m pip install --upgrade pip
 
 # install the python dependencies
+RUN pip install -U setuptools
 COPY requirements.txt /tmp/
 RUN pip3 install -r /tmp/requirements.txt --no-cache-dir
 
