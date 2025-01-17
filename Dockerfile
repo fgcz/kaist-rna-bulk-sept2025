@@ -85,9 +85,9 @@ ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
 RUN python3 -m pip install --upgrade pip
 
 # install the python dependencies
-RUN pip install -U setuptools wheel
+RUN sudo -H pip install -U setuptools wheel
 COPY requirements.txt /tmp/
-RUN pip3 install -r /tmp/requirements.txt --no-cache-dir
+RUN sudo -H pip3 install -r /tmp/requirements.txt --no-cache-dir
 
 USER ${NB_USER}
 
