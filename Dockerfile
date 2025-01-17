@@ -83,6 +83,9 @@ ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
 
 USER ${NB_USER}
 
+# Upgrade pip
+RUN python -m pip install --upgrade pip
+
 # install conda dependencies
 RUN conda install -y -c bioconda samtools
 
