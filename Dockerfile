@@ -84,7 +84,11 @@ ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
 USER ${NB_USER}
 
 # Upgrade pip
-RUN python -m pip install --upgrade pip
+RUN python3 -m pip install --upgrade pip
+
+# install the python dependencies
+COPY requirements.txt /tmp/
+RUN pip3 install -r /tmp/requirements.txt --no-cache-dir
 
 # install conda dependencies
 RUN conda install -y -c bioconda samtools
@@ -93,9 +97,7 @@ RUN conda install -y -c bioconda samtools
 COPY install.R /tmp/
 RUN R -f /tmp/install.R
 
-# install the python dependencies
-COPY requirements.txt /tmp/
-RUN pip3 install -r /tmp/requirements.txt --no-cache-dir && \
-    rm -rf ${HOME}/.renku/venv
+# Remove venv
+RUN rm -rf ${HOME}/.renku/venv
 
 COPY --from=builder ${HOME}/.renku/venv ${HOME}/.renku/venv
