@@ -1,3 +1,2 @@
 # qc apps
 rseqc
-multiqc

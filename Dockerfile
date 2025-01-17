@@ -81,15 +81,19 @@ RUN curl -LO https://github.com/shenwei356/seqkit/releases/download/v2.3.1/seqki
 ## Set path
 ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
 
+USER ${NB_USER}
+
 # Upgrade pip
 RUN python3 -m pip install --upgrade pip
 
 # install the python dependencies
-RUN sudo -H pip install -U setuptools wheel
+RUN pip install -U setuptools wheel
 COPY requirements.txt /tmp/
-RUN sudo -H pip3 install -r /tmp/requirements.txt --no-cache-dir
-
-USER ${NB_USER}
+RUN pip3 install -r /tmp/requirements.txt --no-cache-dir
+RUN git clone https://github.com/MultiQC/MultiQC.git && 
+    cd MultiQC && 
+    pip install . && 
+    cd ..
 
 # install conda dependencies
 RUN conda install -y -c bioconda samtools
