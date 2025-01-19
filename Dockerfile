@@ -83,18 +83,6 @@ ENV PATH=/opt/FastQC:/opt/fastq_screen_v0.14.0:$PATH
 
 USER ${NB_USER}
 
-# Upgrade pip
-RUN python3 -m pip install --upgrade pip
-
-# install the python dependencies
-RUN pip install -U setuptools wheel
-COPY requirements.txt /tmp/
-RUN pip3 install -r /tmp/requirements.txt --no-cache-dir
-RUN git clone https://github.com/MultiQC/MultiQC.git && \
-    cd MultiQC && \
-    pip install . && \
-    cd ..
-
 # install conda dependencies
 RUN conda install -y -c bioconda samtools
 
@@ -102,7 +90,11 @@ RUN conda install -y -c bioconda samtools
 COPY install.R /tmp/
 RUN R -f /tmp/install.R
 
-# Remove venv
-RUN rm -rf ${HOME}/.renku/venv
+# install the python dependencies
+RUN python3 -m pip install --upgrade pip
+RUN pip install -U setuptools wheel
+COPY requirements.txt /tmp/
+RUN pip3 install -r /tmp/requirements.txt --no-cache-dir && \
+    rm -rf ${HOME}/.renku/venv
 
 COPY --from=builder ${HOME}/.renku/venv ${HOME}/.renku/venv
