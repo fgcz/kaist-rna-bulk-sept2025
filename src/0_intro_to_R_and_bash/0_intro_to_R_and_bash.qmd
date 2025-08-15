@@ -7,6 +7,8 @@ format:
     toc-location: left
     toc-depth: 3
     title-block-banner: "#00A7FF"
+filters:
+ - /home/rstudio/_extensions/kbodwin/flourish/flourish.lua
 css: style.css
 editor: visual
 bibliography: references.bib
@@ -29,7 +31,7 @@ Let's see some examples of commands you will find useful throughout the rest of 
 The command `echo` will simply return any text you give it.
 
 ```{bash}
-echo Hello World I am on CCAMP
+echo Hello World I am at KAIST
 echo We are learning bash!
 ```
 
@@ -121,10 +123,10 @@ ls -lh /
 
 There are a lot of different files and directories here required for the computer to work. In fact, it contains *all* the programs, data, and settings on your computer (so don't delete it). You may notice the `/home` directory, which is the directory in which all the course materials are located.
 
-I have additionally installed a number of different programs in `/opt`. Take a look at these now.
+I have additionally installed a number of different programs in `~/bin` (`~` is short-hand for the home directory, i.e. `/home/rstudio`). Take a look at these now.
 
 ```{bash}
-ls -lh /opt
+ls -lh ~/bin
 ```
 
 ## Variables
@@ -137,7 +139,7 @@ Let's say we want to store the text "Hello World" inside a variable x and then p
 x="Hello World"
 echo $x
 echo $x
-x="Hello Bangaloru"
+x="Hello SK"
 echo $x
 ```
 
@@ -172,7 +174,7 @@ sleep 2
 
 Execute this file by typing the following.
 
-```{bash}
+```{bash, eval=FALSE}
 bash test.sh
 ```
 
@@ -180,7 +182,7 @@ bash test.sh
 
 We have just skimmed the surface of what `bash` can do, and you should be able to understand the bash code in the rest of the module a little better now. Still, we encourage you to spend more time getting familiar with bash after this course because it will be instrumental in running not just these analyses, but many other tools and bioinformatic pipelines.
 
-# Introduction to R (to be filled out)
+# Introduction to R
 
 ```{r}
 print("Hello World")
