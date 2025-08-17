@@ -84,6 +84,10 @@ mkdir -p $PROCESSED_FASTQC $PROCESSED_MULTIQC
   -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 \
   ~/work/gse154927-full/fastq/HCT116*fastq.gz
   
+~/bin/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
+  -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 \
+  ~/work/gse154927-full/fastq/SW480*fastq.gz
+  
 # Combine result with multiqc
 multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
 ```
