@@ -121,32 +121,18 @@ Unfortunately, executing `fastq_screen` can take a significant amount of time ev
 ~/bin/FastQ-Screen-0.16.0/fastq_screen -h
 ```
 
-Let's download these results now.
-
-```{bash}
-# Make directories
-OUTPUT_DIR=~/work/results/1_qc/fastq_screen
-mkdir -p $OUTPUT_DIR
-cd $OUTPUT_DIR
-
-curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/yeast_fastq_screen.html
-
-# Back home
-cd $CURR_DIR
-```
-
-Open the downloaded html file which has been placed within `results/1_qc/fastq_screen`.
+Open the downloaded html file which has been placed within `~/work/gse154927-full/fastqscreen`.
 
 ## Exercise #3
 
-1.  Which sample has the lowest rate of alignment to adapter sequence? Which has the highest?
-2.  Which organism next to yeast has the highest hit for the samples?
+1.  Which sample has the highest rate of alignment to adapter sequence? Is there a correspondence with fastqc?
+2.  Which organism apart from Homo sapiens to has the highest hit for the samples?
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Solutions
 
-1.  GE3 has the lowest rate of alignment to adapter sequence while GE4 has the highest rate. This is consistent with the fastqc result as well, where we saw a similar pattern for GE4.
-2.  The second highest hit for all samples is Bacillus cereus. This is a bacterium found commonly in the environment and the hits here are in all likelihood not simply by chance. The mapping rate is fairly low so we don't expect this degree of contamination to have much impact on the samples.
+1.  HCT116_EpCAMhigh_3 has the highest rate of adapter contamination. This makes sense if we take a look at the "Adapter Content" tab of the MultiQC output.
+2.  The second highest hit for all samples is Pan troglodytes. This is due to sequence homology and is common to see for human samples.
 :::
 
 # Preprocessing with `fastp`
