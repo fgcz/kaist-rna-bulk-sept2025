@@ -62,7 +62,7 @@ ds
 
 2.  TURBO DNA-free Kit protocol (Invitrogen)
 
-3.  The samples vary between 24M to just under 52M reads. In general, we seek to get around 20M samples for bulk RNA-seq of human and mouse samples. Given that these are human samples, we should have enough data to get good results for evaluating gene expression data (see Count QC in chapter 3).
+3.  The samples vary between 2M to just under 52M reads. In general, we seek to get around 20M samples for bulk RNA-seq of human and mouse samples. Given that these are human samples, some of these have less than optimal counts. However, it may still be enough to get usable gene expression data. (see Count QC in chapter 3).
 
 4.  The libraries do not have a specific strandedness.
 :::
@@ -118,17 +118,14 @@ Unfortunately, executing `fastq_screen` can take a significant amount of time ev
 
 ```{bash}
 #| class-output: scrolling
-/opt/fastq_screen_v0.14.0/fastq_screen -h
+~/bin/FastQ-Screen-0.16.0/fastq_screen -h
 ```
 
 Let's download these results now.
 
 ```{bash}
-CURR_DIR=$(pwd)
-cd ../..
-
 # Make directories
-OUTPUT_DIR=results/1_qc/fastq_screen
+OUTPUT_DIR=~/work/results/1_qc/fastq_screen
 mkdir -p $OUTPUT_DIR
 cd $OUTPUT_DIR
 
