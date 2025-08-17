@@ -28,7 +28,7 @@ In this part of the course, we will be primarily working with a [public cancer d
 
 First, let's take a quick look at the data.
 
-The data should be downloaded into `data/tmp/yeast_fastq_full/`. To check this, run
+The data should be downloaded into `~/work/gse154927-full/fastq/`. To check this, run
 
 ```{bash}
 ls -lh ~/work/gse154927-full/fastq/
@@ -82,18 +82,15 @@ mkdir -p $PROCESSED_FASTQC $PROCESSED_MULTIQC
 # Process with FastQC
 ~/bin/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
   -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 \
-  ~/work/gse154927-full/fastq/*fastq.gz
+  ~/work/gse154927-full/fastq/HCT116*fastq.gz
   
 # Combine result with multiqc
-#multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
-
-# Back home
-cd $CURR_DIR
+multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
 ```
 
 Assuming we are not carrying on with manual execution of fastp in the next section, run the following block to delete the raw data.
 
-## Exersise #2
+## Exercise #2
 
 Take a look at the outputs in the "\~/work/results/1_qc/fastqc" and "\~/work/results/1_qc/multiqc" directory to answer the following questions.
 
