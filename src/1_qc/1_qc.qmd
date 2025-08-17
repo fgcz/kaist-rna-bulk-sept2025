@@ -22,7 +22,7 @@ suppressPackageStartupMessages({
 
 Welcome to our introductory RNA-seq course.
 
-In this part of the course, we will be primarily working with a [public cancer dataset](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE154927) from the following [publication](https://pubmed.ncbi.nlm.nih.gov/36346211/). We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.
+In this part of the course, we will be primarily working with a [public cancer dataset](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE154927) from the following [publication](https://pmc.ncbi.nlm.nih.gov/articles/PMC9674345/). We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.
 
 ## Checking the data
 
@@ -31,7 +31,7 @@ First, let's take a quick look at the data.
 The data should be downloaded into `data/tmp/yeast_fastq_full/`. To check this, run
 
 ```{bash}
-ls -lh /data/tmp/yeast_fastq_full
+ls -lh ~/work/gse154927-full/fastq/
 ```
 
 You should see 17 files in this directory. 16 files ending in fastq.gz and one "dataset.tsv" file. The "dataset.tsv" file gives some details about the samples. Let's load this file now in R to see how it looks like.
@@ -54,13 +54,17 @@ ds
 ::: {.callout-note appearance="simple" collapse="true"}
 ### Solutions
 
-1.  2 groups: Glucose and GlycEth (i.e. Glucose+Ethanol)
+1.  4 groups:
 
-2.  Lexogen mRNA Stranded Kit
+    ```         
+    HCT116_EpCAMhigh, HCT116_EpCAMlow, SW480_EpCAMhigh, SW480_EpCAMlow
+    ```
 
-3.  The samples vary between 5M to just under 20M reads. In general, we seek to get around 20M samples for bulk RNA-seq of human and mouse samples. Given that these are yeast samples and the corresponding genome is significantly smaller, even 5M reads is enough to get good results (see Count QC in chapter 3).
+2.  TURBO DNA-free Kit protocol (Invitrogen)
 
-4.  The libraries are anti-sense.
+3.  The samples vary between 24M to just under 52M reads. In general, we seek to get around 20M samples for bulk RNA-seq of human and mouse samples. Given that these are human samples, we should have enough data to get good results for evaluating gene expression data (see Count QC in chapter 3).
+
+4.  The libraries do not have a specific strandedness.
 :::
 
 # FastQC & MultiQC
