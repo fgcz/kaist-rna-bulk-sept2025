@@ -22,43 +22,22 @@ suppressPackageStartupMessages({
 
 Welcome to our introductory RNA-seq course.
 
-In this part of the course, we will be primarily working with yeast samples, initially sequenced and analyzed at the Functional Genomics Center Zürich. We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.
+In this part of the course, we will be primarily working with a [public cancer dataset](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE154927) from the following [publication](https://pubmed.ncbi.nlm.nih.gov/36346211/). We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.
 
-## Downloading the data
+## Checking the data
 
-First, let's download the data. The script will download a tar file containing our fastq files, decompress it, and deposit the files into the folder `data/tmp/yeast_fastq_full`. To execute this script, press on the green arrow button (for all such bash scripts, we first switch to the root directory i.e. `/home/rstudio/work/rna-seq-course-feb2023` , so the locations of all output files is clearer).
-
-```{bash}
-#| class-output: scrolling
-CURR_DIR=$(pwd)
-cd ../..
-
-# First we make a directory to house our data
-YEAST_DIR=data/tmp/yeast_fastq_full
-mkdir -p $YEAST_DIR
-
-# Download the data
-cd $YEAST_DIR
-curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/yeast_full.tar
-
-# Extract data
-tar -xvf yeast_full.tar
-rm -f yeast_full.tar
-
-# Back home
-cd $CURR_DIR
-```
+First, let's take a quick look at the data.
 
 The data should be downloaded into `data/tmp/yeast_fastq_full/`. To check this, run
 
 ```{bash}
-ls -lh ../../data/tmp/yeast_fastq_full
+ls -lh /data/tmp/yeast_fastq_full
 ```
 
-You should see 9 files in this directory. 8 files ending in fastq.gz and one "dataset.tsv" file. The "dataset.tsv" file gives some details about the samples. Let's load this file now in R to see how it looks like.
+You should see 17 files in this directory. 16 files ending in fastq.gz and one "dataset.tsv" file. The "dataset.tsv" file gives some details about the samples. Let's load this file now in R to see how it looks like.
 
 ```{r}
-ds <- data.table::fread("../../data/tmp/yeast_fastq_full/dataset.tsv") %>% as_tibble()
+ds <- vroom::vroom("~/work/gse154927-full/fastq/dataset.tsv") %>% as_tibble()
 ds
 ```
 
@@ -66,7 +45,7 @@ ds
 
 1.  How many groups of samples are there?
 
-2.  What Library Prep Kit was used?
+2.  How were the data prepared? Hint: Check the publication.
 
 3.  What is the read count? Is this what we expect for RNA-seq?
 
@@ -91,21 +70,18 @@ First, let's run FastQC. This tool was developed by Babraham Bioinformatics [@An
 ```{bash}
 #| class-output: scrolling
 
-CURR_DIR=$(pwd)
-cd ../..
-
 # Make directories
-PROCESSED_FASTQC=results/1_qc/fastqc
-PROCESSED_MULTIQC=results/1_qc/multiqc
+PROCESSED_FASTQC=~/work/results/1_qc/fastqc
+PROCESSED_MULTIQC=~/work/results/1_qc/multiqc
 mkdir -p $PROCESSED_FASTQC $PROCESSED_MULTIQC
 
 # Process with FastQC
-/opt/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
-  -t 8 -a data/supplementary-files/adapter_list.txt --kmers 7 \
-  data/tmp/yeast_fastq_full/*fastq.gz
+~/bin/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
+  -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 \
+  ~/work/gse154927-full/fastq/*fastq.gz
   
 # Combine result with multiqc
-multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
+#multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
 
 # Back home
 cd $CURR_DIR
@@ -113,13 +89,9 @@ cd $CURR_DIR
 
 Assuming we are not carrying on with manual execution of fastp in the next section, run the following block to delete the raw data.
 
-```{bash}
-rm -rf ../../data/tmp/yeast_fastq_full
-```
-
 ## Exersise #2
 
-Take a look at the outputs in the "results/1_qc/fastqc" and "results/1_qc/multiqc" directory to answer the following questions.
+Take a look at the outputs in the "\~/work/results/1_qc/fastqc" and "\~/work/results/1_qc/multiqc" directory to answer the following questions.
 
 1.  Did the pooling work well?
 2.  What could be an explanation for the decrease in quality towards the ends of the reads?
