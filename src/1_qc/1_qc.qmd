@@ -69,7 +69,7 @@ ds
 
 # FastQC & MultiQC
 
-First, let's run FastQC. This tool was developed by Babraham Bioinformatics [@Andrews:2010tn] and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC [@ewels2016] which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. Let's run these tools now. This process takes about 10 minutes on 8 cores.
+First, let's run FastQC. This tool was developed by Babraham Bioinformatics [@Andrews:2010tn] and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC [@ewels2016] which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. We won't run these tools now, but if we did, this process would take about 10 minutes on 8 cores.
 
 ```{bash}
 #| class-output: scrolling
@@ -80,19 +80,13 @@ PROCESSED_MULTIQC=~/work/results/1_qc/multiqc
 mkdir -p $PROCESSED_FASTQC $PROCESSED_MULTIQC
 
 # Process with FastQC
-~/bin/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
+echo ~/bin/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
   -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 \
-  ~/work/gse154927-full/fastq/HCT116*fastq.gz
-  
-~/bin/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
-  -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 \
-  ~/work/gse154927-full/fastq/SW480*fastq.gz
-  
-# Combine result with multiqc
-multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
-```
+  ~/work/gse154927-full/fastq/*fastq.gz
 
-Assuming we are not carrying on with manual execution of fastp in the next section, run the following block to delete the raw data.
+# Combine result with multiqc
+echo multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
+```
 
 ## Exercise #2
 
@@ -107,8 +101,8 @@ Take a look at the outputs in the "\~/work/results/1_qc/fastqc" and "\~/work/res
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Solutions
 
-1.  There were most likely some problems with the pooling. GE4 appears to be over-represented while other samples are comparatively underrepresented. This could be due to the sequencer type: some Illumina instruments can prefer shorter fragments during bridge amplification.
-2.  This is a multi-faceted issue. It is a general artifact of Illumina sequencers on one hand, related towards the speed of sequencing and the longevity of the reagents. We sequenced on the NextSeq, which has a maximum read length of 150. On another, adapter content towards the 3' end of the read can negatively affect the performance.
+1.  There were most likely some problems with the pooling. SW480_EpCAMhigh_1 appears to be under-represented while other samples are comparatively underrepresented.
+2.  This is a multi-faceted issue. It is a general artifact of sequencers on one hand, related towards the speed of sequencing and the longevity of the reagents. On another, increasing adapter content towards the 3' end of the read can negatively affect the performance due to low sequence diversity.
 3.  It looks as expected. GE4 however has an increase in the amount of Gs towards the end of the read. This is most likely due to very short fragment lengths (or adapter dimers) and the sequencer beginning to read past the adapter.
 4.  No, the adapter content is already quite high for most of the samples. Sequencing longer fragments would not be worth the investment, most likely.
 5.  Trimming off the adapter and removing the first few bases off the 5' end would remove most of the marking of bad quality from these samples, especially GE4.
