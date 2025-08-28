@@ -84,8 +84,10 @@ echo ~/bin/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
   -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 \
   ~/work/gse154927-full/fastq/*fastq.gz
 
+cp -r ~/work/gse154927-full/fastqc ~/work/results/1_qc/
+
 # Combine result with multiqc
-echo multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
+multiqc --outdir $PROCESSED_MULTIQC $PROCESSED_FASTQC
 ```
 
 ## Exercise #2
@@ -103,9 +105,9 @@ Take a look at the outputs in the "\~/work/results/1_qc/fastqc" and "\~/work/res
 
 1.  There were most likely some problems with the pooling. SW480_EpCAMhigh_1 appears to be under-represented while other samples are comparatively underrepresented.
 2.  This is a multi-faceted issue. It is a general artifact of sequencers on one hand, related towards the speed of sequencing and the longevity of the reagents. On another, increasing adapter content towards the 3' end of the read can negatively affect the performance due to low sequence diversity.
-3.  It looks as expected. GE4 however has an increase in the amount of Gs towards the end of the read. This is most likely due to very short fragment lengths (or adapter dimers) and the sequencer beginning to read past the adapter.
+3.  It looks as expected. A number of samples however have an increase in the amount of As towards the end of the read. This is most likely due to very short fragment lengths (or adapter dimers) and the sequencer beginning to read past the adapter.
 4.  No, the adapter content is already quite high for most of the samples. Sequencing longer fragments would not be worth the investment, most likely.
-5.  Trimming off the adapter and removing the first few bases off the 5' end would remove most of the marking of bad quality from these samples, especially GE4.
+5.  Trimming off the adapter and removing the first few bases off the 5' end would remove most of the marking of bad quality from these samples.
 :::
 
 # FastqScreen
@@ -141,26 +143,32 @@ In this section, we preprocess the fastqs to prepare them for alignment in the n
 CURR_DIR=$(pwd)
 cd ../..
 
-FASTP_OUTDIR=results/1_qc/fastp
+INPUT_DIR=~/work/gse154927-full/fastq
+FASTP_OUTDIR=~/work/results/1_qc/fastp
 mkdir -p $FASTP_OUTDIR
 echo $(pwd)
 
 # Start processing with fastp
-for FASTQ in data/tmp/yeast_fastq_full/*_R1.fastq.gz;
-  do SAMPLE_NAME=$(basename ${FASTQ%_R1.fastq.gz})
-  echo $SAMPLE_NAME
-  /opt/fastp --in1 $FASTQ \
-    --out1 $FASTP_OUTDIR/$SAMPLE_NAME"_trimmed_R1.fastq.gz" \
-    --thread 4 --trim_front1 4 --trim_tail1 0 \
-    --adapter_fasta data/supplementary-files/allIllumina-forTrimmomatic-20160202.fa \
-    --max_len1 0 --max_len2 0 --trim_poly_x --average_qual 20 \
-    --poly_x_min_len 10 --length_required 30 --compression 2 \
-    2> $FASTP_OUTDIR/$SAMPLE_NAME"_preprocessing.log"
-  rm -f $FASTQ
+SAMPLES=$(cat ~/work/gse154927-full/fastq/dataset.tsv | awk -F"\t" '{print $1}' | tail +2 | sort)
+for SN in $SAMPLES;
+  do echo $SN
+  echo ~/bin/fastp \
+    --in1 "${INPUT_DIR}/${SN}_R1.fastq.gz" \
+    --in2 "${INPUT_DIR}/${SN}_R2.fastq.gz" \
+    --out1 "${FASTP_OUTDIR}/${SN}_trimmed_R1.fastq.gz" \
+    --out2 "${FASTP_OUTDIR}/${SN}_trimmed_R2.fastq.gz" \
+    --adapter_fasta ~/work/kaist-rna-bulk-sept2025/data/allIllumina-forTrimmomatic-20160202.fa \
+  	--thread 8 \
+  	--trim_front1 4 \
+  	--trim_tail1 4    \
+  	--average_qual 0 \
+  	--adapter_fasta adapters.fa \
+  	--max_len1 0 \
+  	--max_len2 0 \
+  	--trim_poly_x \
+  	--poly_x_min_len 10 \
+  	--length_required 30
 done
-
-# Back home
-cd $CURR_DIR
 ```
 
 ## Exercise #4
