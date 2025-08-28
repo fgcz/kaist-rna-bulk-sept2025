@@ -151,7 +151,7 @@ echo $(pwd)
 # Start processing with fastp
 SAMPLES=$(cat ~/work/gse154927-full/fastq/dataset.tsv | awk -F"\t" '{print $1}' | tail +2 | sort)
 for SN in $SAMPLES;
-  do echo $SN
+  do echo "Processing: ${SN}"
   echo ~/bin/fastp \
     --in1 "${INPUT_DIR}/${SN}_R1.fastq.gz" \
     --in2 "${INPUT_DIR}/${SN}_R2.fastq.gz" \
@@ -168,6 +168,7 @@ for SN in $SAMPLES;
   	--trim_poly_x \
   	--poly_x_min_len 10 \
   	--length_required 30
+	echo
 done
 ```
 
