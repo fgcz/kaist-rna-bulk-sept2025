@@ -50,9 +50,7 @@ suppressPackageStartupMessages({
 First, let's fetch the input count files generated from featureCounts for each sample.
 
 ```{r setup}
-ftpLocation <- "https://fgcz-gstore.uzh.ch/public/OmicsInOncology_CPS341nBio435_FS25_week3/feature_counts"
-countDirectoryToUse <- "feature_counts"
-dir.create(countDirectoryToUse, showWarnings = FALSE)
+countDirectoryToUse <- "~/work/gse154927-full/featureCounts"
 
 sampleNames <- c(
   "HCT116_EpCAMhigh_1",
@@ -74,11 +72,6 @@ sampleNames <- c(
 )
 
 countFilenames <- paste0(sampleNames, ".txt")
-
-for (fn in countFilenames) {
-  download.file(url=file.path(ftpLocation, fn),
-                destfile=file.path(countDirectoryToUse, fn))
-}
 ```
 
 You will notice a new directory called "feature_counts" in the same folder where you executed this code. Take a quick look inside.
@@ -143,8 +136,10 @@ countList <- lapply(rownames(meta), function(sn) {
 rawCounts <- bind_cols(countList)
 
 # Save merged data for later use
+outputDirectory <- "~/results/3_quant"
+dir.create(outputDirectory, showWarnings = FALSE, recursive = TRUE)
 saveRDS(rawCounts, 
-        file=file.path(countDirectoryToUse, "mergedCounts.rds"))
+        file=file.path(outputDirectory, "mergedCounts.rds"))
 ```
 
 ## Count Statistics
