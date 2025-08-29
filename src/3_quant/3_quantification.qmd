@@ -1,5 +1,5 @@
 ---
-title: "Part 3: Quantification"
+title: "Exercise #3: Quantification"
 format:
   html:
     embed-resources: true
@@ -7,18 +7,34 @@ format:
     toc-location: left
     toc-depth: 3
     title-block-banner: "#00A7FF"
-css: style.css
+filters:
+  - flourish
+css: report_assets/style.css
 editor: visual
-bibliography: references.bib
+bibliography: report_assets/references.bib
 ---
 
-# Methods for Quantification
+# Bulk RNA-seq Quantification
 
-In this tutorial, we will perform quantification using two main methods: FeatureCounts and Kallisto.
+In this tutorial, we look at the results of bulk RNA-seq quantification. Our data comes from the [following paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC9674345/).
 
-## FeatureCounts
+It is not important to understand the paper in detail. Just know we are dealing with two colon cancer cell-lines "HCT116" and "SW480" which have been FACS-sorted according to the expression of CD44 and EpCAM, "EpCAMhigh" and "EpCAMlow", resulting in 4 groups with 4 replicates each.
 
-```{r}
+-   HCT116: EpCAMhigh
+
+-   HCT116: EpCAMlow
+
+-   SW480: EpCAMhigh
+
+-   SW480: EpCAMlow
+
+We will focus on the tools available for QC rather than the underlying biology.
+
+## Setup
+
+### Load required packages
+
+```{r load packages}
 suppressPackageStartupMessages({
   library(SummarizedExperiment)
   library(pheatmap)
@@ -27,284 +43,186 @@ suppressPackageStartupMessages({
   library(plotly)
   library(tidyverse)
 })
-source("../helpers.R")
 ```
 
-#### Set-up
+### Loading counts
 
-First, let's fetch the input bam files for each sample. While we could use the bams we generated in the past exercises, keep in mind that these utilized downsampled fastqs in order to speed up computation. The bams provided here used the full fastq files but were processed in an otherwise identical way.
+First, let's fetch the input count files generated from featureCounts for each sample.
 
-```{bash}
-CURR_DIR=$(pwd)
-cd ../..
+```{r setup}
+ftpLocation <- "https://fgcz-gstore.uzh.ch/public/OmicsInOncology_CPS341nBio435_FS25_week3/feature_counts"
+countDirectoryToUse <- "feature_counts"
+dir.create(countDirectoryToUse, showWarnings = FALSE)
 
-# Download the data
-STAR_OUTDIR=results/2_mapping/STAR_alignment
-mkdir -p $STAR_OUTDIR
-cd $STAR_OUTDIR
-echo "Depositing data in "$STAR_OUTDIR
-curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/processed_yeast_STAR_aligned.tar
+sampleNames <- c(
+  "HCT116_EpCAMhigh_1",
+  "HCT116_EpCAMhigh_2",
+  "HCT116_EpCAMhigh_3",
+  "HCT116_EpCAMhigh_4",
+  "HCT116_EpCAMlow_1",
+  "HCT116_EpCAMlow_2",
+  "HCT116_EpCAMlow_3",
+  "HCT116_EpCAMlow_4",
+  "SW480_EpCAMhigh_1",
+  "SW480_EpCAMhigh_2",
+  "SW480_EpCAMhigh_3",
+  "SW480_EpCAMhigh_4",
+  "SW480_EpCAMlow_1",
+  "SW480_EpCAMlow_2",
+  "SW480_EpCAMlow_3",
+  "SW480_EpCAMlow_4"
+)
 
-# Extract data
-tar -xvf processed_yeast_STAR_aligned.tar
-rm -f processed_yeast_STAR_aligned.tar
+countFilenames <- paste0(sampleNames, ".txt")
 
-# Back home
-cd $CURR_DIR
+for (fn in countFilenames) {
+  download.file(url=file.path(ftpLocation, fn),
+                destfile=file.path(countDirectoryToUse, fn))
+}
 ```
 
-Second, we need to subset the annotation (gtf) file to include only protein-coding genes. There are a few reasons why we might rather exclude transcript types such as lncRNA and snRNA.
+You will notice a new directory called "feature_counts" in the same folder where you executed this code. Take a quick look inside.
+
+How were these counts generated?
+
+-   Trimming with `fastp`
+
+-   Alignment with `STAR` to the GRCh38.p13 reference genome
+
+-   Running featureCounts from the Rsubread package using the GENCODE Release 42 GTF file. The file used can be found here on our [public FTP](https://fgcz-gstore.uzh.ch/public/OmicsInOncology_CPS341nBio435_FS25_week3)
+
+The file is quite large and you need not be familiar with its format at this point or download it. What is important to know is that this file has been subset to only the protein_coding genes.
+
+There are a few reasons why we might rather exclude transcript types such as lncRNA and snRNA.
 
 -   Including these other transcript types increase the number of tests, meaning more false positives, and less power to detect protein-coding genes
 
 -   non-coding RNAs do not have poly-A tails and can't be detected with mRNA sequencing, so their absence might be misinterpreted
 
--   They are sometimes not well annotated and this can adversely enrichment analysis
+-   They are sometimes not well annotated and this can adversely affect enrichment analysis
 
-In general, a good strategy is to exclude them by default and include them by demand (i.e. if the research question explicitly demands it). Let's do this subsetting now.
+In general, a good strategy is to exclude them by default and include them by demand (i.e. if the research question explicitly demands it).
 
-```{r}
-seqAnno <- getFeatureAnnotation("../../data/supplementary-files/Ensembl_R64_genes/genes_annotation_byTranscript.txt", dataFeatureType="transcript")
-transcriptsUse = rownames(seqAnno)[seqAnno$type %in% "protein_coding"]
-gtf <- readGff("../../data/supplementary-files/Ensembl_R64_genes/genes.gtf")
-transcripts <- getGffAttributeField(gtf$attributes,
-                                    field="transcript_id", 
-                                    attrsep="; *", valuesep=" ")
-transcriptsUse = union(transcriptsUse, setdiff(transcripts, rownames(seqAnno))) ## add those where we have no info, e.g. spikes
-gtf = gtf[transcripts %in% transcriptsUse, ]
-
-tmpOutDir <- "../../data/tmp"
-# We create the tmp directory if it does not exist
-dir.create(tmpOutDir, showWarnings=FALSE, recursive=TRUE)
-
-# Save the subset GTF
-gtfFile <- file.path(tmpOutDir, "genes_protein_coding.gtf")
-write.table(gtf, gtfFile, quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
-```
-
-#### Running `featureCounts`
-
-We are now ready to run `featureCounts` from the Rsubread package.
-
-```{r}
-#| class-output: scrolling
-bamFiles <- Sys.glob(file.path("../../results/2_mapping/STAR_alignment", "*bam"))
-outputDir <- "../../results/3_quant/featureCounts"
-dir.create(outputDir, showWarnings=FALSE, recursive=TRUE)
-
-for (bamFile in bamFiles) {
-  sampleName <- tools::file_path_sans_ext(basename(bamFile))
-  outputPrefix <- file.path(outputDir, sampleName)
-  
-  countResult = Rsubread::featureCounts(
-    bamFile, 
-    annot.inbuilt=NULL,
-    annot.ext=gtfFile,
-    isGTFAnnotationFile=TRUE,
-    GTF.featureType="exon",
-    GTF.attrType="gene_id",
-    useMetaFeatures=TRUE,
-    allowMultiOverlap=TRUE,
-    isPairedEnd=FALSE, 
-    nthreads=8, 
-    strandSpecific=2,
-    minMQS=10,
-    minOverlap=10,
-    primaryOnly=TRUE
-  )
-  colnames(countResult$counts) = "matchCounts"
-  cnts <- countResult$counts %>% as.data.frame() %>% rownames_to_column("Identifier")
-  data.table::fwrite(cnts, file=paste0(outputPrefix, ".txt"), sep="\t")
-  colnames(countResult$stat) = c("Status", "Count")
-  sts <- countResult$stat %>% as.data.frame()
-  data.table::fwrite(sts, file=paste0(outputPrefix, "-stats.txt"), sep="\t")
-}
-```
-
-#### Clean-up STAR bams
-
-We clean up the STAR output to save space.
-
-```{bash}
-rm -rf ../../results/2_mapping/STAR_alignment
-```
-
-## Running Kallisto
-
-Next, we will perform the quantification using Kallisto and see how its performance compares against STAR. As Kallisto is a command-line tool, all code in this section will be again bash-based.
-
-#### Download trimmed data
-
-As we did for previous parts, we will download the fastp-processed data to save time. In case you executed the fasp script and still have the associated files there, feel free to skip this step. Just make sure you deposit the files in the location specified in the script below.
-
-```{bash}
-CURR_DIR=$(pwd)
-cd ../..
-
-# Download the data
-FASTP_OUTDIR=results/1_qc/fastp
-mkdir -p $FASTP_OUTDIR
-cd $FASTP_OUTDIR
-echo "Depositing data in "$FASTP_OUTDIR
-curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/processed_yeast_fastp.tar
-
-# Extract data
-tar -xvf processed_yeast_fastp.tar
-rm -f processed_yeast_fastp.tar
-
-# Back home
-cd $CURR_DIR
-```
-
-Now that we have downloaded the data, we are ready to perform the quantification with Kallisto. Execute the script below. Take note of the inputs used and refer to the [Kallisto manual](https://pachterlab.github.io/kallisto/manual) for an explanation of the arguments used.
-
-```{bash}
-#| class-output: scrolling
-CURR_DIR=$(pwd)
-cd ../..
-
-FASTP_OUTDIR=results/1_qc/fastp
-KALLISTO_OUTDIR=results/3_quant/kallisto
-mkdir -p $KALLISTO_OUTDIR
-
-# Start processing with kallisto
-for FASTQ in $FASTP_OUTDIR/*_R1.fastq.gz
-  do SAMPLE_NAME=$(basename ${FASTQ%_trimmed_R1.fastq.gz})
-  echo $SAMPLE_NAME
-  time /opt/kallisto quant \
-    -i data/supplementary-files/Ensembl_R64_genes_protein_coding_kallistoIndex/transcripts.idx \
-    -o $KALLISTO_OUTDIR -t 4 --bias --bootstrap-samples 10 --seed 42 \
-    --single --rf-stranded --fragment-length 180 --sd 50 $FASTQ \
-    2> $KALLISTO_OUTDIR/$SAMPLE_NAME"_kallisto.stderr" > $KALLISTO_OUTDIR/$SAMPLE_NAME"_kallisto.stdout"
-  mv $KALLISTO_OUTDIR/abundance.tsv $KALLISTO_OUTDIR/$SAMPLE_NAME".txt"
-  mv $KALLISTO_OUTDIR/run_info.json $KALLISTO_OUTDIR/$SAMPLE_NAME".json"
-done
-
-# Back home
-cd $CURR_DIR
-```
-
-#### Clean-up Kallisto inputs
-
-```{bash}
-rm -rf ../../results/1_qc/fastp/
-```
-
-## Exercise #1
-
-1.  Did you notice a difference between the execution time of featureCounts versus Kallisto? Are the execution times comparable?
-
-2.  Take a moment to look at the outputs of Kallisto and featureCounts. Are the rows the same? How can you check? What about the columns?
-
-3.  In what format are the counts outputted by kallisto? By featureCounts? What influence could this possibly have on downstream analysis?
-
-```{r}
-# Write your code here
-```
-
-::: {.callout-tip appearance="simple" collapse="true"}
-### Solutions
-
-1.  Kallisto and featureCounts perform similarly quickly. Keep in mind however, that featureCounts requires .bam files which we generated in a previous step with STAR, while Kallisto works on the fastqs themselves. Alignment with STAR can take a long time (remember we didn't even use the full fastqs for the STAR alignment), especially with large genomes.
-
-2.  The rows are the different. Kallisto quantifies on the transcript-level while FeatureCounts quantifies on the gene-level. For yeast however, alternative splicing is very rare, which is why there is a 1-to-1 mapping of transcripts to genes, hence why the matrices have the same number of rows. In the case of human or mouse, Kallisto's transcript dataframe would have to be accumulated to the gene-level.s
-
-    ```{r, eval=FALSE}
-    fcG1 <- data.table::fread("../../results/3_quant/featureCounts/G1.txt")
-    kaG1 <- data.table::fread("../../results/3_quant/kallisto/20191112.A-G1.txt")
-    all(sort(fcG1$Identifier) == sort(kaG1$target_id))  # Returns FALSE
-    all(sort(fcG1$Identifier) == sort(unlist(str_remove(kaG1$target_id, "_mRNA"))))  # Returns TRUE
-    ```
-
-3.  The kallisto counts (est_count) are floating point numbers. This may become a problem when it comes time to load these counts for differential expression, since most of the available tools expect the counts to be discreet. In such cases we may have to round the counts to integers, or using packages like tximport.
-:::
-
-# Count QC
+### Loading counts
 
 Now that the we have generated the counts, we can start exploring the data. We could proceed with either the counts generated by Kallisto or featureCounts. Let's load the featureCounts for now.
 
-```{r}
+```{r metadata}
 # Define meta dataframe for later use
 meta <- data.frame(
-  Condition=as.factor(rep(c("Glucose", "GlycEth"), each=4)),
-  row.names=c(paste0("G", 1:4), paste0("GE", 1:4))
+  Condition=as.factor(c(rep("HCT116_EpCAMhigh", 4), 
+                        rep("HCT116_EpCAMlow", 4),
+                        rep("SW480_EpCAMhigh", 4),
+                        rep("SW480_EpCAMlow", 4))),
+  row.names=sampleNames
 )
 
 # Define some general-use parameters for use later
-countDirectoryToUse <- "../../results/3_quant/featureCounts"
-sigThresh <- 10
-conditionColours <- scales::hue_pal()(length(unique(meta$Condition)))
+sigThresh <- 10  # significane threshold for the counts
+conditionColours <- scales::hue_pal()(length(unique(meta$Condition)))  # choose pretty colours
+# associate the conditions with the pretty colours
 names(conditionColours) <- unique(meta$Condition)
 sampleColours <- conditionColours[meta$Condition]
 ```
 
-First, we load the counts and combine them into a single data-frame. Note we do this here manually, but there are methods like the aforementioned tximport which perform this operation in a convenient way, and beyond this, correct for biases in the counts. We will be using this method of import in the section on differential expression analysis.
+First, we load the counts and combine them into a single data-frame. Note we do this here manually, but there are methods like the `tximport` function which perform this operation in a convenient way, and beyond this, correct for biases in the counts. We will be using this method of import in the optional section on differential expression analysis.
 
-```{r}
+```{r load counts, message=FALSE}
 # Find the count files on the system
 countPaths <- Sys.glob(file.path(countDirectoryToUse, sprintf("*%s.txt", rownames(meta))))
 names(countPaths) <- rownames(meta)
 
 # Load into memory and combine
 countList <- lapply(rownames(meta), function(sn) {
-  count <- data.table::fread(countPaths[[sn]]) %>% 
+  count <- vroom::vroom(countPaths[[sn]]) %>% 
     as.data.frame() %>%
-    column_to_rownames(var="Identifier") %>%
+    tibble::column_to_rownames(var="Identifier") %>%
     dplyr::rename_with(~sn)
   return(count)
 })
 rawCounts <- bind_cols(countList)
 
 # Save merged data for later use
-saveRDS(rawCounts, file=file.path(countDirectoryToUse, "mergedCounts.rds"))
+saveRDS(rawCounts, 
+        file=file.path(countDirectoryToUse, "mergedCounts.rds"))
 ```
 
 ## Count Statistics
 
 Let's look at the count statistics first. In the first of two plots, we get the total counts for each sample. In the second, we see how many features, and what fraction of all features, exceed our signal threshold.
 
-```{r}
+```{r barplots}
 toPlot <- tibble(
   Sample=colnames(rawCounts),
   `Read Counts`=colSums(rawCounts),
   `Fraction of features above threshold`=colSums(rawCounts > sigThresh),
   Percentages=paste(signif(100 * colSums(rawCounts > sigThresh) / nrow(rawCounts), digits=2), "%")
 )
-plot_ly(toPlot, x = ~Sample, y = ~`Read Counts`, type = "bar") %>%
+plot_ly(
+  toPlot,
+  x = ~Sample, 
+  y = ~`Read Counts`, 
+  type = "bar"
+) %>%
   layout(title="Total reads", yaxis = list(title = "Counts [Mio]"))
-plot_ly(toPlot, x = ~Sample, y = ~`Fraction of features above threshold`, type="bar",
-        text=~Percentages, textposition = 'auto') %>%
+plot_ly(
+  toPlot, 
+  x = ~Sample, 
+  y = ~`Fraction of features above threshold`, 
+  type="bar",
+  text=~Percentages, textposition = 'auto'
+) %>%
   layout(title="Genomic features with reads above threshold", yaxis = list(title = "Count"))
 ```
 
-## Exercise #2
+### Exercise #2
 
-1.  How do the read counts compare to the initial FastQC report?
+1.  How do the read counts compare to the initial FastQC report? See the plot below.
 
-2.  How many features (in %) are above threshold? Do you think re-sequencing the samples with relatively low counts will be useful?
+![Raw fastq read counts for each sample](report_assets/fastq_counts.png)
+
+2.  How many features (in %) are above threshold? Do you think re-sequencing the samples with relatively low counts will be useful or provide a significant return on investment?
 
 ::: {.callout-note appearance="simple" collapse="true"}
 ### Solutions
 
-1.  They are lower. We started with around 10M reads or more for each sample.
+1.  The counts after mapping and quantification are lower.
 
-2.  All around 85%. Re-sequencing is unlikely to be worth our time, unless we are interested in very lowly-expressed genes. GE3 has almost as many features with a count above threshold as GE4, despite having half as many counts.
+2.  All around 50-60%. Re-sequencing is unlikely to be worth our time, unless we are interested in very lowly-expressed genes. Even the sample with the lowest counts has almost as many features expressed above threshold as the sample with the highest read counts, despite having only a fraction of the counts.
 :::
 
 ## Filtering Counts
 
-Before continuing, we should filter out genes which are lowly expressed or absent, which we do this on a per-group basis (think about why this might be). Next, we generate normalised counts using "Variance Stabilisation" as provided in the DESeq2 package. As per the documentation, this function calculates a variance stabilizing transformation (VST) from the fitted dispersion-mean relation(s) and then transforms the count data (normalized by division by the size factors or normalization factors), yielding a matrix of values which now have constant variance along the range of mean values (homoskedastic)[@DESeq2]. There are other functions we could use, such as `rlog` which is less sensitive to size factors, but VST works well in the general case.
+Before continuing, we should filter out genes which are lowly expressed or absent, which we do on a per-group basis (think about why this might be). Next, we generate normalised counts using "Variance Stabilisation" as provided in the DESeq2 package. As per the documentation, this function calculates a variance stabilizing transformation (VST) from the fitted dispersion-mean relation(s) and then transforms the count data (normalized by division by the size factors or normalization factors), yielding a matrix of values which now have constant variance along the range of mean values (homoskedastic)[@DESeq2]. There are other functions we could use, such as `rlog` which is less sensitive to size factors, but VST works well in the general case.
 
-```{r}
-# First filter genes which are at expressed below threshold in less than half the samples within a group
+First though, we want to filter the count matrix for genes which are informative, i.e. which are sufficiently expressed in the dataset and which can stratify our data. Before, we defined a minimum threshold of `r sigThresh` at which we consider a gene expressed in a sample. Below, we do some calculations to determine if a gene is sufficiently expressed in our dataset at this treshold.
+
+A simple approach would be to say that we want the gene expressed in at least, for example, 25% of the samples. However, this simple approach might let some genes through which are in fact just noise in our data. Would we for example consider a gene to be important if it is expressed in only a single replicate for every group? Probably not. So we can try something else.
+
+Our strategy:
+
+1.  Within a group, do at least half the samples express the gene? If yes, we consider the gene expressed in that group.
+
+2.  Do at least half the groups express the gene? If yes, we keep it. If no, we toss it.
+
+For our data, this means that we keep a gene if it is expressed in 2 or more samples within 2 or more groups.
+
+```{r filtering}
+# First filter genes 
+
+# Which genes are above threshold?
 isPresent <- rawCounts > sigThresh
+# For every gene, how many samples within a group have it expressed?
 isPresentCond <- rowsum(t(isPresent * 1), group=meta$Condition)
+# For every gene for a particular group, is it expressed in at half the samples?
 isPresentCond <- t(sweep(isPresentCond, 1,
                          table(meta$Condition)[rownames(isPresentCond)], FUN="/")) >= 0.5
+# For every gene, is it expressed in at least 2 groups?
 isValid <- rowMeans(isPresentCond) >= 0.5
+# Subset the count matrix
 rawCountsFilt <- rawCounts[isValid, ]
 
-# Load data into a DESeq2 dataset so we can use the variance stabilizing function from Deseq2
+# Load data into a DESeq2 dataset so we can use the variance stabilizing function from DESeq2
 dds <- DESeq2::DESeqDataSetFromMatrix(countData=rawCountsFilt,
                                       colData=meta,
                                       design=~Condition)
@@ -316,14 +234,14 @@ vsdSE <- SummarizedExperiment::assay(vsd)
 
 Let's quickly compare the raw and normalised counts to see how they have changed.
 
-```{r}
+```{r head counts}
 head(rawCountsFilt)
 head(as.data.frame(vsdSE))
 ```
 
 ## Dimensionality Reduction
 
-We now have a count matrix of with the following dimensions: 8 x 6'600. In other words, we have represented each sample by a vector of 6'600 features. In order adequately QC our samples, one important aspect is determining how similar or dissimilar one vector of genes from a specific sample is that of another. However, considering 6'600 dimensions directly is not something that humans are generally capable of doing. This is where dimensionality reduction comes in. We would ideally like to *reduce* the given *dimensions* (a 6'600-dimensional space), down to a 2- or 3-dimensional space.
+We now have a count matrix of with the following dimensions: 16 x 14'392. In other words, we have represented each sample by a vector of 14'392 features. In order to adequately QC our samples, one important aspect is determining how similar or dissimilar one vector of genes from a specific sample is to that of another. However, interpreting 14'392 dimensions directly is not something that humans are generally capable of doing. This is where dimensionality reduction comes in. We would ideally like to *reduce* the given *dimensions* (a 14'392-dimensional space), down to a 2- or 3-dimensional space, so we can visualise the result.
 
 Two approaches, which are in fact related, are PCA (*principal component analysis*) and MDS (*multidimensional scaling*).
 
@@ -333,7 +251,7 @@ PCA is a linear dimensionality reduction technique which, in essence, tries to f
 
 Additionally, we will plot a 'scree' plot, which aims to visualise the variance explained by each principal component.
 
-```{r}
+```{r PCA scree}
 # Run PCA
 pcDat  <- prcomp(t(vsdSE), scale. = FALSE)
 
@@ -345,19 +263,22 @@ varExp_df <- data.frame(PC= paste0("PC",1:8),
                           varExp=varExp[1:8])
 
 # Scree plot
-varExp_df %>%
-  ggplot(aes(x=PC,y=varExp, group=1)) +
-  geom_point(colour="steelblue", size=4) +
-  geom_col(fill="steelblue") +
-  geom_line() + 
-  theme_bw() + ylim(c(0,100))
+ggplot(varExp_df, aes(x=PC,y=varExp, group=1)) +
+geom_point(colour="steelblue", size=4) +
+geom_col(fill="steelblue") +
+geom_line() + 
+theme_bw() + ylim(c(0,100))
 ```
 
 Let's now plot the first and second principal components in 2-dimensions.
 
-```{r}
-plot_ly(as.data.frame(pcDat$x), x=~PC1, y=~PC2, color=meta$Condition, colors="Set1",
-        type="scatter", mode="markers") %>%
+```{r PCA plot}
+plot_ly(as.data.frame(pcDat$x), 
+        x=~PC1, y=~PC2, 
+        color=meta$Condition, 
+        colors="Set1",
+        type="scatter", 
+        mode="markers") %>%
   layout(title="PCA Plot")
 ```
 
@@ -367,14 +288,27 @@ Multi-dimensional scaling is another dimensionality reduction which aims to best
 
 Here, we use limma [@limma] to calculate the MDS and use plotly to visualise the pairwise distances in 3-dimensions.
 
-```{r}
+```{r MDS plot}
 mds <- limma::plotMDS(vsdSE, plot=FALSE)
 mdsOut <- mds$eigen.vectors[,1:3]
-colnames(mdsOut) <- c("Leading logFC dim1", "Leading logFC dim2", 
+colnames(mdsOut) <- c("Leading logFC dim1", 
+                      "Leading logFC dim2", 
                       "Leading logFC dim3")
 toPlot <- cbind(meta %>% rownames_to_column("Sample"), mdsOut)
-plot_ly(toPlot, x=~`Leading logFC dim1`, y=~`Leading logFC dim2`, z=~`Leading logFC dim3`, color=~Condition, colors="Set1", type='scatter3d', mode='markers+text', text=~Sample, textposition = "top right") %>%
-  plotly::layout(title="Classical MDS", scene=list(xaxis=list(title = 'Leading logFC dim1'), yaxis = list(title = 'Leading logFC dim2'), zaxis = list(title = 'Leading logFC dim3')))
+plot_ly(toPlot, 
+        x=~`Leading logFC dim1`, 
+        y=~`Leading logFC dim2`, 
+        z=~`Leading logFC dim3`, 
+        color=~Condition, 
+        colors="Set1", 
+        type='scatter3d', 
+        mode='markers+text', 
+        text=~Sample, 
+        textposition = "top right") %>%
+  plotly::layout(title="Classical MDS", 
+                 scene=list(xaxis=list(title = 'Leading logFC dim1'), 
+                            yaxis = list(title = 'Leading logFC dim2'), 
+                            zaxis = list(title = 'Leading logFC dim3')))
 ```
 
 ::: {.callout-note appearance="simple" collapse="true"}
@@ -382,7 +316,7 @@ plot_ly(toPlot, x=~`Leading logFC dim1`, y=~`Leading logFC dim2`, z=~`Leading lo
 
 The following image and linked StackedOverflow post explains well the difference between the two methods.
 
-[![](https://i.stack.imgur.com/WvnU7.png){fig-alt="Visual explanation of the difference between PCA and MDS" fig-align="center"}](https://stats.stackexchange.com/questions/14002/whats-the-difference-between-principal-component-analysis-and-multidimensional)
+[![](https://i.stack.imgur.com/WvnU7.png){fig-alt="Visual explanation of the  difference between PCA and MDS" fig-align="center"}](https://stats.stackexchange.com/questions/14002/whats-the-difference-between-principal-component-analysis-and-multidimensional)
 :::
 
 ### Exercise #2
@@ -391,7 +325,7 @@ The following image and linked StackedOverflow post explains well the difference
 2.  Change the above function call so that all genes in the count matrix are used as input.
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solutions
+#### Solutions
 
 1.  By default, the top 500 genes are used.
 
@@ -410,9 +344,9 @@ We can also quantify the similarity between samples using correlations. This inv
 
 We can use hierarchical clustering using the pearson correlations as inputs. This will group samples together in a hierarchical fashion in a tree-like structure.
 
-```{r}
-d <- as.dist(1-cor(vsdSE, use="complete.obs"))
-hc <- hclust(d, method="ward.D2")
+```{r dendogram}
+d <- as.dist(1-cor(vsdSE, use="complete.obs"))   # calculate the pairwise correlations
+hc <- hclust(d, method="ward.D2")  # run the clustering algorithm
 WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 ```
 
@@ -420,7 +354,7 @@ WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 
 Similarly, we can call `pheatmap` on the correlations to easily visualize the similarity between samples within and across conditions.
 
-```{r}
+```{r correlation heatmap, fig.width=12, fig.height=12}
 # Pearson correlation plot 
 pheatmap(
   mat               = cor(vsdSE, use="complete.obs"),
@@ -440,7 +374,7 @@ pheatmap(
 
 ### Top 2'000 Variable Genes Heatmap
 
-```{r}
+```{r pheatmap 2k variable}
 # First, we center the matrix
 vsdSECentered <- sweep(vsdSE, 1, rowMeans(vsdSE))
 # Identify high variance features
@@ -462,11 +396,3 @@ hmObj <- pheatmap(countsToPlot,
          fontsize=8)
 hmObj
 ```
-
-## Exercise #3 (time allowing):
-
-Change the above code such that the Kallisto outputs are read in intead of the FeatureCount count matrices. What differences, if any, do you observe?
-
-::: {.callout-tip appearance="simple"}
-You can use `stringr::str_remove` as we did above to transform the name of the transcripts into genes (as we did for the previous exercise).
-:::
