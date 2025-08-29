@@ -14,12 +14,6 @@ editor: visual
 bibliography: report_assets/references.bib
 ---
 
-```{r}
-suppressPackageStartupMessages({
-  library(tidyverse)
-})
-```
-
 # Introduction
 
 Welcome to our introductory RNA-seq course.
@@ -39,6 +33,10 @@ ls -lh ~/work/gse154927-full/fastq/
 You should see 17 files in this directory. 16 files ending in fastq.gz and one "dataset.tsv" file. The "dataset.tsv" file gives some details about the samples. Let's load this file now in R to see how it looks like.
 
 ```{r}
+suppressPackageStartupMessages({
+  library(tidyverse)
+})
+
 ds <- vroom::vroom("~/work/gse154927-full/fastq/dataset.tsv") %>% as_tibble()
 ds
 ```
@@ -105,7 +103,7 @@ Take a look at the outputs in the "\~/work/results/1_qc/fastqc" and "\~/work/res
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Solutions
 
-1.  There were most likely some problems with the pooling. SW480_EpCAMhigh_1 appears to be under-represented while other samples are comparatively underrepresented.
+1.  There were most likely some problems with the pooling. SW480_EpCAMhigh_1 appears to be under-represented while other samples are comparatively overrepresented.
 2.  This is a multi-faceted issue. It is a general artifact of sequencers on one hand, related towards the speed of sequencing and the longevity of the reagents. On another, increasing adapter content towards the 3' end of the read can negatively affect the performance due to low sequence diversity.
 3.  It looks as expected. A number of samples however have an increase in the amount of As towards the end of the read. This is most likely due to very short fragment lengths (or adapter dimers) and the sequencer beginning to read past the adapter.
 4.  No, the adapter content is already quite high for most of the samples. Sequencing longer fragments would not be worth the investment, most likely.
@@ -141,7 +139,9 @@ Open the downloaded html file which has been placed within `~/work/gse154927-ful
 
 In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp[@chen2018]. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does. Depending on the resources, fastp can take a long time to execute for this number of samples, so we opt to rather do this step on only two samples from the downsampled data to get a sense for how fastp improves the quality in fastq files.
 
-```{bash, eval=FALSE}
+```{bash, eval=TRUE}
+#| class-output: scrolling
+
 CURR_DIR=$(pwd)
 cd ../..
 
