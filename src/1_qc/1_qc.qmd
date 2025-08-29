@@ -82,7 +82,7 @@ PROCESSED_MULTIQC=~/work/results/1_qc/multiqc
 mkdir -p $PROCESSED_FASTQC $PROCESSED_MULTIQC
 
 # Process with FastQC
-echo ~/bin/FastQC/fastqc --extract -o $PROCESSED_FASTQC \
+echo fastqc --extract -o $PROCESSED_FASTQC \
   -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 \
   ~/work/gse154927-full/fastq/*fastq.gz
 
@@ -120,7 +120,7 @@ Unfortunately, executing `fastq_screen` can take a significant amount of time ev
 
 ```{bash}
 #| class-output: scrolling
-~/bin/FastQ-Screen-0.16.0/fastq_screen -h
+fastq_screen -h
 ```
 
 Open the downloaded html file which has been placed within `~/work/gse154927-full/fastqscreen`.
@@ -139,22 +139,25 @@ Open the downloaded html file which has been placed within `~/work/gse154927-ful
 
 # Preprocessing with `fastp`
 
-In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp[@chen2018]. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does, but **do not execute it**. Depending on the resources, fastp can take a long time to execute for this number of samples (\~1 hr in this case), so we opt to rather download the outputs for use in the next chapter.
+In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp[@chen2018]. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does. Depending on the resources, fastp can take a long time to execute for this number of samples, so we opt to rather do this step on only two samples from the downsampled data to get a sense for how fastp improves the quality in fastq files.
 
 ```{bash, eval=FALSE}
 CURR_DIR=$(pwd)
 cd ../..
 
-INPUT_DIR=~/work/gse154927-full/fastq
+INPUT_DIR=~/work/gse154927-subsampled/fastq
 FASTP_OUTDIR=~/work/results/1_qc/fastp
 mkdir -p $FASTP_OUTDIR
 echo $(pwd)
 
 # Start processing with fastp
-SAMPLES=$(cat ~/work/gse154927-full/fastq/dataset.tsv | awk -F"\t" '{print $1}' | tail +2 | sort)
-for SN in $SAMPLES;
+
+# In case we want to process all (skip during lecture)
+ALL_SAMPLES=$(cat ~/work/gse154927-subsampled/fastq/dataset.tsv | awk -F"\t" '{print $1}' | tail +2 | sort)
+
+for SN in HCT116_EpCAMhigh_3 SW480_EpCAMhigh_1;
   do echo "Processing: ${SN}"
-  echo ~/bin/fastp \
+  fastp \
     --in1 "${INPUT_DIR}/${SN}_R1.fastq.gz" \
     --in2 "${INPUT_DIR}/${SN}_R2.fastq.gz" \
     --out1 "${FASTP_OUTDIR}/${SN}_trimmed_R1.fastq.gz" \
@@ -163,8 +166,7 @@ for SN in $SAMPLES;
   	--thread 8 \
   	--trim_front1 4 \
   	--trim_tail1 4    \
-  	--average_qual 0 \
-  	--adapter_fasta adapters.fa \
+  	--average_qual 20 \
   	--max_len1 0 \
   	--max_len2 0 \
   	--trim_poly_x \
