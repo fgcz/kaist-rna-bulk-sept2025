@@ -1,5 +1,5 @@
 ---
-title: "Part 1: QC"
+title: "Exercise #1: QC"
 format:
   html:
     embed-resources: true
@@ -7,9 +7,11 @@ format:
     toc-location: left
     toc-depth: 3
     title-block-banner: "#00A7FF"
-css: style.css
+filters:
+  - flourish
+css: report_assets/style.css
 editor: visual
-bibliography: references.bib
+bibliography: report_assets/references.bib
 ---
 
 ```{r}
