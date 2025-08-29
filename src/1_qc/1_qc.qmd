@@ -183,7 +183,7 @@ done
 
 1.  The adapter content in some of the samples
 
-2.  The file with all sequences considered to be adapter provided here `data/supplementary-files/allIllumina-forTrimmomatic-20160202.fa` . This list is not exhaustive and may need to be expanded if your library prep in question uses an adapter not in the list.
+2.  The file with all sequences considered to be adapter provided here `~/work/kaist-rna-bulk-sept2025/data/allIllumina-forTrimmomatic-20160202.fa` . This list is not exhaustive and may need to be expanded if your library prep in question uses an adapter not in the list.
 
 3.  According to the documentation on GitHub, fastp performs trimming in the following order:
 
