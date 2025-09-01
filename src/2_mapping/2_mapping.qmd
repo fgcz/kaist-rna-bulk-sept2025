@@ -7,9 +7,9 @@ format:
     toc-location: left
     toc-depth: 3
     title-block-banner: "#00A7FF"
-css: style.css
+css: assets/style.css
 editor: visual
-bibliography: references.bib
+bibliography: assets/references.bib
 ---
 
 # Mapping with STAR
@@ -57,7 +57,7 @@ tibble(Name=dat_raw$Name, OriginalCount=dat_raw$`Read Count`, FastpCount=dat_fas
 
 ## Running STAR
 
-We are now ready to run the STAR aligner on our inputs. Note that an import step has already been done for us, namely the creation of the STAR index directory. How to generate this directory be found [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html#running-star). Alignment with STAR can (despite its purported speed) take a while, around \~15 minutes for all samples, so look over commands in the meantime.
+We are now ready to run the STAR aligner on our inputs. Note that an import step has already been done for us, namely the creation of the STAR index directory. How to generate this directory be found [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html#running-star). Alignment with STAR can (despite its purported speed) take a while and use a lot of RAM (\~30GB for the human genome), around \~15 minutes for all samples, so look over commands in the meantime.
 
 ```{bash, eval=FALSE}
 set +e
@@ -71,7 +71,7 @@ mkdir -p $OUTPUT_DIR
 ALL_SAMPLES=$(cat ~/work/gse154927-subsampled/fastp/dataset.tsv | awk -F"\t" '{print $1}' | tail +2 | sort)
 
 # Start processing with fastp
-for SN in $ALL_SAMPLES
+for SAMPLE_NAME in $ALL_SAMPLES
   do echo $SN
   R1_FILE=$TRIMMED_FASTQS/"${SN}_R1.fastq.gz"
   R2_FILE=$TRIMMED_FASTQS/"${SN}_R2.fastq.gz"
@@ -81,7 +81,7 @@ for SN in $ALL_SAMPLES
 	  --genomeDir $STAR_INDEX \
 	  --readFilesIn $R1_FILE $R2_FILE \
 	  --twopassMode None \
-	  --runThreadN 4 \
+	  --runThreadN 2 \
 	  --sjdbOverhang 150 \
 	  --outFilterType BySJout \
 	  --outFilterMatchNmin 30 \
