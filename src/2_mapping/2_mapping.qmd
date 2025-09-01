@@ -74,7 +74,7 @@ for SN in $ALL_SAMPLES
   
   # First do alignment with STAR using a pre-built index
   time /opt/STAR \
-	  --genomeDir \
+	  --genomeDir ~/work/grch38-p13-gencode-release-42/annotation/genes_STARIndex \
 	  --readFilesIn $R1_FILE $R2_FILE \
 	  --twopassMode None \
 	  --runThreadN 4 \
@@ -108,7 +108,7 @@ for SN in $ALL_SAMPLES
   samtools index $OUTPUT_DIR/$SAMPLE_NAME.bam
   
   # “Guess” how RNA-seq sequencing were configured
-  infer_experiment.py -r data/supplementary-files/Ensembl_R64_genes/genes.bed \
+  infer_experiment.py -r ~/work/grch38-p13-gencode-release-42/annotation/genes.bed \
     -i $OUTPUT_DIR/$SAMPLE_NAME.bam -s 200000 > $OUTPUT_DIR/$SAMPLE_NAME"_inferred.txt"
 done
 
