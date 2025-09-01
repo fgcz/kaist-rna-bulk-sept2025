@@ -14,47 +14,44 @@ bibliography: references.bib
 
 # Mapping with STAR
 
-For this section, we will be aligning our processed fastqs using STAR [@dobin2012].
+For this section, we will be aligning our processed fastqs using STAR [@dobin2012] and looking at the alignments in IGV.
 
-## Downloading test data
+## Exploring test data
 
-First, let's download our dataset for this section. If you haven't already, please delete all fastp generated data from the previous section. Don't worry, we will download it at a later point again from the FGCZ server. Then, let's download our test data for this section: fastp-processed files which have been downsampled by 10X to speed up alignment.
+First, let's look at our test data for this section: fastp-processed files based on the subsampled data from the previous section to speed up alignment.
 
-```{bash}
-CURR_DIR=$(pwd)
-cd ../..
-
-# Download the data
-FASTP_OUTDIR=results/1_qc/fastp_downsampled
-mkdir -p $FASTP_OUTDIR
-cd $FASTP_OUTDIR
-echo "Depositing data in "$FASTP_OUTDIR
-curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/yeast_fastp_downsampled_for_STAR.tar
-
-# Extract data
-tar -xvf yeast_fastp_downsampled_for_STAR.tar
-rm -f yeast_fastp_downsampled_for_STAR.tar
-
-# back home
-cd $CURR_DIR
-```
-
-Now that the data has been downloaded, let's see exactly what we are dealing with. To this end, run the following cell. It calls [seqkit](https://bioinf.shenwei.me/seqkit/usage/) to output some stats about the fastq files.
+Now that the data has been downloaded, let's see exactly what we are dealing with. To this end, run the following cell. It calls [seqkit](https://bioinf.shenwei.me/seqkit/usage/) to output some stats about the fastq files about the cell-line HCT116 samples.
 
 ```{bash}
-/opt/seqkit stats ../../results/1_qc/fastp_downsampled/*fastq.gz
+#| class-output: scrolling
+
+echo "Running on raw fastqs..."
+seqkit stats --skip-err --quiet ~/work/gse154927-subsampled/fastq/HCT116*fastq.gz
+echo
+echo
+echo "Running on trimmed/filtered fastqs..."
+seqkit stats --skip-err --quiet ~/work/gse154927-subsampled/fastp/HCT116*fastq.gz
 ```
 
 ### Exercise #1
 
-1.  How many reads does each sample have? How does this compare to the input fastq files?
+1.  How many reads does each sample have? How does this compare to the input fastq files? Hint: compare the read counts in the two subdirectories from `~/work/gse154927-subsampled`
 
 2.  Is the minimum length of each read in the fastq files expected?
 
 ::: {.callout-tip collapse="true"}
 ## Solutions
 
-1.  As expected, each sample has around a tenth of the input reads of our initial sequencing data. 500'000 to 1'000'000 may seem like little considering the general recommendation of 20M for bulk RNA-seq, but it is enough to actually get reasonable results for yeast.
+```{r, warning=FALSE}
+suppressPackageStartupMessages(library(tidyverse))
+
+dat_raw <- vroom::vroom("~/work/gse154927-subsampled/fastq/dataset.tsv", show_col_types = FALSE) %>% arrange(Name)
+dat_fastp <- vroom::vroom("~/work/gse154927-subsampled/fastp/dataset.tsv", show_col_types = FALSE) %>% arrange(Name)
+
+tibble(Name=dat_raw$Name, OriginalCount=dat_raw$`Read Count`, FastpCount=dat_fastp$`Read Count`, ReadFraction=dat_fastp$`Read Count` / dat_raw$`Read Count`)
+```
+
+1.  As expected, each sample has around a tenth of the input reads of our initial sequencing data. 500'000 to 1'000'000 may seem like little considering the general recommendation of 20M for bulk RNA-seq.
 2.  Yes, we specified a minimum length of 30bp when we ran fastp, which is what we see in the seqkit output.
 :::
 
@@ -63,31 +60,45 @@ Now that the data has been downloaded, let's see exactly what we are dealing wit
 We are now ready to run the STAR aligner on our inputs. Note that an import step has already been done for us, namely the creation of the STAR index directory. How to generate this directory be found [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html#running-star). Alignment with STAR can (despite its purported speed) take a while, around \~15 minutes for all samples, so look over commands in the meantime.
 
 ```{bash}
-CURR_DIR=$(pwd)
-cd ../..
-
-TRIMMED_FASTQS=results/1_qc/fastp_downsampled
-OUTPUT_DIR=results/2_mapping/STAR_alignment
+TRIMMED_FASTQS=~/work/gse154927-subsampled/fastp
+OUTPUT_DIR=~/work/results/2_mapping/STAR_alignment
 mkdir -p $OUTPUT_DIR
 
+ALL_SAMPLES=$(cat ~/work/gse154927-subsampled/fastp/dataset.tsv | awk -F"\t" '{print $1}' | tail +2 | sort)
+
 # Start processing with fastp
-for FASTQ in $TRIMMED_FASTQS/*_trimmed_R1.fastq.gz
-  do SAMPLE_NAME=$(basename ${FASTQ%_trimmed_R1.fastq.gz})
-  echo $FASTQ
+for SN in $ALL_SAMPLES
+  do echo $FASTQ
+  R1_FILE=$TRIMMED_FASTQS/"${SN}_R1.fastq.gz"
+  R2_FILE=$TRIMMED_FASTQS/"${SN}_R2.fastq.gz"
   
   # First do alignment with STAR using a pre-built index
   time /opt/STAR \
-    --genomeDir data/supplementary-files/Ensembl_R64_genes_STARIndex \
-    --outFileNamePrefix $OUTPUT_DIR/$SAMPLE_NAME"_" \
-    --readFilesIn $FASTQ --twopassMode None --runThreadN 4 \
-    --sjdbOverhang 150 --outFilterType BySJout --outFilterMatchNmin 30 \
-    --outFilterMismatchNmax 10 --outFilterMismatchNoverLmax 0.05 \
-    --outMultimapperOrder Random --alignSJDBoverhangMin 1 \
-    --alignSJoverhangMin 8 --alignIntronMax 1000 --alignMatesGapMax 1000 \
-    --outFilterMultimapNmax 50 --chimSegmentMin 15 \
-    --chimJunctionOverhangMin 15 --chimScoreMin 15 --chimScoreSeparation 10 \
-    --outSAMstrandField intronMotif --alignEndsProtrude 3 ConcordantPair \
-    --outSAMattributes All --outStd BAM_Unsorted --outSAMtype BAM Unsorted \
+	  --genomeDir \
+	  --readFilesIn $R1_FILE $R2_FILE \
+	  --twopassMode None \
+	  --runThreadN 4 \
+	  --sjdbOverhang 150 \
+	  --outFilterType BySJout \
+	  --outFilterMatchNmin 30 \
+	  --outFilterMismatchNmax 10 \
+	  --outFilterMismatchNoverLmax 0.05 \
+	  --outMultimapperOrder Random \
+	  --alignSJDBoverhangMin 1 \
+	  --alignSJoverhangMin 8 \
+	  --alignIntronMax 100000 \
+	  --alignMatesGapMax 100000  \
+	  --outFilterMultimapNmax 50 \
+	  --chimSegmentMin 15 \
+	  --chimJunctionOverhangMin 15 \
+	  --chimScoreMin 15 \
+	  --chimScoreSeparation 10 \
+	  --outSAMstrandField intronMotif \
+	  --alignEndsProtrude 10 ConcordantPair \
+	  --outSAMmultNmax 4 \
+	  --outSAMattributes All  \
+	  --outStd BAM_Unsorted \
+	  --outSAMtype BAM Unsorted \
     --outSAMattrRGline ID:$SAMPLE_NAME SM:$SAMPLE_NAME \
     --readFilesCommand zcat > $OUTPUT_DIR/$SAMPLE_NAME.out.bam
   
