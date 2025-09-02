@@ -8,10 +8,10 @@ format:
     toc-depth: 3
     title-block-banner: "#00A7FF"
 filters:
- - /home/rstudio/_extensions/kbodwin/flourish/flourish.lua
-css: style.css
+ - fourish
+css: report_assets/style.css
 editor: visual
-bibliography: references.bib
+bibliography: report_assets/references.bib
 ---
 
 # Introduction to Bash
