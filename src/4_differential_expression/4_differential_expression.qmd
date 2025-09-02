@@ -7,18 +7,18 @@ format:
     toc-location: left
     toc-depth: 3
     title-block-banner: "#00A7FF"
-css: style.css
+css: report_assets/style.css
 editor: visual
-bibliography: references.bib
+bibliography: report_assets/references.bib
 ---
 
 # Differential Expression Analysis
 
-In this section, we will use the count data from Kallisto from the previous part, redo some of the QC, and perform the differential expression analysis using DESeq2[@DESeq2]. This part is adapted from the official DESeq2 [vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html), available on Bioconductor, so feel free to look there for additional information.
+In this section, we will use the count data from Kallisto, redo some of the QC, and perform the differential expression analysis using DESeq2[@DESeq2]. This part is adapted from the official DESeq2 [vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html), available on Bioconductor, so feel free to look there for additional information.
 
 ## Preparing data
 
-```{r}
+```{r load packages}
 suppressPackageStartupMessages({
   library(SummarizedExperiment)
   library(pheatmap)
@@ -29,44 +29,33 @@ suppressPackageStartupMessages({
   library(tximport)
   library(DESeq2)
 })
-source("../helpers.R")
+source("helpers.R")
 ```
 
-Let's download data. These counts should be mostly identical to the results we produced ourselves in the last step but are provided here as a download for convenience.
+This time, we will use the transcript counts from Kallisto rather than the featureCounts from the STAR alignments. The point of this section is to see how similar the pseudoalignment results are to the alignment- dependent methods.
 
-```{bash}
-CURR_DIR=$(pwd)
-cd ../..
-
-# Download the data
-KALLISTO_OUTDIR=results/3_quant/kallisto
-mkdir -p $KALLISTO_OUTDIR
-
-# change to kallisto dir and delete contents if there are any
-cd $KALLISTO_OUTDIR
-rm -f ./*
-
-# Download data
-echo "Depositing data in "$KALLISTO_OUTDIR
-curl -O https://fgcz-gstore.uzh.ch/public/RNASeqCourse/processed_yeast_kallisto_counts.tar
-
-# Extract data
-tar -xvf processed_yeast_kallisto_counts.tar
-rm -f processed_yeast_kallisto_counts.tar
-
-# Back home
-cd $CURR_DIR
+```{r get counts}
+countsDirectoryToUse <- "~/work/gse154927-full/kallisto"
+kallistoFilePaths <- Sys.glob(file.path(countsDirectoryToUse, "*txt"))
 ```
 
 First, let's create our meta-information frame and instantiate some variables we will use later.
 
-```{r}
+```{r metadata}
 # Define meta dataframe for later use
+conditions <- c(rep("HCT116_EpCAMhigh", 4), 
+                rep("HCT116_EpCAMlow", 4),
+                rep("SW480_EpCAMhigh", 4),
+                rep("SW480_EpCAMlow", 4))
 meta <- data.frame(
-  Condition=as.factor(rep(c("Glucose", "GlycEth"), each=4)),
-  row.names=c(paste0("G", 1:4), paste0("GE", 1:4))
+  Condition=as.factor(conditions),
+  row.names=paste0(conditions, "_", rep(1:4, 4))
 )
-conditionColours <- scales::hue_pal()(length(unique(meta$Condition)))
+
+# Define some general-use parameters for use later
+sigThresh <- 10  # significane threshold for the counts
+conditionColours <- scales::hue_pal()(length(unique(meta$Condition)))  # choose pretty colours
+# associate the conditions with the pretty colours
 names(conditionColours) <- unique(meta$Condition)
 sampleColours <- conditionColours[meta$Condition]
 ```
@@ -75,34 +64,36 @@ sampleColours <- conditionColours[meta$Condition]
 ### On `Condition` factor levels
 
 R will choose a reference level for factors based on alphabetical order. Then, once we do the differential expression with DESeq2, you will never tell the DESeq2 functions which level you want to compare against (e.g. which level represents the control group), the comparisons will be based on the alphabetical order of the levels. There are two solutions: you can either explicitly tell results which comparison to make using the contrast argument (this will be shown later), or you can explicitly set the factors levels. In order to see the change of reference levels reflected in the results names, you need to either run `DESeq` or `nbinomWaldTest`/`nbinomLRT` after the re-leveling operation.
-
-In our case, we are lucky in that the Glucose group comes before GlycEth alphabetically and is therefore already set as the reference, and subsequently is the first term when you run `levels(meta$Condition)`. Try it out for yourself.
 :::
 
-Again, load the by-transcript gtf file to aid us in the annotation of our Kallisto results.
+Now, load the by-transcript gtf file to aid us in the annotation of our Kallisto results.
 
-```{r}
+```{r get anno}
 # Load the annotation
-seqAnno <- getFeatureAnnotation("../../data/supplementary-files/Ensembl_R64_genes/genes_annotation_byTranscript.txt", dataFeatureType="transcript")
+transcriptsAnnotation <- "~/work/grch38-p13-gencode-release-42/annotation/genes_annotation_byTranscript.txt"
+seqAnno <- getFeatureAnnotation(transcriptsAnnotation, dataFeatureType="transcript")
 seqAnno <- seqAnno[seqAnno$type %in% "protein_coding", ]
 ```
 
 Next, we load the counts using `tximport` , a convenience function for loading in count data from a variety of sources (Salmon, Kallisto, featureCounts, etc.) which also performs the aggregation of transcript counts to the gene level (remember that Kallisto produced count files on the transcript level).
 
-```{r}
+```{r load kallisto}
 # Get the files
-kallistoFiles <- file.path("../../results/3_quant/kallisto", paste0(rownames(meta), ".txt"))
-names(kallistoFiles) <- rownames(meta)
-stopifnot(all(file.exists(kallistoFiles)))  # Ensure we have all the files
-kallistoFiles
+names(kallistoFilePaths) <- rownames(meta)
+stopifnot(all(file.exists(kallistoFilePaths)))  # Ensure we have all the files
+kallistoFilePaths
 
 # Use tximport to load the counts
-txiKallisto <- tximport(kallistoFiles, type = "kallisto", tx2gene = seqAnno, ignoreAfterBar = TRUE, txIdCol = "transcript_id", geneIdCol = "gene_id")
+txiKallisto <- tximport(kallistoFilePaths, type = "kallisto", 
+                        tx2gene = seqAnno, 
+                        ignoreAfterBar = TRUE, 
+                        txIdCol = "transcript_id", 
+                        geneIdCol = "gene_id")
 ```
 
 Take a quick look at the `txiKallisto` object we generated and take a look at the rownames. Contrast this to the rownames in the raw files.
 
-```{r}
+```{r exercise0}
 # Your code here
 ```
 
@@ -112,7 +103,7 @@ Take a quick look at the `txiKallisto` object we generated and take a look at th
 
 Finally, let's construct a *DESeqDataSet* from the `txi` object and sample information in `meta`
 
-```{r}
+```{r make dds}
 dds <- DESeq2::DESeqDataSetFromTximport(txiKallisto,
                                         colData=meta,
                                         design=~Condition)
@@ -123,7 +114,7 @@ dds
 
 Let's first perform a QC step for these counts, to ensure they match up with the feature counts we attained in the last exercise.
 
-```{r}
+```{r get norm}
 sigThresh <- 10
 isPresent <- counts(dds) > sigThresh
 isPresentCond <- rowsum(t(isPresent * 1), group=meta$Condition)
@@ -138,7 +129,7 @@ vsdSE <- SummarizedExperiment::assay(vsdQC)
 
 ### PCA
 
-```{r}
+```{r pca scree}
 # Run PCA
 pcDat  <- prcomp(t(vsdSE), scale. = FALSE)
 
@@ -158,13 +149,13 @@ varExp_df %>%
   theme_bw() + ylim(c(0,100))
 ```
 
-```{r}
+```{r pca}
 plotPCA(vsdQC, intgroup=c("Condition"), ntop=nrow(vsdQC))
 ```
 
 ### MDS
 
-```{r}
+```{r mds}
 mds <- limma::plotMDS(vsdSE, plot=FALSE)
 mdsOut <- mds$eigen.vectors[,1:3]
 colnames(mdsOut) <- c("Leading logFC dim1", "Leading logFC dim2", 
@@ -176,7 +167,7 @@ plot_ly(toPlot, x=~`Leading logFC dim1`, y=~`Leading logFC dim2`, z=~`Leading lo
 
 ### Hierarchical Clustering Plot
 
-```{r}
+```{r hier}
 d <- as.dist(1-cor(vsdSE, use="complete.obs"))
 hc <- hclust(d, method="ward.D2")
 WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
@@ -188,7 +179,7 @@ WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 
 2.  Plot the top 2'000 most variable genes in a heatmap.
 
-    ```{r}
+    ```{r exercise1a}
     # Your code here
     ```
 
@@ -199,7 +190,7 @@ WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 
 2.  The easy solution is to simply copy the code from the previous exercise here:
 
-    ```{r, eval=FALSE}
+    ```{r exercise1b, eval=FALSE}
     # First, we center the matrix
     normCountsCentered <- sweep(vsdSE, 1, rowMeans(vsdSE))
     # Identify high variance features
@@ -227,14 +218,15 @@ WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
 
 The standard differential expression analysis steps are wrapped into a single function, `DESeq`. The estimation steps performed by this function are described below, in the manual page for `?DESeq` .
 
-```{r}
+```{r DE}
 # Calculate size factors
 dds <- estimateSizeFactors(dds, controlGenes = isValid)
 sf <- 1 / dds@colData$sizeFactor
 
 # Calculate DESeq
+contrastName=c("Condition", "HCT116_EpCAMhigh", "HCT116_EpCAMlow")
 dds <- DESeq(dds)
-res <- results(dds)
+res <- results(dds, contrast=contrastName)
 res <- correctDESeq2Output(res, isValid)
 ```
 
@@ -242,13 +234,9 @@ res <- correctDESeq2Output(res, isValid)
 You may wonder why we designated all genes above threshold as being "control genes" when calculating the size factors. Though this list of course also includes genes which will presumably be differentially expressed between the two conditions, the majority of genes will not be, and this therefore serves as a good approximation of the control genes in cases where we do not have this information a priori.
 :::
 
-::: {.callout-note appearance="simple"}
-Results tables are generated using the function `results`, which extracts a results table with log2 fold changes, p-values and adjusted p-values. With no additional arguments to results, the log2 fold change and Wald test p-value will be for the last variable in the design formula, and if this is a factor, the comparison will be the last level of this variable over the reference level (see previous note on factor levels).
-:::
-
 Let's set some thresholds that we will use going forward to filter the DE result. Namely, we will set the p-value, log2-fold, and adjusted p-value thresholds above/below which we will consider genes to be differentially expressed.
 
-```{r}
+```{r set thresh}
 pvalThresh <- 0.01
 padjThresh <- 0.05
 log2FCThresh <- 0.5
@@ -260,18 +248,18 @@ Next, let's take a closer look at the results.
 
 1.  What are the columns of the object?
 2.  What was the method used for p-value correction?
-3.  How many significantly-expressed genes are there assuming we consider genes differentially expressed if `p <= pvalThresh` and `log2FoldChange >= log2FCThresh` ?
+3.  How many significantly-expressed genes are there assuming we consider genes differentially expressed if `p <= pvalThresh` and `log2FoldChange >= log2FCThresh`?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
 ## Solutions
 
-1.  The columns most interesting to us are pvalue, padj (adjusted p-value), and log2FoldChange. Some other columns include `lfcSE`, which gives the standard error of the `log2FoldChange` and `stat`, which gives the Wald statistic. See ?results for more information.
+1.  The columns most interesting to us are pvalue, padj (adjusted p-value), and log2FoldChange. Some other columns include `lfcSE`, which gives the standard error of the `log2FoldChange` and `stat`, which gives the Wald statistic. See `?results` for more information.
 
-2.  BH (Benjamin-Hochberg), otherwise known as the false discovery ratex
+2.  BH (Benjamin-Hochberg), otherwise known as the false discovery rate
 
 3.  Execute the following:
 
-    ```{r}
+    ```{r exercise2a}
     sum(abs(res$log2FoldChange) >= log2FCThresh & 
           res$pvalue <= pvalThresh &
           isValid, na.rm=TRUE)
@@ -282,7 +270,7 @@ Next, let's take a closer look at the results.
 
 Let's first summarise the results table we get.
 
-```{r}
+```{r summ}
 summary(res)
 ```
 
@@ -290,31 +278,29 @@ You will notice that there are no low-count genes in the result since we filtere
 
 The `results` function contains a number of arguments to customize the results table which is generated. You can read about these arguments by looking up `?results`. Note that the results function automatically performs independent filtering based on the mean of normalized counts for each gene, optimizing the number of genes which will have an adjusted p-value below a given FDR cutoff, `alpha`. All genes which do not pass the threshold are set to `NA`.
 
-```{r}
-res05 <- results(dds, alpha=0.05)
+```{r DE alpha}
+res05 <- results(dds, contrast=contrastName, alpha=0.05)
 summary(res05)
 ```
 
 DESeq2 includes a number of convenience methods for visualizing results. The function *plotMA* shows the log2 fold changes attributable to a given variable over the mean of normalized counts for all the samples in the *DESeqDataSet*. Points will be colored red if the adjusted *p* value is less than 0.1 (the default `alpha` value).
 
-```{r}
+```{r MA}
 plotMA(res, ylim=c(-2,2))
 ```
 
-It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which removes the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
 
-```{r}
-resultsName <- resultsNames(dds)[-1]
-resultsName  # Get the contrast
-resLFC <- correctDESeq2Output(lfcShrink(dds, coef=resultsName, type="normal"), isValid)
+```{r MA corr}
+resLFC <- correctDESeq2Output(lfcShrink(dds, contrast=contrastName, type="normal"), isValid)
 plotMA(resLFC, ylim=c(-2,2))
 ```
 
 ### Volcano Plot
 
-Let's next visualise the data in a volcano plot. This type of plot summarises the the p-values against log-fold changes as a scatterplot, resulting in a figure resembling a volcano. We will use the packaged `EnhancedVolcano` [@EnhancedVolcano] since it works well out of the box.
+Let's next visualise the data in a volcano plot. This type of plot summarises the p-values against log-fold changes as a scatterplot, resulting in a figure resembling a volcano. We will use the packaged `EnhancedVolcano` [@EnhancedVolcano] since it works well out of the box.
 
-```{r, fig.height=5, fig.width=4}
+```{r volcano vanilla, fig.height=10, fig.width=8}
 EnhancedVolcano::EnhancedVolcano(resLFC,
                                  lab=rownames(res),
                                  x = 'log2FoldChange', y = 'pvalue')
@@ -324,11 +310,14 @@ Take a look at the output. Each spot in the scatter plot represents a gene with 
 
 However, due to the large effect size for some genes, it becomes difficult to see genes closer to the threshold lines. In addition, we would ultimately like to see gene names instead of gene IDs. To this end, let's set a maximum x- and y-axis value for our plot and swap the gene IDs out for the gene names.
 
-```{r, fig.height=8, fig.width=6}
-ymax <- 100
+```{r volcano gene name, fig.height=8, fig.width=7}
+ymax <- 50
 xmax <- 4
 seqAnnoMinimal <- seqAnno %>%
-  select(gene_id, gene_name, transcript_id)
+  select(gene_id, gene_name) %>%
+  group_by(gene_id, gene_name) %>%
+  filter(row_number() == 1) %>%
+  as.data.frame()
 rownames(seqAnnoMinimal) <- seqAnnoMinimal$gene_id
 seqAnnoMinimal <- seqAnnoMinimal[rownames(resLFC),]
 
@@ -345,7 +334,7 @@ toPlot <- res %>%
 # Plot the EnhancedVolcano
 EnhancedVolcano::EnhancedVolcano(toPlot,
   lab = toPlot$gene_name,
-  selectLab = c("SEC72", "MRPL23", "ARG7", "ADY2", "CDC40", "CTI6", "SNF8", "SPA2"),
+  selectLab = head(toPlot$gene_name),  # plot the first genes in our list
   drawConnectors = TRUE,
   arrowheads = FALSE,
   xlim = c(-xmax, xmax),
@@ -358,17 +347,19 @@ EnhancedVolcano::EnhancedVolcano(toPlot,
 
 ### Exercise #3
 
-1.  In this particular experiment, we are interested to see how feeding yeast a diet of glucose versus a diet of glucose and ethanol affects the cells. To this end, the yeast-biologist who performed this experiment was able to provide us with a number of genes involved in glucose transport which they expect to be down-regulated in the Glucose+Ethanol condition relative to the glucose condition. The genes in question are HXT1, HXT4, and HXT11. Modify the above code so that it displays these genes. Was the biologist correct in their assumptions? Would these results be affected much by changing thresholds?
+1.  The authors write in their paper the following about the predicted mechanism in these samples: *It has been established that in breast and pancreatic cancer ZEB1-driven EMT downregulates the expression of the RBP and splicing regulator ESRP1 as part of a self-enforcing feedback loop. Accordingly, among the top differentially expressed genes (DEGs) between EpCAMhi and EpCAMlo in SW480 and HCT116 colon cancer cells, ESRP1 was found to be upregulated both at the RNA and at the protein level in the quasi-mesenchymal subpopulation where ZEB1 expression is downregulated.*
+
+Can we confirm in our data that this finding holds water?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
 ## Solutions
 
 1.  Put the gene names in question to the "selectLab" argument and re-run that line.
 
-    ```{r, fig.height=5}
+    ```{r exercise3a, fig.height=5}
     EnhancedVolcano::EnhancedVolcano(toPlot,
       lab = toPlot$gene_name,
-      selectLab = c("HXT1", "HXT4", "HXT11"),
+      selectLab = c("ESRP1", "ZEB1"),
       drawConnectors = TRUE,
       arrowheads = FALSE,
       xlim = c(-xmax, xmax),
@@ -379,14 +370,14 @@ EnhancedVolcano::EnhancedVolcano(toPlot,
       y = 'pvalue') + coord_flip()
     ```
 
-    Two of the three genes are extremely down-regulated in the Glucose+Ethanol condition relative to Glucose. We don't expect changing the thresholds to have much affect on this.
+    ESRP1 is upregulated (positive logFC) while ZEB1 is downregulated (negative logFC).
 :::
 
 ## Clustering of Significant Features
 
-```{r}
+```{r clust}
 # Calculate vsd count matrix again
-vsd <- assay(DESeq2::vst(dds))
+vsd <- assay(DESeq2::vst(dds))[,1:8]
 # First, we center the matrix
 vsdCentered <- sweep(vsd, 1, rowMeans(vsd))
 
@@ -432,9 +423,9 @@ Testing whether a set of genes are significantly represented in a set of genes t
 
 ## Overrepresentation Analysis
 
-Since this is the case for our yeast experiment, using ORA this is the recommended way. First, let's split our genes into up-regulated and down-regulated.
+Since this is the case for our cancer experiment, using ORA this is the recommended way. First, let's split our genes into up-regulated and down-regulated.
 
-```{r}
+```{r filt ora}
 # separate into 'up' and 'down' genes
 isSig <- res$pvalue <= pvalThresh
 upGenesIndex <- res$log2FoldChange >= log2FCThresh & isSig
@@ -448,10 +439,10 @@ validGenes <- rownames(res)[isValid]
 
 Now, we can call the `enrichGO` function within clusterProfiler on these gene subsets using one of the three gene ontologies as a reference. We will also use the two build-in plotting functions, `dotplot` and `cnetplot` .
 
-```{r}
+```{r ora, fig.height=10, fig.width=10}
 ego <- clusterProfiler::enrichGO(gene = downGenes,
                                  universe = validGenes, 
-                                 OrgDb = "org.Sc.sgd.db", 
+                                 OrgDb = "org.Hs.eg.db", 
                                  keyType = "ENSEMBL", 
                                  ont = "BP", 
                                  pAdjustMethod = "BH", 
@@ -470,13 +461,11 @@ clusterProfiler::dotplot(ego) +
 
 # Plot cnetplot
 clusterProfiler::cnetplot(ego, 
-                          color.params = list(foldChange = log2RatioLabel),
-                          cex.params = list(gene_label = 0.3,
-                                            category_label = 0.7))
+                          size_category = 2,
+                          color.params = list(foldChange = log2RatioLabel))
 
 # Plot goplot
-clusterProfiler::goplot(ego,
-                        cex.params = list(category_label = 0.2))
+clusterProfiler::goplot(ego)
 ```
 
 ## Exercise #4

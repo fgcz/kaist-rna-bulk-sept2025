@@ -1,9 +1,9 @@
-getFeatureAnnotation = function(featAnnoFn, dataFeatureType=c("gene", "transcript", "isoform")){
+getFeatureAnnotation = function(featAnnoFn, dataFeatureType=c("gene", "transcript", "isoform")) {
   require(data.table)
   require(rtracklayer)
   dataFeatureType <- match.arg(dataFeatureType)
-
-  if(dataFeatureType == "gene"){
+  
+  if (dataFeatureType == "gene") {
     refAnnoGeneFn <- sub("(_byTranscript)*\\.txt$", "_byGene.txt", featAnnoFn)
     
     message("Using gene level annotation: ", refAnnoGeneFn)
@@ -12,7 +12,7 @@ getFeatureAnnotation = function(featAnnoFn, dataFeatureType=c("gene", "transcrip
     ## numeric columns shall not have NA.
     seqAnno[is.na(seqAnno)] <- ""
     rownames(seqAnno) <- seqAnno$gene_id
-  }else if(dataFeatureType %in% c("transcript", "isoform")){
+  } else if (dataFeatureType %in% c("transcript", "isoform")){
     seqAnno <- fread(featAnnoFn, data.table=FALSE)
     ## replace the NA character columns with ""; 
     ## numeric columns shall not have NA.
@@ -20,7 +20,7 @@ getFeatureAnnotation = function(featAnnoFn, dataFeatureType=c("gene", "transcrip
     ## historical reason: replace Identifier with transcript_id
     colnames(seqAnno)[colnames(seqAnno)=="Identifier"] <- "transcript_id"
     rownames(seqAnno) <- seqAnno$transcript_id
-  }else{
+  } else {
     stop("Only support dataFeatureType in 'transcript', 'isoform', 'gene'")
   }
   minimalCols <- c("gene_id", "transcript_id", "gene_name", "type", "strand",
