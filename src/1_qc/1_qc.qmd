@@ -20,15 +20,7 @@ Welcome to our introductory RNA-seq course.
 
 In this part of the course, we will be primarily working with a [public cancer dataset](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE154927) from the following [publication](https://pmc.ncbi.nlm.nih.gov/articles/PMC9674345/).
 
-It is not important to understand the paper in detail. Just know we are dealing with two colon cancer cell-lines "HCT116" and "SW480" which have been FACS-sorted according to the expression of CD44 and EpCAM, "EpCAMhigh" and "EpCAMlow", resulting in 4 groups with 4 replicates each.
-
--   HCT116: EpCAMhigh
-
--   HCT116: EpCAMlow
-
--   SW480: EpCAMhigh
-
--   SW480: EpCAMlow
+It is not important to understand the paper in detail. Just know we are dealing with two colon cancer cell-lines "HCT116" and "SW480" which have been FACS-sorted according to the expression of CD44 and EpCAM.
 
 We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.
 
