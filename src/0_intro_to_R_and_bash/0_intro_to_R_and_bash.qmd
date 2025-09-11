@@ -8,10 +8,10 @@ format:
     toc-depth: 3
     title-block-banner: "#00A7FF"
 filters:
- - /home/rstudio/_extensions/kbodwin/flourish/flourish.lua
-css: style.css
+  - flourish
+css: report_assets/style.css
 editor: visual
-bibliography: references.bib
+bibliography: report_assets/references.bib
 ---
 
 # Introduction to Bash
@@ -126,7 +126,7 @@ There are a lot of different files and directories here required for the compute
 I have additionally installed a number of different programs in `~/bin` (`~` is short-hand for the home directory, i.e. `/home/rstudio`). Take a look at these now.
 
 ```{bash}
-ls -lh ~/bin
+ls -lh ~/.local/bin
 ```
 
 ## Variables

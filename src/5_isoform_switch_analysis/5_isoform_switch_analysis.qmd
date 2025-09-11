@@ -1,0 +1,15 @@
+---
+title: "Part 5: Isoform Switch Analysis with Short Reads"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-location: left
+    toc-depth: 3
+    title-block-banner: "#00A7FF"
+css: report_assets/style.css
+editor: visual
+bibliography: report_assets/references.bib
+---
+
+# Hello World
