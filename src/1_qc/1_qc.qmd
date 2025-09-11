@@ -60,7 +60,7 @@ ds
     HCT116_EpCAMhigh, HCT116_EpCAMlow, SW480_EpCAMhigh, SW480_EpCAMlow
     ```
 
-2.  TURBO DNA-free Kit protocol (Invitrogen)
+2.  TURBO DNA-free Kit protocol (Invitrogen).
 
 3.  The samples vary between 2M to just under 52M reads. In general, we seek to get around 20M samples for bulk RNA-seq of human and mouse samples. Given that these are human samples, some of these have less than optimal counts. However, it may still be enough to get usable gene expression data. (see Count QC in chapter 3).
 
@@ -80,9 +80,9 @@ PROCESSED_MULTIQC=~/work/results/1_qc/multiqc
 mkdir -p $PROCESSED_FASTQC $PROCESSED_MULTIQC
 
 # Process with FastQC
-echo fastqc --extract -o $PROCESSED_FASTQC \
+echo "fastqc --extract -o $PROCESSED_FASTQC \
   -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 \
-  ~/work/gse154927-full/fastq/*fastq.gz
+  ~/work/gse154927-full/fastq/*fastq.gz"
 
 cp -r ~/work/gse154927-full/fastqc ~/work/results/1_qc/
 
@@ -126,18 +126,18 @@ Open the downloaded html file which has been placed within `~/work/gse154927-ful
 ## Exercise #3
 
 1.  Which sample has the highest rate of alignment to adapter sequence? Is there a correspondence with fastqc?
-2.  Which organism apart from Homo sapiens to has the highest hit for the samples?
+2.  Which organism apart from *Homo sapiens* to has the highest hit for the samples?
 
 ::: {.callout-note collapse="true" appearance="simple"}
 ## Solutions
 
 1.  HCT116_EpCAMhigh_3 has the highest rate of adapter contamination. This makes sense if we take a look at the "Adapter Content" tab of the MultiQC output.
-2.  The second highest hit for all samples is Pan troglodytes. This is due to sequence homology and is common to see for human samples.
+2.  The second highest hit for all samples is *Pan troglodytes*. This is due to sequence homology and is common to see for human samples.
 :::
 
 # Preprocessing with `fastp`
 
-In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp[@chen2018]. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does. Depending on the resources, fastp can take a long time to execute for this number of samples, so we opt to rather do this step on only two samples from the downsampled data to get a sense for how fastp improves the quality in fastq files.
+In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp [@chen2018]. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does. Depending on the resources, fastp can take a long time to execute for this number of samples, so we opt to rather do this step on only two samples from the downsampled data to get a sense for how fastp improves the quality in fastq files.
 
 ```{bash, eval=TRUE}
 #| class-output: scrolling
@@ -185,7 +185,7 @@ done
 ::: {.callout-note appearance="simple" collapse="true"}
 ### Solutions
 
-1.  The adapter content in some of the samples
+1.  The adapter content in some of the samples.
 
 2.  The file with all sequences considered to be adapter provided here `~/work/kaist-rna-bulk-sept2025/data/allIllumina-forTrimmomatic-20160202.fa` . This list is not exhaustive and may need to be expanded if your library prep in question uses an adapter not in the list.
 
