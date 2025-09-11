@@ -16,19 +16,7 @@ bibliography: report_assets/references.bib
 
 # Bulk RNA-seq Quantification
 
-In this tutorial, we look at the results of bulk RNA-seq quantification. Our data comes from the [following paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC9674345/).
-
-It is not important to understand the paper in detail. Just know we are dealing with two colon cancer cell-lines "HCT116" and "SW480" which have been FACS-sorted according to the expression of CD44 and EpCAM, "EpCAMhigh" and "EpCAMlow", resulting in 4 groups with 4 replicates each.
-
--   HCT116: EpCAMhigh
-
--   HCT116: EpCAMlow
-
--   SW480: EpCAMhigh
-
--   SW480: EpCAMlow
-
-We will focus on the tools available for QC rather than the underlying biology.
+In this tutorial, we look at the results of bulk RNA-seq quantification.
 
 ## Setup
 
