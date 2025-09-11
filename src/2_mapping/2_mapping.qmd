@@ -29,8 +29,7 @@ Now that the data has been downloaded, let's see exactly what we are dealing wit
 
 echo "Running on raw fastqs..."
 seqkit stats --skip-err --quiet ~/work/gse154927-subsampled/fastq/HCT116*fastq.gz
-echo
-echo
+echo -e "\n\n"
 echo "Running on trimmed/filtered fastqs..."
 seqkit stats --skip-err --quiet ~/work/gse154927-subsampled/fastp/HCT116*fastq.gz
 ```
@@ -50,10 +49,10 @@ suppressPackageStartupMessages(library(tidyverse))
 dat_raw <- vroom::vroom("~/work/gse154927-subsampled/fastq/dataset.tsv", show_col_types = FALSE) %>% arrange(Name)
 dat_fastp <- vroom::vroom("~/work/gse154927-subsampled/fastp/dataset.tsv", show_col_types = FALSE) %>% arrange(Name)
 
-tibble(Name=dat_raw$Name, OriginalCount=dat_raw$`Read Count`, FastpCount=dat_fastp$`Read Count`, ReadFraction=dat_fastp$`Read Count` / dat_raw$`Read Count`)
+tibble(Name=dat_raw$Name, OriginalCount=dat_raw$"Read Count", FastpCount=dat_fastp$"Read Count", ReadFraction=dat_fastp$"Read Count" / dat_raw$"Read Count")
 ```
 
-1.  As expected, each sample has around a tenth of the input reads of our initial sequencing data. 500'000 to 1'000'000 may seem like little considering the general recommendation of 20M for bulk RNA-seq, but we would likely still get somewhat usable count data from this assuming we mostly care about large fold changes.
+1.  As expected, each sample has around a tenth of the input reads of our initial sequencing data. 500'000 to 1'000'000 may seem like little considering the general recommendation of 20M for bulk RNA-seq, but we would likely still get somewhat usable count data from this assuming we mostly care about large fold changes (biological effect size).
 2.  Yes, we specified a minimum length of 30bp when we ran fastp, which is what we see in the seqkit output.
 :::
 
@@ -73,8 +72,8 @@ mkdir -p $OUTPUT_DIR
 ALL_SAMPLES=$(cat ~/work/gse154927-subsampled/fastp/dataset.tsv | awk -F"\t" '{print $1}' | tail +2 | sort)
 
 # Start processing with fastp
-for SAMPLE_NAME in $ALL_SAMPLES
-  do echo SAMPLE_NAME
+for SAMPLE_NAME in $ALL_SAMPLES; do
+  echo SAMPLE_NAME
   R1_FILE=$TRIMMED_FASTQS/"${SAMPLE_NAME}_R1.fastq.gz"
   R2_FILE=$TRIMMED_FASTQS/"${SAMPLE_NAME}_R2.fastq.gz"
   
@@ -109,9 +108,8 @@ for SAMPLE_NAME in $ALL_SAMPLES
     --readFilesCommand zcat > $OUTPUT_DIR/$SAMPLE_NAME.out.bam
   
   # Sort and index
-  samtools sort -l 9 -m 2625M -@ 4 $OUTPUT_DIR/$SAMPLE_NAME.out.bam -o $OUTPUT_DIR/$SAMPLE_NAME.bam
+  samtools sort --write-index -l 9 -m 2625M -@ 4 $OUTPUT_DIR/$SAMPLE_NAME.out.bam -o $OUTPUT_DIR/$SAMPLE_NAME.bam##idx##$OUTPUT_DIR/$SAMPLE_NAME.bam.bai
   rm -f $OUTPUT_DIR/$SAMPLE_NAME.out.bam
-  samtools index $OUTPUT_DIR/$SAMPLE_NAME.bam
   
   # “Guess” how RNA-seq sequencing were configured
   infer_experiment.py -r $GENES_BED \
@@ -139,13 +137,13 @@ cp -r ~/work/gse154927-subsampled/bams/* $OUTPUT_DIR
 ::: {.callout-tip collapse="true"}
 ## Solutions
 
-Let's first answer number 3, as it will help us to answer the other questions. This is obviously not the only way to do this, so feel free to use your own (potenitally more efficient) solution.
+Let's first answer number 3, as it will help us to answer the other questions. This is obviously not the only way to do this, so feel free to use your own (potentially more efficient) solution.
 
 ```{r}
 suppressPackageStartupMessages(library(tidyverse))
 starLogFiles <- Sys.glob("~/work/results/2_mapping/STAR_alignment/*_STAR.log")
 logFiles <- lapply(starLogFiles, function(x) {
-  tmp <- data.table::fread(x, sep="|", strip.white=TRUE, nrows=9, skip=8) %>% 
+  tmp <- data.table::fread(x, sep="|", strip.white=TRUE, nrows=9, skip="Uniquely mapped") %>% 
     as.data.frame()
   tmpVals <- str_trim(tmp[,2])
   tmpNames <- tmp[,1]
@@ -153,12 +151,12 @@ logFiles <- lapply(starLogFiles, function(x) {
   return(as_tibble(as.list(tmpVals)))
 }) %>% 
   bind_rows() %>%
-  mutate(`Uniquely mapped reads %`=sub("%", "", `Uniquely mapped reads %`)) %>%
+  mutate("Uniquely mapped reads %"=sub("%", "", `Uniquely mapped reads %`)) %>%
   mutate_all(., as.numeric) %>%
   mutate(Name = basename(starLogFiles))
 
-summary(logFiles$`Number of splices: Total`)
-summary(logFiles$`Number of splices: Annotated (sjdb)`)
+summary(logFiles$"Number of splices: Total")
+summary(logFiles$"Number of splices: Annotated (sjdb)")
 ```
 
 1.  SW480_EpCAMlow_1 is the sample with the highest mapping rate. HCT116_EpCAMlow_2_STAR is the sample with the lowest mapping rate.
