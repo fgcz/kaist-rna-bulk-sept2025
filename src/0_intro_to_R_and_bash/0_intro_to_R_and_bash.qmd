@@ -184,38 +184,389 @@ We have just skimmed the surface of what `bash` can do, and you should be able t
 
 # Introduction to R
 
+R is a powerful, free software environment for statistical computing and graphics. R's strengths include its vast collection of packages, sophisticated graphing capabilities, and an open-source user community.
+
+-   **Free and Open Source**: R is available under the GNU license, granting users essential rights, e.g. to run, study, redistribute, and improve the software.
+-   **Cross-Platform**: It runs on almost any operating system.
+-   **Graphics**: R has advanced capabilities for creating high-quality, customizable plots, often considered superior to other statistical packages.
+
+R's functionality is divided into a base system and thousands of add-on **packages**. These packages are collections of functions, data, and compiled code in a well-defined format.
+
+-   **CRAN (The Comprehensive R Archive Network)**: There are around 15,000 packages available on CRAN, developed by users and programmers worldwide.
+-   **Bioconductor**: This is a separate repository of packages specifically for the analysis and comprehension of high-throughput genomic data.
+-   **Other Sources**: Many developers also make packages available on personal websites or platforms like GitHub.
+
+## Calculator
+
+R can be used as a simple calculator for arithmetic and other mathematical operations.
+
 ```{r}
-print("Hello World")
+# Basic Arithmetic
+2 + 2
+3 - 5
+7 * -3
+pi / 3.141592
+
+# Other mathematical functions
+2^5
+log2(32)
+sqrt(2)
 ```
 
+## Variables and Assignment
+
+Values can be stored in variables using the assignment operator `<-`. This allows you to save results and use them in later calculations.
+
 ```{r}
-x = 4
-x <- 4
-x + x
+# Assign the value 1 to the variable x
+x <- 1
+x # Auto-printing the content of x
+
+# Assign a character string to a variable
+msg <- "hello"
+msg
+
+# Create a sequence of integers from 1 to 20
+x <- 1:20
+x
 ```
 
+## Workspace and Package Management
+
+Your R session includes a workspace where all created objects are stored. You can manage your working directory and load external functionalities through packages.
+
 ```{r}
-y <- x + x
+# Get the current working directory
+getwd()
+
+# Set the working directory (replace with your path)
+# setwd("/path/to/your/directory")
+
+# List objects in the current workspace
+ls()
+
+# Remove an object
+# rm(x)
 ```
 
+To use functionality not included in base R, you need to install and load packages.
+
 ```{r}
-4 / 2
-2 / 3
+# Install a package from CRAN (e.g., ISLR)
+# The command is run once to download the package.
+install.packages("ISLR")
+
+# Install core Bioconductor packages
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install()
+
+# Install specific Bioconductor packages
+# BiocManager::install(c("GenomicFeatures", "AnnotationDbi"))
+
+
+# Load a package to use its functions in the current session
+library(ISLR)
 ```
 
+## Getting Help
+
+R has a comprehensive built-in help system.
+
 ```{r}
-x <- c(1, 2, 3)
+# Get specific help for a function (exact match)
+?mean
+
+# Search for help pages related to a topic (partial match)
+??plot
 ```
 
+# Data Structures in R
+
+R has several fundamental data structures for storing different kinds of data.
+
+A vector is a one-dimensional collection of elements of the same type (numeric, character, logical, etc.). They are most commonly created with the `c()` function.
+
 ```{r}
-sumFn <- function(i) {
-  y <- i + i
-  return(y)
-}
+# Numeric vector
+x_numeric <- c(0.5, 0.6)
 
-x <- 1:2000
-y <-as.numeric(x)
+# Logical vector
+x_logical <- c(TRUE, FALSE, T, F)
 
-sapply(x[1:1000], sumFn)
-sumFn(x[1:1000])
+# Character vector
+x_character <- c("a", "b", "c")
+
+# Integer sequence vector
+x_integer <- 9:29
+
+# Performing vectorized operations
+x <- 1:4
+y <- 6:9
+
+x + y  # Element-wise addition
+x * y  # Element-wise multiplication
+x > 2  # Logical comparison
+```
+
+## Matrices
+
+A matrix is a two-dimensional vector with **rows** and **columns**. All elements must be of the same type.
+
+```{r}
+# Create a 2x3 matrix filled with NA by default
+m <- matrix(nrow = 2, ncol = 3)
+m
+
+# Create a matrix from a vector, filling by column
+m <- matrix(1:6, nrow = 2, ncol = 3)
+m
+```
+
+## Factors
+
+Factors are used to represent categorical data. They are useful because they are self-describing; for example, "Male" and "Female" are more informative than 1 and 2.
+
+```{r}
+# Create a factor
+x <- factor(c("yes", "yes", "no", "yes", "no"))
+x
+
+# See the frequency of each level
+table(x)
+
+# The default level order is alphabetical. We can change it.
+x <- factor(c("yes", "yes", "no", "yes", "no"),
+            levels = c("yes", "no"))
+x
+```
+
+## Data Frames
+
+Data frames are table-like structures used to store tabular data. Unlike matrices, columns in a data frame can be of different data types (e.g., numeric, character, factor).
+
+```{r}
+# Create a data frame
+df <- data.frame(
+  foo = 1:4, 
+  bar = c(T, T, F, F)
+)
+df
+
+# Get the number of rows and columns
+nrow(df)
+ncol(df)
+```
+
+# Data Handling
+
+## Subsetting
+
+You can extract specific parts of R objects using subsetting operators.
+
+-   `[`: Extracts elements and always returns an object of the same class as the original. Can select multiple elements.
+
+-   `[[`: Extracts a single element from a list or data frame.
+
+-   `$`: Extracts elements from a data frame by name.
+
+```{r}
+# --- Subsetting a Vector ---
+x <- c("a", "b", "c", "c", "d", "a")
+x[1]        # First element
+x[1:4]      # First four elements
+x[x > "a"]  # Logical subsetting
+
+# --- Subsetting a Data Frame ---
+df <- data.frame(
+  number = 1:4, 
+  logic = c(T, T, F, F)
+)
+
+# Using $
+df$number
+
+# Using [[
+df[[1]]
+
+# Using [ rows, columns ]
+df[1, ]      # First row, all columns
+df[, 2]      # All rows, second column
+df[c(1, 3), 2] # First and third rows of the second column
+```
+
+## Handling Missing Values (NA)
+
+Missing values are represented by `NA`. They can be identified and removed to perform calculations.
+
+```{r}
+x <- c(1, 2, NA, 4, NA, 5)
+
+# Create a logical vector indicating which values are NA
+is_na <- is.na(x)
+is_na
+
+# Select only the non-NA values
+x[!is_na]
+
+# For multiple objects, use complete.cases to find rows with no NAs
+y <- c("a", "b", NA, "d", NA, "f")
+good_cases <- complete.cases(x, y)
+good_cases
+
+# Subset both vectors based on complete cases
+x[good_cases]
+y[good_cases]
+```
+
+## Reading and Writing Data
+
+You can easily import data from and export data to external files.
+
+```{r}
+# Create a sample data frame to write to a file
+my_data <- data.frame(
+  Company = c("CompanyA", "CompanyB", "CompanyC", "CompanyD"),
+  Aircrafts = c(161, 52, 280, 432),
+  Accidents = c(3, 8, 2, 10)
+)
+
+# Write to a tab-separated file (.xls or .tsv)
+write.table(my_data, 
+            file = "MyData.tsv", 
+            sep = "\t", 
+            row.names = FALSE, 
+            quote = FALSE)
+            
+# Write to a comma-separated file (.csv)
+write.table(my_data, 
+            file = "MyData.csv", 
+            sep = ",", 
+            row.names = FALSE, 
+            quote = FALSE)
+
+# Read from a tab-separated file
+data_from_file <- read.delim("MyData.tsv", header = TRUE)
+str(data_from_file) # Check the structure of the imported data
+```
+
+# Data Visualization
+
+R's base graphics system provides a flexible way to create a wide variety of plots.
+
+## Scatter and Line Plots
+
+The `plot()` function is a generic function for creating plots. The `type` argument controls the style (points, lines, both).
+
+```{r}
+# Data vectors
+cars <- c(1, 3, 6, 4, 9)
+trucks <- c(2, 5, 4, 5, 12)
+
+# Create a plot for 'cars' with points and lines
+plot(cars, type = "o", col = "blue", ylim = c(0, 12),
+     ylab = "Count", main = "Autos")
+
+# Add a line for 'trucks' to the existing plot
+lines(trucks, type = "o", pch = 22, lty = 2, col = "red")
+
+# Add a legend
+legend("topleft", 
+       legend = c("cars", "trucks"),
+       col = c("blue", "red"),
+       pch = 21:22,
+       lty = 1:2)
+```
+
+## Bar Plots
+
+Bar plots are used to display categorical data with rectangular bars.
+
+```{r}
+# Data vector
+days <- c("Mon", "Tue", "Wed", "Thu", "Fri")
+cars <- c(1, 3, 6, 4, 9)
+
+# Create the bar plot
+barplot(cars,
+        main = "Car Barplot",
+        xlab = "Days",
+        ylab = "N of cars",
+        col = "grey",
+        names.arg = days)
+```
+
+## Pie Charts
+
+Pie charts represent proportions in a circle.
+
+```{r}
+# Data vector
+cars <- c(1, 3, 6, 4, 9)
+days <- c("Mon", "Tue", "Wed", "Thu", "Fri")
+
+# Create the pie chart with colors and labels
+pie(cars, 
+    main = "Cars",
+    col = rainbow(length(cars)),
+    labels = days)
+```
+
+## Histograms
+
+Histograms visualize the distribution of a single continuous variable by dividing the data into bins and counting the frequency of observations in each bin.
+
+```{r}
+# Use the built-in 'mtcars' dataset
+# Look at the distribution of horsepower (hp)
+hist(mtcars$hp,
+     main = "Horsepower Distribution",
+     xlab = "Total Horsepower",
+     prob = TRUE) # Show density instead of frequency
+
+# Add a density line
+lines(density(mtcars$hp), col = "red", lwd = 2, lty = 2)
+```
+
+## Boxplots
+
+Boxplots (or box-and-whisker plots) display the distribution of data based on a five-number summary (minimum, first quartile, median, third quartile, and maximum). They are excellent for comparing distributions across different groups.
+
+```{r}
+# Use the built-in 'mtcars' dataset
+# Compare horsepower (hp) by the number of gears (gear)
+boxplot(hp ~ gear, 
+        data = mtcars,
+        main = "Horsepower by Number of Gears",
+        xlab = "Number of Gears",
+        ylab = "Horsepower",
+        col = c("orange", "red", "lightblue"))
+```
+
+# Descriptive Statistics
+
+Descriptive statistics summarize the central tendency, dispersion, and shape of a dataset's distribution.
+
+```{r}
+# Use the 'faithful' dataset
+eruption_duration <- faithful$eruptions
+
+# Central Tendency
+mean(eruption_duration)
+median(eruption_duration)
+
+# Position
+quantile(eruption_duration) # Quartiles
+quantile(eruption_duration, probs = c(0.1, 0.9)) # 10th and 90th percentiles
+
+# Dispersion
+range_val <- max(eruption_duration) - min(eruption_duration)
+range_val
+IQR(eruption_duration) # Interquartile Range
+var(eruption_duration) # Variance
+sd(eruption_duration)  # Standard Deviation
+
+# Covariance
+waiting_time <- faithful$waiting
+cov(eruption_duration, waiting_time)
 ```
