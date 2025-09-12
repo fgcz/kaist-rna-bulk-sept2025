@@ -1,5 +1,5 @@
 ---
-title: "Part 5: Isoform Switch Analysis with Short Reads"
+title: "Part 5: Isoform switch / Alternative splicing analyses"
 format:
   html:
     embed-resources: true
@@ -12,4 +12,218 @@ editor: visual
 bibliography: report_assets/references.bib
 ---
 
-# Hello World
+# Isoform switch / Alternative splicing analyses
+
+Note: This workbooks in an adaptation of the official Bioconductor vignette by Kristoffer Vitting-Seerup. Please use the [vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/IsoformSwitchAnalyzeR/inst/doc/IsoformSwitchAnalyzeR.html) for further details or to expand any point.
+
+The ENCODE consortium recently found that on average, \>6 transcripts/alternative isoforms are generated per gene, and even much more in certain genes. Many of these remain uncharacterized, and they may be more common than expected, with important functional consequences. Recent breakthroughs in sequencing techniques and bioinformatics now allow to accurately reconstruct and quantify full-length gene isoforms, either from short RNA-sequencing data via tools such as StringTie, Kallisto and Salmon, or from long-read RNA-seq that can provide us with full length transcripts. To leverage the full potential of RNA-seq data and these full length transcripts, changes in isoform usage must be analysed. Unfortunately, this is rarely done. IsoformSwitchAnalyzeR enables statistical identification of isoform switches from RNA-seq derived quantification of novel and/or known full-length isoforms. Functional consequences and associated changes in alternative splicing can be also predicted.
+
+`IsoformSwitchAnalyzeR` measures isoform usage via isoform fraction (IF) values which quantifies the fraction of the parent gene expression originating from a specific isoform (calculated as isoform_exp / gene_exp). Consequently, the difference in isoform usage is quantified as the difference in isoform fraction (dIF) calculated as IF2 - IF1, and these dIF are used to measure the effect size (like fold changes are in gene/isoform expression analysis).
+
+In short, the aim of `IsoformSwitchAnalyzeR` is to find, annotate and visuale isoform switches with functional consequences, as well as its associated alternative splicing, from full-length RNA-seq derived isoform/transcript level quantification of RNASeq data. Quantification results coming from both short- and long-read sequencing data can be analyzed.
+
+`IsoformSwitchAnalyzeR` performs five high-level tasks:
+
+1.  Statistical identification of isoform switches.
+
+2.  Integration of a wide range of (predicted) annotations for the isoforms involved in the identified switches (e.g. protein domains).
+
+3.  Identification of which isoforms have a predicited functional consequnce (e.g. loss/gain of protein domain).
+
+4.  Visualization of predicted consequences of the isoform switches for individual genes
+
+5.  Analysis of genome wide patterns in both switch consequences and alternative splicing.
+
+![IsoformSwitchAnalyzeRWorkflow](https://training.galaxyproject.org/training-material/topics/transcriptomics/images/differential_isoform/scheme.jpeg)
+
+There are three high-level less-customizable wrapper functions:
+
+1.  `isoformSwitchAnalysisPart1()`
+2.  `isoformSwitchAnalysisPart2()`
+3.  `isoformSwitchAnalysisCombined()`
+
+## Exercise #1
+
+1.  Can you use the vignette or the help/manual of the functions (i.e. `?isoformSwitchAnalysisPart1()` after loading the package) to summarize what steps they are performing?
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Solution
+
+-   `isoformSwitchAnalysisPart1()` - Identifying isoform switches, annotating ORF, preparing sequences to use external tools if required (check out the [vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/IsoformSwitchAnalyzeR/inst/doc/IsoformSwitchAnalyzeR.html#:~:text=in%20Figure%201.-,Part,-1%20Extract%20Isoform) for details).
+-   `isoformSwitchAnalysisPart2()` - Analyzing alternative splicing, predicting functional consequences, plotting.
+-   `isoformSwitchAnalysisCombined()` - If one does not plan to incorporate external sequence analysis (or is only interested in splicing), it is possible to run the full workflow using this function.
+:::
+
+Alternatively, we are going to be using a step-by-step approach so we can analyze the transcript counts from our previous workbooks and discuss results.
+
+## Importing the data
+
+First, we are loading the package and importing the data:
+
+```{r import}
+# Installation from the Bioconductor repository:
+# First install Bioconductor
+# if (!requireNamespace("BiocManager", quietly = TRUE)){
+#     install.packages("BiocManager")
+#     BiocManager::install()
+# }
+# Then install the package:
+# BiocManager::install("IsoformSwitchAnalyzeR")
+
+# Looading the package:
+suppressPackageStartupMessages(library(IsoformSwitchAnalyzeR))
+
+# Importing the data:
+# From the vignette:
+# salmonQuant <- importIsoformExpression(
+#    parentDir = system.file("extdata/",package="IsoformSwitchAnalyzeR")
+# )
+
+# There are alternatives, merged samples, different subdirectories, etc! Again, always a good idea ?importIsoformExpression and checking out the full vignette
+
+# Tip: Many packages and vignettes use small subsets of data as case example, which may be included in internal folders such as "extdata". We are using our data here, but when you are on your own, it may be a good idea to double check a package/workflow is working as expected with the test dataset before using real data.
+countsDirectoryToUse <- "~/work/gse154927-full/kallisto"
+
+kallistoFilePaths <- list.files(path=countsDirectoryToUse, pattern="*.txt", full.names=T)
+kallistoQuant <- importIsoformExpression(sampleVector=kallistoFilePaths)
+
+```
+
+Next, let's take a closer look. What have we imported?
+
+```{r import2}
+class(kallistoQuant)
+
+head(kallistoQuant$abundance, 5)
+
+head(kallistoQuant$counts, 5)
+```
+
+## Exercise #2
+
+1.  What R object is created by the `importIsoformExpression` function?
+2.  Even in comprehensive vignettes and workbook there may be obscure concepts. Can you investigate what are the differences between the `abundance` and `counts` imported in `IsoformSwitchAnalyzeR`?
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Solution
+
+1.  A list of with 4 elements. These include 3 data.frames and another list.
+2.  A count is the raw count of reads that have overlapped some genomic feature. Abundance would be a more biologically meaningful quantification of the expression (i.e. the biological process) of a gene or transcript, which has been normalized in some way. Counts are better for the statistical analysis but the abundance estimates are better to measuring effect sizes.
+:::
+
+What else is needed?
+
+1.  Apart from the Kallisto counts, we will also need some information about the analyses that we want to perform. Similar to the previous session, we need to specify the experimental design matrix, i.e. biologically meaningful comparisons and possible covariates to include in the statistical models if there are unwanted sources of variation not due to experimental conditions you are interested in but that may influence results).
+2.  Annotation file with transcript structure, which transcripts are known for which genes, coordinates, etc (i.e. GTF file).
+3.  Nucleotide sequence of the transcripts (FASTA file).
+
+```{r import3}
+
+# Matrix design:
+myDesign <- data.frame(
+  sampleID = colnames(kallistoQuant$abundance)[-1],
+  condition = gsub("_[1-4]","",colnames(kallistoQuant$abundance)[-1])
+)
+
+# Note that as in differential expression analyses, at least 3 replicates is a must for statistical analyses!
+
+# We also download/locate/prepare:
+annotation_file <- "~/work/grch38-p13-gencode-release-42/annotation/genes_protein_coding.gtf"
+transcript_sequences <- "~/work/grch38-p13-gencode-release-42/annotation/transcripts_protein_coding.fa"
+myComparisons <- data.frame(
+  condition_1 = c("HCT116_EpCAMhigh", "HCT116_EpCAMlow"),
+  condition_2 = c("SW480_EpCAMhigh", "SW480_EpCAMlow")
+)
+# Note that the quantification that we are importing, annotation file, transcript sequences... must of course share the transcript IDs! Be careful when importing databases!
+
+# An object called switchAnalyzeRlist is going to integrate all of this
+aSwitchList <- importRdata(
+    isoformCountMatrix = kallistoQuant$counts,
+    isoformRepExpression = kallistoQuant$abundance,
+    designMatrix = myDesign,
+    comparisonsToMake = myComparisons,
+    isoformExonAnnoation = annotation_file,
+    isoformNtFasta = transcript_sequences   
+  )
+
+summary(aSwitchList)
+```
+
+## Exercise #3
+
+1.  Check out the resources used! How much GB of RAM is your R session using? In real analyses, the availaibility of computational resources is often a problem and something to keep in mind!
+2.  How many isoforms have been quantified and how many genes are representing?
+3.  How many isoforms were not expressed in any sample?
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Solution
+
+1.  It will depend on whether this is a new session, you have keep old objects, freed unused objects, etc... but you may notice that the objects in this analyses are bigger than in the previous ones!
+2.  148,137 isoforms from 18,732 genes
+3.  21,265 isoforms
+:::
+
+## Filtering
+
+Your `switchAnalyzeRlist` will most likely contain genes and isoforms that are irrelevant and should be filtered out. The function in charge of this is `preFilter`.
+
+```{r filter}
+aSwitchList <- preFilter(
+  switchAnalyzeRlist = aSwitchList,
+  geneExpressionCutoff = 1,
+  isoformExpressionCutoff = 0,
+  removeSingleIsoformGenes = TRUE
+)
+
+```
+
+## Exercise #4
+
+1.  Check out the manual of the function documentation (help) and the full vignette if required. Which aspects coud your filter on?
+2.  Can you think about any other way of filtering?
+3.  How many transcripts were removed?
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Solution
+
+1.  Multi-isoform genes, gene expression, isoform expression, isoform Fraction (isoform usage), unwanted isoform classes, unwanted gene biotypes, genes without differential isoform usage.
+2.  There may be non-used isoforms that only appear here because they were in the isoform/gene annotation used... We could filter here, or remove them from the annotation in previous steps, so they are not even quantified!
+3.  More than 40% of them! 61,037 transcripts.
+:::
+
+## Computing Isoform Switches
+
+There are different approaches supported in `IsoformSwitchAnalyzeR`. We are using `DEXSeq`. This is a step that would take long and exhaust the computational resources of this session. We are then subsampling and taking only a subset of our data:
+
+```{r dexseq}
+# Subsetting
+
+
+# Note that we need to think about two parameters first:
+alpha <- 0.05 # FDR corrected P-value (Q-value) cutoff
+dIFcutoff <- 0.10 #  minimum (absolute) change in isoform usage (dIF) to be considered
+
+aSwitchList <- isoformSwitchTestDEXSeq(
+  switchAnalyzeRlist = aSwitchList,
+  reduceToSwitchingGenes=FALSE,
+  alpha=alpha,
+  dIFcutoff = dIFcutoff,
+  onlySigIsoforms = FALSE
+)
+
+```
+
+```{r import2}
+```
+
+```{r import2}
+```
+
+```{r import2}
+```
+
+```{r import2}
+```
+
+```{r import2}
+```
