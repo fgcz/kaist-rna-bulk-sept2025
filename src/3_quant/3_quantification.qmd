@@ -85,7 +85,7 @@ bamFiles <- Sys.glob(file.path("~/work/gse154927-subsampled/bams", "*bam"))
 outputDir <- "~/work/results/3_quant/featureCounts"
 dir.create(outputDir, showWarnings=FALSE, recursive=TRUE)
 
-for (bamFile in bamFiles[4]) {
+for (bamFile in bamFiles[1:4]) {
   sampleName <- tools::file_path_sans_ext(basename(bamFile))
   outputPrefix <- file.path(outputDir, sampleName)
   
