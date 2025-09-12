@@ -36,7 +36,7 @@ This time, we will use the transcript counts from Kallisto rather than the featu
 
 ```{r get counts}
 countsDirectoryToUse <- "~/work/gse154927-full/kallisto"
-kallistoFilePaths <- Sys.glob(file.path(countsDirectoryToUse, "*txt"))
+kallistoFilePaths <- list.files(path=countsDirectoryToUse, pattern="*.txt", full.names = T)
 ```
 
 First, let's create our meta-information frame and instantiate some variables we will use later.
