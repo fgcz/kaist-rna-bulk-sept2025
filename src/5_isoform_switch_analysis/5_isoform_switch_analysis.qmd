@@ -179,14 +179,14 @@ aSwitchList <- preFilter(
 
 ## Exercise #4
 
-1.  Check out the manual of the function documentation (help) and the full vignette if required. Which aspects coud your filter on?
+1.  Check out the manual of the function documentation (help) and the full vignette if required. Which aspects could your filter on?
 2.  Can you think about any other way of filtering?
 3.  How many transcripts were removed?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
 ## Solution
 
-1.  Multi-isoform genes, gene expression, isoform expression, isoform Fraction (isoform usage), unwanted isoform classes, unwanted gene biotypes, genes without differential isoform usage.
+1.  Multi-isoform genes, gene expression, isoform expression, isoform fraction (isoform usage), unwanted isoform classes, unwanted gene biotypes, genes without differential isoform usage.
 2.  There may be non-used isoforms that only appear here because they were in the isoform/gene annotation used... We could filter here, or remove them from the annotation in previous steps, so they are not even quantified!
 3.  More than 40% of them! 61,037 transcripts.
 :::
@@ -196,15 +196,18 @@ aSwitchList <- preFilter(
 There are different approaches supported in `IsoformSwitchAnalyzeR`. We are using `DEXSeq`. This is a step that would take long and exhaust the computational resources of this session. We are then subsampling and taking only a subset of our data:
 
 ```{r dexseq}
-# Subsetting
+# Subsampling so we only get results with very high differential isoform fraction
+aSwitchList2 <- subsetSwitchAnalyzeRlist(
+    switchAnalyzeRlist = aSwitchList,
+    subset = abs(aSwitchList$isoformFeatures$dIF) > 0.4
+)
 
-
-# Note that we need to think about two parameters first:
+# Note that we need to think about two parameters before computing switches:
 alpha <- 0.05 # FDR corrected P-value (Q-value) cutoff
 dIFcutoff <- 0.10 #  minimum (absolute) change in isoform usage (dIF) to be considered
 
-aSwitchList <- isoformSwitchTestDEXSeq(
-  switchAnalyzeRlist = aSwitchList,
+aSwitchList2 <- isoformSwitchTestDEXSeq(
+  switchAnalyzeRlist = aSwitchList2,
   reduceToSwitchingGenes=FALSE,
   alpha=alpha,
   dIFcutoff = dIFcutoff,
