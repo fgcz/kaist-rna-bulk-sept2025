@@ -61,6 +61,7 @@ Alternatively, we are going to be using a step-by-step approach so we can analyz
 First, we are loading the package and importing the data:
 
 ```{r import}
+.rs.restartR(clean=TRUE)
 # Installation from the Bioconductor repository:
 # First install Bioconductor
 # if (!requireNamespace("BiocManager", quietly = TRUE)){
@@ -79,9 +80,9 @@ suppressPackageStartupMessages(library(IsoformSwitchAnalyzeR))
 #    parentDir = system.file("extdata/",package="IsoformSwitchAnalyzeR")
 # )
 
-# There are alternatives, merged samples, different subdirectories, etc! Again, always a good idea ?importIsoformExpression and checking out the full vignette
+# There are alternatives, merged samples, different subdirectories, etc! Again, always a good idea to do ?importIsoformExpression and checking out the full vignette.
 
-# Tip: Many packages and vignettes use small subsets of data as case example, which may be included in internal folders such as "extdata". We are using our data here, but when you are on your own, it may be a good idea to double check a package/workflow is working as expected with the test dataset before using real data.
+# Tip: Many packages and vignettes use small subsets of data as examples, which may be included in internal folders such as "extdata". We are using our data here, but when you are on your own, it may be a good idea to double check a package/workflow is working as expected with the test dataset before using real data.
 countsDirectoryToUse <- "~/work/gse154927-full/kallisto"
 
 kallistoFilePaths <- list.files(path=countsDirectoryToUse, pattern="*.txt", full.names=T)
@@ -138,13 +139,13 @@ myComparisons <- data.frame(
 
 # An object called switchAnalyzeRlist is going to integrate all of this
 aSwitchList <- importRdata(
-    isoformCountMatrix = kallistoQuant$counts,
-    isoformRepExpression = kallistoQuant$abundance,
-    designMatrix = myDesign,
-    comparisonsToMake = myComparisons,
-    isoformExonAnnoation = annotation_file,
-    isoformNtFasta = transcript_sequences   
-  )
+  isoformCountMatrix = kallistoQuant$counts,
+  isoformRepExpression = kallistoQuant$abundance,
+  designMatrix = myDesign,
+  comparisonsToMake = myComparisons,
+  isoformExonAnnoation = annotation_file,
+  isoformNtFasta = transcript_sequences   
+)
 
 summary(aSwitchList)
 ```
@@ -152,13 +153,13 @@ summary(aSwitchList)
 ## Exercise #3
 
 1.  Check out the resources used! How much GB of RAM is your R session using? In real analyses, the availability of computational resources is often a problem and something to keep in mind!
-2.  How many isoforms have been quantified and how many genes are representing?
+2.  How many isoforms have been quantified and how many genes are represented?
 3.  How many isoforms were not expressed in any sample?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
 ## Solution
 
-1.  It will depend on whether this is a new session, you have keep old objects, freed unused objects, etc... but you may notice that the objects in this analyses are bigger than in the previous ones!
+1.  It will depend on whether this is a new session, whether you have kept old objects, have freed unused objects, etc... but you may notice that the objects in this analyses are bigger than in the previous ones!
 2.  148,137 isoforms from 18,732 genes
 3.  21,265 isoforms
 :::
@@ -198,8 +199,8 @@ There are different approaches supported in `IsoformSwitchAnalyzeR`. We are usin
 ```{r dexseq}
 # Subsampling, so we only get results with higher differential isoform fraction and the object is not that big anymore
 aSwitchList_sub <- subsetSwitchAnalyzeRlist(
-    switchAnalyzeRlist = aSwitchList,
-    subset = abs(aSwitchList$isoformFeatures$dIF) > 0.15
+  switchAnalyzeRlist = aSwitchList,
+  subset = abs(aSwitchList$isoformFeatures$dIF) > 0.15
 )
 
 # We can also clean up the old one!
@@ -214,8 +215,7 @@ aSwitchList_sub <- isoformSwitchTestDEXSeq(
   reduceToSwitchingGenes=FALSE,
   alpha=alpha,
   dIFcutoff = dIFcutoff,
-  onlySigIsoforms = FALSE, 
-  correctForConfoundingFactors=TRUE
+  onlySigIsoforms = FALSE
 )
 
 # Get some numbers
@@ -242,9 +242,9 @@ datToPlot$isoform_switch_q_value <- ifelse(datToPlot$isoform_switch_q_value < mi
 minPValToPlot <- 1E-50
 
 ggplot(data=datToPlot, aes(x=dIF, y=-log10(isoform_switch_q_value))) +
-   geom_point(
-      aes( color=abs(dIF) > 0.1 & isoform_switch_q_value < 0.05 ), # default cutoff
-      size=1
+  geom_point(
+    aes( color=abs(dIF) > 0.1 & isoform_switch_q_value < 0.05 ), # default cutoff
+    size=1
   ) +
   geom_hline(yintercept = -log10(0.05), linetype='dashed') + # default cutoff
   geom_vline(xintercept = c(-0.1, 0.1), linetype='dashed') + # default cutoff
@@ -258,8 +258,8 @@ ggplot(data=datToPlot, aes(x=dIF, y=-log10(isoform_switch_q_value))) +
 # Take into account the gene-level fold change too
 ggplot(data=aSwitchList_sub$isoformFeatures, aes(x=gene_log2_fold_change, y=dIF)) +
   geom_point(
-      aes( color=abs(dIF) > 0.1 & isoform_switch_q_value < 0.05 ), # default cutoff
-      size=1
+    aes( color=abs(dIF) > 0.1 & isoform_switch_q_value < 0.05 ), # default cutoff
+    size=1
   ) + 
   facet_wrap( ~ condition_1 ~ condition_2) +
   #facet_grid(condition_1 ~ condition_2) + # alternative to facet_wrap if you have overlapping conditions
@@ -295,7 +295,7 @@ Since the gene/exon structure is known, alternative splicing can be identified. 
 ```{r splic}
 
 aSwitchList_sub <- analyzeAlternativeSplicing(
-    switchAnalyzeRlist = aSwitchList_sub
+  switchAnalyzeRlist = aSwitchList_sub
 )
 
 head(aSwitchList_sub$AlternativeSplicingAnalysis, 10)
@@ -317,21 +317,21 @@ extractSplicingEnrichment(aSwitchList_sub,splicingToAnalyze='all')
 ::: {.callout-tip collapse="true" appearance="simple"}
 1.  ES, MEE, MES, IR, A5, A3, ATSS, ATTS
 2.  Will depend on your choice, but one of:
-    -   ES-793
+-   ES-793
 
-    -   MEE-20
+-   MEE-20
 
-    -   MES-208
+-   MES-208
 
-    -   IR-167
+-   IR-167
 
-    -   A5-387
+-   A5-387
 
-    -   A3-372
+-   A3-372
 
-    -   ATSS-1,485
+-   ATSS-1,485
 
-    -   ATTS- 1,433
+-   ATTS- 1,433
 3.  Only genes with isoform switches would be included (filtering by the parameters `alpha` and `dIFcutoff`). Contradictory default values are mentioned? But it's `TRUE`!
 4.  Yes! IR in the second comparison
 :::
@@ -368,11 +368,11 @@ Articular genes
 
 ```{r genes}
 switchPlot(
-    aSwitchList_sub,
-    gene="GUSB",
-    condition1 = "SW480_EpCAMhigh",
-    condition2 = "HCT116_EpCAMhigh",
-    plotTopology=FALSE
-  )
+  aSwitchList_sub,
+  gene="GUSB",
+  condition1 = "SW480_EpCAMhigh",
+  condition2 = "HCT116_EpCAMhigh",
+  plotTopology=FALSE
+)
 
 ```
