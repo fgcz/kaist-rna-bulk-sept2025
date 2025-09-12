@@ -47,7 +47,7 @@ There are three high-level less-customizable wrapper functions:
 1.  Can you use the vignette or the help/manual of the functions (i.e. `?isoformSwitchAnalysisPart1()` after loading the package) to summarize what steps they are performing?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solution
+### Solution
 
 -   `isoformSwitchAnalysisPart1()` - Identifying isoform switches, annotating ORF, preparing sequences to use external tools if required (check out the [vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/IsoformSwitchAnalyzeR/inst/doc/IsoformSwitchAnalyzeR.html#:~:text=in%20Figure%201.-,Part,-1%20Extract%20Isoform) for details).
 -   `isoformSwitchAnalysisPart2()` - Analyzing alternative splicing, predicting functional consequences, plotting.
@@ -105,7 +105,7 @@ head(kallistoQuant$counts, 5)
 2.  Even in comprehensive vignettes and workbook there may be obscure concepts. Can you investigate what are the differences between the `abundance` and `counts` imported in `IsoformSwitchAnalyzeR`?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solution
+### Solution
 
 1.  A list of with 4 elements. These include 3 data.frames and another list.
 2.  A count is the raw count of reads that have overlapped some genomic feature. Abundance would be a more biologically meaningful quantification of the expression (i.e. the biological process) of a gene or transcript, which has been normalized in some way. Counts are better for the statistical analysis but the abundance estimates are better to measuring effect sizes.
@@ -156,7 +156,7 @@ summary(aSwitchList)
 3.  How many isoforms were not expressed in any sample?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solution
+### Solution
 
 1.  It will depend on whether this is a new session, whether you have kept old objects, have freed unused objects, etc... but you may notice that the objects in this analyses are bigger than in the previous ones!
 2.  148,137 isoforms from 18,732 genes
@@ -184,7 +184,7 @@ aSwitchList <- preFilter(
 3.  How many transcripts were removed?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solution
+### Solution
 
 1.  Multi-isoform genes, gene expression, isoform expression, isoform fraction (isoform usage), unwanted isoform classes, unwanted gene biotypes, genes without differential isoform usage.
 2.  There may be non-used isoforms that only appear here because they were in the isoform/gene annotation used... We could filter here, or remove them from the annotation in previous steps, so they are not even quantified!
@@ -280,7 +280,7 @@ ggplot(data=aSwitchList_sub$isoformFeatures, aes(x=gene_log2_fold_change, y=dIF)
 4.  How many overlapping genes are shared between comparisons?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solution
+### Solution
 
 1.  1,414 switches involving 2,157 isoforms of 1,039 genes
 2.  Isoform switch analysis was performed for 5,117 gene comparisons
@@ -312,7 +312,7 @@ extractSplicingEnrichment(aSwitchList_sub, splicingToAnalyze='all')
 3.  What would the `onlySwitchingGenes` parameter in the `analyzeAlternativeSplicing` function do? Is there anything unusual in the manual page?
 4.  Is there type of splicing event significantly enriched?
 
-## Solution
+### Solution
 
 ::: {.callout-tip collapse="true" appearance="simple"}
 1.  ES, MEE, MES, IR, A5, A3, ATSS, ATTS
@@ -357,7 +357,7 @@ extractSwitchSummary(aSwitchList_sub, dIFcutoff = 0.4, filterForConsequences = F
 1.  Why can we only choose intron_retention here?
 2.  How many genes with isoform switches have potential functional consequences based on the differences in intron retention?
 
-## Solution
+### Solution
 
 ::: {.callout-tip collapse="true" appearance="simple"}
 1.  Because for the sake of time we skipped some steps were we would have added more information to the `switchAnalyzeRlist`, executing external software. These could have included others aspects such as coding potential, protein domains, prediction of intrinsically disordered regions, etc.
