@@ -165,7 +165,7 @@ plot_ly(toPlot, x=~`Leading logFC dim1`, y=~`Leading logFC dim2`, z=~`Leading lo
   plotly::layout(title="Classical MDS", scene=list(xaxis=list(title = 'Leading logFC dim1'), yaxis = list(title = 'Leading logFC dim2'), zaxis = list(title = 'Leading logFC dim3')))
 ```
 
-### Hierarchical Clustering Plot
+### Unsupervised Hierarchical Clustering Plot
 
 ```{r hier}
 d <- as.dist(1-cor(vsdSE, use="complete.obs"))
@@ -234,7 +234,7 @@ res <- correctDESeq2Output(res, isValid)
 You may wonder why we designated all genes above threshold as being "control genes" when calculating the size factors. Though this list of course also includes genes which will presumably be differentially expressed between the two conditions, the majority of genes will not be, and this therefore serves as a good approximation of the control genes in cases where we do not have this information a priori.
 :::
 
-Let's set some thresholds that we will use going forward to filter the DE result. Namely, we will set the p-value, log2-fold, and adjusted p-value thresholds above/below which we will consider genes to be differentially expressed.
+Let's set some thresholds that we will use going forward to filter the DE result. Namely, we will set the p-value, log2-fold change, and adjusted p-value thresholds above/below which we will consider genes to be differentially expressed.
 
 ```{r set thresh}
 pvalThresh <- 0.01
@@ -255,7 +255,7 @@ Next, let's take a closer look at the results.
 
 1.  The columns most interesting to us are pvalue, padj (adjusted p-value), and log2FoldChange. Some other columns include `lfcSE`, which gives the standard error of the `log2FoldChange` and `stat`, which gives the Wald statistic. See `?results` for more information.
 
-2.  BH (Benjamin-Hochberg), otherwise known as the false discovery rate
+2.  BH (Benjamin-Hochberg), otherwise known as the false discovery rate.
 
 3.  Execute the following:
 
@@ -403,7 +403,7 @@ hmObj <- pheatmap(countsToPlot,
          fontsize=8)
 ```
 
-# Enrichment Analysis
+# Functional Enrichment Analysis
 
 In this section, we would like to take our results from the differential expression and identify genes in the result which are functionally related. To this end, this so-called enrichment analysis can help us. As mentioned in the lecture, there are several tools in R that allow us to perform this analysis, but we will make use of clusterProfiler [@clusterProfiler]. Its documentation can be found [here](https://yulab-smu.top/biomedical-knowledge-mining-book/enrichment-overview.html). Its main strengths lie in a number of built-in visualisations we will find helpful in interpreting the data.
 
