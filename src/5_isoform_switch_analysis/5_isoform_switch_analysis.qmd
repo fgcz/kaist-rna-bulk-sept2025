@@ -317,6 +317,7 @@ extractSplicingEnrichment(aSwitchList_sub,splicingToAnalyze='all')
 ::: {.callout-tip collapse="true" appearance="simple"}
 1.  ES, MEE, MES, IR, A5, A3, ATSS, ATTS
 2.  Will depend on your choice, but one of:
+
 -   ES-793
 
 -   MEE-20
@@ -332,6 +333,7 @@ extractSplicingEnrichment(aSwitchList_sub,splicingToAnalyze='all')
 -   ATSS-1,485
 
 -   ATTS- 1,433
+
 3.  Only genes with isoform switches would be included (filtering by the parameters `alpha` and `dIFcutoff`). Contradictory default values are mentioned? But it's `TRUE`!
 4.  Yes! IR in the second comparison
 :::
