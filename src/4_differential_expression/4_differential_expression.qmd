@@ -29,7 +29,7 @@ suppressPackageStartupMessages({
   library(tximport)
   library(DESeq2)
 })
-source("helpers.R")
+source("helpers.R") # You can get more functions defined in other R script
 ```
 
 This time, we will use the transcript counts from Kallisto rather than the featureCounts from the STAR alignments. The point of this section is to see how similar the pseudoalignment results are to the alignment- dependent methods.
