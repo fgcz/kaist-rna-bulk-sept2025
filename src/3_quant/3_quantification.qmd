@@ -161,7 +161,7 @@ for SAMPLE_NAME in HCT116_EpCAMhigh_1 HCT116_EpCAMhigh_2 HCT116_EpCAMhigh_3 HCT1
 done
 ```
 
-#### Exercise #1
+### Exercise #1
 
 1.  Did you notice a difference between the execution time of featureCounts versus Kallisto? Are the execution times comparable?
 
@@ -171,7 +171,7 @@ done
 
 ```{r}
 # Let's examine the featureCounts output
-fcFiles <- Sys.glob("~/work/results/3_quant/featureCounts/*.txt")
+fcFiles <- Sys.glob("~/work/results/3_quant/featureCounts/*[0-9].txt")
 if(length(fcFiles) > 0) {
   # Look at the first file
   firstSample <- data.table::fread(fcFiles[1])
@@ -191,9 +191,9 @@ if(length(fcFiles) > 0) {
 ```
 
 ::: {.callout-tip appearance="simple" collapse="true"}
-##### Solutions
+#### Solutions
 
-1.  FeatureCounts typically runs quite quickly on subsampled data like this. Kallisto would be faster for transcript-level quantification, but both tools perform well on datasets of this size. Keep in mind that featureCounts requires .bam files which we generated in a previous step with STAR, while Kallisto works on the fastqs themselves. Alignment with STAR can take a long time, especially with large genomes.
+1.  FeatureCounts typically runs quite quickly on subsampled data like this, but keep in mind that the difficult and time-intensive step of alignment has already been done. Kallisto takes on the order of a minute or so for these data. Nonetheless, both tools perform quickly on datasets of this size. Keep in mind that featureCounts requires .bam files which we generated in a previous step with STAR, while Kallisto works on the fastqs themselves. Alignment with STAR can take a long time, especially with large genomes.
 
 2.  The summary statistics show important information including:
 
@@ -202,12 +202,12 @@ if(length(fcFiles) > 0) {
 -   Unassigned reads due to various reasons (multimapping, no features, etc.)
 -   This information is crucial for assessing the quality of your quantification
 
-3.  FeatureCounts outputs integer counts, which is appropriate for most differential expression analysis tools that expect discrete count data. This contrasts with some other quantification methods that might output continuous values that need to be rounded.
+3.  FeatureCounts outputs integer counts, which is appropriate for most differential expression analysis tools that expect discrete count data. This contrasts with some other quantification methods that might output continuous values that need to be rounded, like the abundance estimates from Kallisto.
 :::
 
 ## CountQC
 
-Now that we know how to generate counts based on some downsampled data, let's move into how to QC counts. For this, we switch again to the **full data**, which has been processed for us.
+Now that we know how to generate counts based on some downsampled data, let's move on to how we can QC counts. For this, we switch again to the **full data**, which has been processed for us in an analogous way to the steps above.
 
 ### Loading counts
 
@@ -534,7 +534,7 @@ The following image and linked StackedOverflow post explains well the difference
 [![](https://i.stack.imgur.com/WvnU7.png){fig-alt="Visual explanation of the  difference between PCA and MDS" fig-align="center"}](https://stats.stackexchange.com/questions/14002/whats-the-difference-between-principal-component-analysis-and-multidimensional)
 :::
 
-### Exercise #2
+### Exercise #3
 
 1.  How many genes are used by the function `plotMDS` as inputs. What kind of genes are these?
 2.  Change the above function call so that all genes in the count matrix are used as input.
