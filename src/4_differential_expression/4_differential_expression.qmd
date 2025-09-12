@@ -12,9 +12,9 @@ editor: visual
 bibliography: report_assets/references.bib
 ---
 
-# Differential Expression Analysis
+# Differential expression and Pathway enrichment
 
-In this section, we will use the count data from Kallisto, redo some of the QC, and perform the differential expression analysis using DESeq2[@DESeq2]. This part is adapted from the official DESeq2 [vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html), available on Bioconductor, so feel free to look there for additional information.
+In this section, we will use the count data from Kallisto, redo some of the QC, and perform the differential expression analysis using DESeq2 [@DESeq2]. This part is adapted from the official DESeq2 [vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html), available on Bioconductor, so feel free to look there for additional information.
 
 ## Preparing data
 
