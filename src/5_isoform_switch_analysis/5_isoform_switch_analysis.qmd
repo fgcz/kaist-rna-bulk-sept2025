@@ -47,7 +47,7 @@ There are three high-level less-customizable wrapper functions:
 1.  Can you use the vignette or the help/manual of the functions (i.e. `?isoformSwitchAnalysisPart1()` after loading the package) to summarize what steps they are performing?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solution
+### Solution
 
 -   `isoformSwitchAnalysisPart1()` - Identifying isoform switches, annotating ORF, preparing sequences to use external tools if required (check out the [vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/IsoformSwitchAnalyzeR/inst/doc/IsoformSwitchAnalyzeR.html#:~:text=in%20Figure%201.-,Part,-1%20Extract%20Isoform) for details).
 -   `isoformSwitchAnalysisPart2()` - Analyzing alternative splicing, predicting functional consequences, plotting.
@@ -60,7 +60,7 @@ Alternatively, we are going to be using a step-by-step approach so we can analyz
 
 First, we are loading the package and importing the data:
 
-```{r import}
+```{r import packages}
 # Installation from the Bioconductor repository:
 # First install Bioconductor
 # if (!requireNamespace("BiocManager", quietly = TRUE)){
@@ -79,9 +79,9 @@ suppressPackageStartupMessages(library(IsoformSwitchAnalyzeR))
 #    parentDir = system.file("extdata/",package="IsoformSwitchAnalyzeR")
 # )
 
-# There are alternatives, merged samples, different subdirectories, etc! Again, always a good idea ?importIsoformExpression and checking out the full vignette
+# There are alternatives, merged samples, different subdirectories, etc! Again, always a good idea to do ?importIsoformExpression and checking out the full vignette.
 
-# Tip: Many packages and vignettes use small subsets of data as case example, which may be included in internal folders such as "extdata". We are using our data here, but when you are on your own, it may be a good idea to double check a package/workflow is working as expected with the test dataset before using real data.
+# Tip: Many packages and vignettes use small subsets of data as examples, which may be included in internal folders such as "extdata". We are using our data here, but when you are on your own, it may be a good idea to double check a package/workflow is working as expected with the test dataset before using real data.
 countsDirectoryToUse <- "~/work/gse154927-full/kallisto"
 
 kallistoFilePaths <- list.files(path=countsDirectoryToUse, pattern="*.txt", full.names=T)
@@ -91,7 +91,7 @@ kallistoQuant <- importIsoformExpression(sampleVector=kallistoFilePaths)
 
 Next, let's take a closer look. What have we imported?
 
-```{r import2}
+```{r check kallisto quant}
 class(kallistoQuant)
 
 head(kallistoQuant$abundance, 5)
@@ -105,7 +105,7 @@ head(kallistoQuant$counts, 5)
 2.  Even in comprehensive vignettes and workbook there may be obscure concepts. Can you investigate what are the differences between the `abundance` and `counts` imported in `IsoformSwitchAnalyzeR`?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solution
+### Solution
 
 1.  A list of with 4 elements. These include 3 data.frames and another list.
 2.  A count is the raw count of reads that have overlapped some genomic feature. Abundance would be a more biologically meaningful quantification of the expression (i.e. the biological process) of a gene or transcript, which has been normalized in some way. Counts are better for the statistical analysis but the abundance estimates are better to measuring effect sizes.
@@ -138,13 +138,13 @@ myComparisons <- data.frame(
 
 # An object called switchAnalyzeRlist is going to integrate all of this
 aSwitchList <- importRdata(
-    isoformCountMatrix = kallistoQuant$counts,
-    isoformRepExpression = kallistoQuant$abundance,
-    designMatrix = myDesign,
-    comparisonsToMake = myComparisons,
-    isoformExonAnnoation = annotation_file,
-    isoformNtFasta = transcript_sequences   
-  )
+  isoformCountMatrix = kallistoQuant$counts,
+  isoformRepExpression = kallistoQuant$abundance,
+  designMatrix = myDesign,
+  comparisonsToMake = myComparisons,
+  isoformExonAnnoation = annotation_file,
+  isoformNtFasta = transcript_sequences   
+)
 
 summary(aSwitchList)
 ```
@@ -152,13 +152,13 @@ summary(aSwitchList)
 ## Exercise #3
 
 1.  Check out the resources used! How much GB of RAM is your R session using? In real analyses, the availability of computational resources is often a problem and something to keep in mind!
-2.  How many isoforms have been quantified and how many genes are representing?
+2.  How many isoforms have been quantified and how many genes are represented?
 3.  How many isoforms were not expressed in any sample?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solution
+### Solution
 
-1.  It will depend on whether this is a new session, you have keep old objects, freed unused objects, etc... but you may notice that the objects in this analyses are bigger than in the previous ones!
+1.  It will depend on whether this is a new session, whether you have kept old objects, have freed unused objects, etc... but you may notice that the objects in this analyses are bigger than in the previous ones!
 2.  148,137 isoforms from 18,732 genes
 3.  21,265 isoforms
 :::
@@ -184,7 +184,7 @@ aSwitchList <- preFilter(
 3.  How many transcripts were removed?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solution
+### Solution
 
 1.  Multi-isoform genes, gene expression, isoform expression, isoform fraction (isoform usage), unwanted isoform classes, unwanted gene biotypes, genes without differential isoform usage.
 2.  There may be non-used isoforms that only appear here because they were in the isoform/gene annotation used... We could filter here, or remove them from the annotation in previous steps, so they are not even quantified!
@@ -193,13 +193,13 @@ aSwitchList <- preFilter(
 
 ## Computing Isoform Switches
 
-There are different approaches supported in `IsoformSwitchAnalyzeR`. We are using `DEXSeq`. This is a step that would take long and exhaust the computational resources of this session. We are then subsampling and taking only a subset of our data:
+There are different approaches supported in `IsoformSwitchAnalyzeR`. We are using `DEXSeq`. This is a step that would take long and exhaust the computational resources of this session. Therefore we will subsample the data and proceed with only a subset of our data:
 
 ```{r dexseq}
 # Subsampling, so we only get results with higher differential isoform fraction and the object is not that big anymore
 aSwitchList_sub <- subsetSwitchAnalyzeRlist(
-    switchAnalyzeRlist = aSwitchList,
-    subset = abs(aSwitchList$isoformFeatures$dIF) > 0.15
+  switchAnalyzeRlist = aSwitchList,
+  subset = abs(aSwitchList$isoformFeatures$dIF) > 0.15
 )
 
 # We can also clean up the old one!
@@ -214,10 +214,11 @@ aSwitchList_sub <- isoformSwitchTestDEXSeq(
   reduceToSwitchingGenes=FALSE,
   alpha=alpha,
   dIFcutoff = dIFcutoff,
-  onlySigIsoforms = FALSE, 
-  correctForConfoundingFactors=TRUE
+  onlySigIsoforms = FALSE
 )
+```
 
+```{r vis dex results}
 # Get some numbers
 extractSwitchSummary(aSwitchList_sub)
 
@@ -238,13 +239,14 @@ extractSwitchOverlap(
 
 # Get nice Volcano plots to visualise differences
 datToPlot <- aSwitchList_sub$isoformFeatures
-datToPlot$isoform_switch_q_value <- ifelse(datToPlot$isoform_switch_q_value < minPValToPlot, minPValToPlot, datToPlot$isoform_switch_q_value)
 minPValToPlot <- 1E-50
 
+datToPlot$isoform_switch_q_value <- ifelse(datToPlot$isoform_switch_q_value < minPValToPlot, minPValToPlot, datToPlot$isoform_switch_q_value)
+
 ggplot(data=datToPlot, aes(x=dIF, y=-log10(isoform_switch_q_value))) +
-   geom_point(
-      aes( color=abs(dIF) > 0.1 & isoform_switch_q_value < 0.05 ), # default cutoff
-      size=1
+  geom_point(
+    aes( color=abs(dIF) > 0.1 & isoform_switch_q_value < 0.05 ), # default cutoff
+    size=1
   ) +
   geom_hline(yintercept = -log10(0.05), linetype='dashed') + # default cutoff
   geom_vline(xintercept = c(-0.1, 0.1), linetype='dashed') + # default cutoff
@@ -258,8 +260,8 @@ ggplot(data=datToPlot, aes(x=dIF, y=-log10(isoform_switch_q_value))) +
 # Take into account the gene-level fold change too
 ggplot(data=aSwitchList_sub$isoformFeatures, aes(x=gene_log2_fold_change, y=dIF)) +
   geom_point(
-      aes( color=abs(dIF) > 0.1 & isoform_switch_q_value < 0.05 ), # default cutoff
-      size=1
+    aes( color=abs(dIF) > 0.1 & isoform_switch_q_value < 0.05 ), # default cutoff
+    size=1
   ) + 
   facet_wrap( ~ condition_1 ~ condition_2) +
   #facet_grid(condition_1 ~ condition_2) + # alternative to facet_wrap if you have overlapping conditions
@@ -268,19 +270,17 @@ ggplot(data=aSwitchList_sub$isoformFeatures, aes(x=gene_log2_fold_change, y=dIF)
   scale_color_manual('Signficant\nIsoform Switch', values = c('black','red')) +
   labs(x='Gene log2 fold change', y='dIF') +
   theme_bw()
-
-
 ```
 
 ## Exercise #5
 
 1.  How many isoform switches have we detected in total? Corresponding to how many genes?
 2.  How many gene comparisons were tested?
-3.  Which is the gene with the switch considered to be top?
+3.  Which is the gene with the switch considered to be 'top'?
 4.  How many overlapping genes are shared between comparisons?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
-## Solution
+### Solution
 
 1.  1,414 switches involving 2,157 isoforms of 1,039 genes
 2.  Isoform switch analysis was performed for 5,117 gene comparisons
@@ -293,16 +293,17 @@ ggplot(data=aSwitchList_sub$isoformFeatures, aes(x=gene_log2_fold_change, y=dIF)
 Since the gene/exon structure is known, alternative splicing can be identified. In this package, alternative splicing is used as a term which covers: Alternative Splicing (AS), Alternative Transcription Start Sites (ATSS, sometimes called alternative first exon), and Alternative Transcription Termination Sites (ATTS, sometimes called alternative last exon).
 
 ```{r splic}
+#| class-output: scrolling
 
 aSwitchList_sub <- analyzeAlternativeSplicing(
-    switchAnalyzeRlist = aSwitchList_sub
+  switchAnalyzeRlist = aSwitchList_sub
 )
 
-head(aSwitchList_sub$AlternativeSplicingAnalysis, 10)
+tibble::as_tibble(head(aSwitchList_sub$AlternativeSplicingAnalysis, 10))
 
 extractSplicingSummary(aSwitchList_sub)
 
-extractSplicingEnrichment(aSwitchList_sub,splicingToAnalyze='all')
+extractSplicingEnrichment(aSwitchList_sub, splicingToAnalyze='all')
 ```
 
 ## Exercise #6
@@ -312,27 +313,29 @@ extractSplicingEnrichment(aSwitchList_sub,splicingToAnalyze='all')
 3.  What would the `onlySwitchingGenes` parameter in the `analyzeAlternativeSplicing` function do? Is there anything unusual in the manual page?
 4.  Is there type of splicing event significantly enriched?
 
-## Solution
+### Solution
 
 ::: {.callout-tip collapse="true" appearance="simple"}
 1.  ES, MEE, MES, IR, A5, A3, ATSS, ATTS
 2.  Will depend on your choice, but one of:
-    -   ES-793
 
-    -   MEE-20
+-   ES-793
 
-    -   MES-208
+-   MEE-20
 
-    -   IR-167
+-   MES-208
 
-    -   A5-387
+-   IR-167
 
-    -   A3-372
+-   A5-387
 
-    -   ATSS-1,485
+-   A3-372
 
-    -   ATTS- 1,433
-3.  Only genes with isoform switches would be included (filtering by the parameters `alpha` and `dIFcutoff`). Contradictory default values are mentioned? But it's `TRUE`!
+-   ATSS-1,485
+
+-   ATTS- 1,433
+
+3.  Only genes with isoform switches would be included (filtering by the parameters `alpha` and `dIFcutoff`). The default value is `TRUE` but the documentation incorrectly claims it's `FALSE`!
 4.  Yes! IR in the second comparison
 :::
 
@@ -340,7 +343,9 @@ extractSplicingEnrichment(aSwitchList_sub,splicingToAnalyze='all')
 
 Changes in isoform usage may have important functional consequences. Depending on the information that we have gathered in the workflow above, can we try and predict some consequences?
 
-```{r consequen}
+```{r consequence}
+#| class-output: scrolling
+
 consequencesOfInterest <- c("intron_retention") # The only thing that we can compute
 
 aSwitchList_sub <- analyzeSwitchConsequences(aSwitchList_sub, consequencesToAnalyze = consequencesOfInterest, dIFcutoff = 0.4)
@@ -355,7 +360,7 @@ extractSwitchSummary(aSwitchList_sub, dIFcutoff = 0.4, filterForConsequences = F
 1.  Why can we only choose intron_retention here?
 2.  How many genes with isoform switches have potential functional consequences based on the differences in intron retention?
 
-## Solution
+### Solution
 
 ::: {.callout-tip collapse="true" appearance="simple"}
 1.  Because for the sake of time we skipped some steps were we would have added more information to the `switchAnalyzeRlist`, executing external software. These could have included others aspects such as coding potential, protein domains, prediction of intrinsically disordered regions, etc.
@@ -368,11 +373,11 @@ Articular genes
 
 ```{r genes}
 switchPlot(
-    aSwitchList_sub,
-    gene="GUSB",
-    condition1 = "SW480_EpCAMhigh",
-    condition2 = "HCT116_EpCAMhigh",
-    plotTopology=FALSE
-  )
+  aSwitchList_sub,
+  gene="GUSB",
+  condition1 = "SW480_EpCAMhigh",
+  condition2 = "HCT116_EpCAMhigh",
+  plotTopology=FALSE
+)
 
 ```
