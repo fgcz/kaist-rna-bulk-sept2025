@@ -129,7 +129,7 @@ myDesign <- data.frame(
 
 # We also download/locate/prepare:
 annotation_file <- "~/work/grch38-p13-gencode-release-42/annotation/genes_protein_coding.gtf"
-transcript_sequences <- "~/work/grch38-p13-gencode-release-42/annotation/transcripts_protein_coding.fa"
+transcript_sequences <- "~/work/grch38-p13-gencode-release-42/annotation/genes_protein_coding_kallistoIndex/transcripts.fa"
 myComparisons <- data.frame(
   condition_1 = c("HCT116_EpCAMhigh", "HCT116_EpCAMlow"),
   condition_2 = c("SW480_EpCAMhigh", "SW480_EpCAMlow")
