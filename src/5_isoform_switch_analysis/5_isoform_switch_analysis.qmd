@@ -216,7 +216,9 @@ aSwitchList_sub <- isoformSwitchTestDEXSeq(
   dIFcutoff = dIFcutoff,
   onlySigIsoforms = FALSE
 )
+```
 
+```{r vis dex results}
 # Get some numbers
 extractSwitchSummary(aSwitchList_sub)
 
