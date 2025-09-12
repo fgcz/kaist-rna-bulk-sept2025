@@ -61,7 +61,6 @@ Alternatively, we are going to be using a step-by-step approach so we can analyz
 First, we are loading the package and importing the data:
 
 ```{r import}
-.rs.restartR(clean=TRUE)
 # Installation from the Bioconductor repository:
 # First install Bioconductor
 # if (!requireNamespace("BiocManager", quietly = TRUE)){
@@ -194,7 +193,7 @@ aSwitchList <- preFilter(
 
 ## Computing Isoform Switches
 
-There are different approaches supported in `IsoformSwitchAnalyzeR`. We are using `DEXSeq`. This is a step that would take long and exhaust the computational resources of this session. We are then subsampling and taking only a subset of our data:
+There are different approaches supported in `IsoformSwitchAnalyzeR`. We are using `DEXSeq`. This is a step that would take long and exhaust the computational resources of this session. Therefore we will subsample the data and proceed with only a subset of our data:
 
 ```{r dexseq}
 # Subsampling, so we only get results with higher differential isoform fraction and the object is not that big anymore
@@ -238,8 +237,9 @@ extractSwitchOverlap(
 
 # Get nice Volcano plots to visualise differences
 datToPlot <- aSwitchList_sub$isoformFeatures
-datToPlot$isoform_switch_q_value <- ifelse(datToPlot$isoform_switch_q_value < minPValToPlot, minPValToPlot, datToPlot$isoform_switch_q_value)
 minPValToPlot <- 1E-50
+
+datToPlot$isoform_switch_q_value <- ifelse(datToPlot$isoform_switch_q_value < minPValToPlot, minPValToPlot, datToPlot$isoform_switch_q_value)
 
 ggplot(data=datToPlot, aes(x=dIF, y=-log10(isoform_switch_q_value))) +
   geom_point(
@@ -268,15 +268,13 @@ ggplot(data=aSwitchList_sub$isoformFeatures, aes(x=gene_log2_fold_change, y=dIF)
   scale_color_manual('Signficant\nIsoform Switch', values = c('black','red')) +
   labs(x='Gene log2 fold change', y='dIF') +
   theme_bw()
-
-
 ```
 
 ## Exercise #5
 
 1.  How many isoform switches have we detected in total? Corresponding to how many genes?
 2.  How many gene comparisons were tested?
-3.  Which is the gene with the switch considered to be top?
+3.  Which is the gene with the switch considered to be 'top'?
 4.  How many overlapping genes are shared between comparisons?
 
 ::: {.callout-tip collapse="true" appearance="simple"}
@@ -302,7 +300,7 @@ head(aSwitchList_sub$AlternativeSplicingAnalysis, 10)
 
 extractSplicingSummary(aSwitchList_sub)
 
-extractSplicingEnrichment(aSwitchList_sub,splicingToAnalyze='all')
+extractSplicingEnrichment(aSwitchList_sub, splicingToAnalyze='all')
 ```
 
 ## Exercise #6
@@ -334,7 +332,7 @@ extractSplicingEnrichment(aSwitchList_sub,splicingToAnalyze='all')
 
 -   ATTS- 1,433
 
-3.  Only genes with isoform switches would be included (filtering by the parameters `alpha` and `dIFcutoff`). Contradictory default values are mentioned? But it's `TRUE`!
+3.  Only genes with isoform switches would be included (filtering by the parameters `alpha` and `dIFcutoff`). The default value is `TRUE` but the documentation incorrectly claims it's `FALSE`!
 4.  Yes! IR in the second comparison
 :::
 
