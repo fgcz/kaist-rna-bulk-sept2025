@@ -437,7 +437,7 @@ downGenes <- rownames(res)[downGenesIndex]
 validGenes <- rownames(res)[isValid]
 ```
 
-Now, we can call the `enrichGO` function within clusterProfiler on these gene subsets using one of the three gene ontologies as a reference. We will also use the two build-in plotting functions, `dotplot` and `cnetplot` .
+Now, we can call the `enrichGO` function within clusterProfiler on these gene subsets using one of the three gene ontologies as a reference. We will also use the two build-in plotting functions, `dotplot` and `cnetplot`.
 
 ```{r ora, fig.height=10, fig.width=10}
 ego <- clusterProfiler::enrichGO(gene = downGenes,
@@ -470,6 +470,6 @@ clusterProfiler::goplot(ego)
 
 ## Exercise #4
 
-1.  Try using the `setReadable` function to change the `ego` object such that the labels for the cnetplot are the gene names.
+1.  Try using the `setReadable` function to change the `ego` object such that the labels for the `cnetplot` are the gene names.
 2.  Repeat the process above for the BP term, this time using the up-regulated genes.
 3.  Try to run `enrichKEGG` from the clusterProfiler package.
