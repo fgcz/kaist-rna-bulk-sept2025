@@ -124,6 +124,8 @@ Next, we will perform the quantification using Kallisto and see how its performa
 We will use the fastp-processed data that's available in our subsampled dataset directory.
 
 ```{bash}
+#| class-output: scrolling
+
 # Check available trimmed data
 ls -la ~/work/gse154927-subsampled/fastp/
 ```
@@ -133,35 +135,30 @@ Now that we have the data, we are ready to perform the quantification with Kalli
 ```{bash}
 #| class-output: scrolling
 
-# First, let's create a transcriptome fasta from our GTF
-REFERENCE_FASTA=~/work/grch38-p13-gencode-release-42/sequence/GRCh38.p13.genome.fa
-FILTERED_GTF=~/work/results/tmp/genes_protein_coding.gtf
-TRANSCRIPTOME_FASTA=~/work/results/tmp/transcriptome_protein_coding.fa
+# We can create a Kallisto index using the following command
+# kallisto index -i transcripts.idx ~/work/grch38-p13-gencode-release-42/annotation/transcripts_protein_coding.fa
 
-# Extract transcriptome (this is a simplified approach)
-# In practice, you would use gffread or similar tools
 echo "Note: For this tutorial, we'll use a pre-built transcriptome index"
+
+KALLISTO_INDEX=~/work/grch38-p13-gencode-release-42/annotation/genes_protein_coding_kallistoIndex/transcripts.idx
 
 FASTP_OUTDIR=~/work/gse154927-subsampled/fastp
 KALLISTO_OUTDIR=~/work/results/3_quant/kallisto
 mkdir -p $KALLISTO_OUTDIR
 
-# For the tutorial, we'll simulate kallisto runs
-# In practice, you would need a proper transcriptome index
-echo "Kallisto quantification would be run here"
-echo "This requires a pre-built transcriptome index which is not available in this tutorial"
+ALL_SAMPLES=$(cat ~/work/gse154927-subsampled/fastq/dataset.tsv | awk -F"\t" '{print $1}' | tail +2 | sort)
 
-# The following would be the actual kallisto commands (commented out):
-# for FASTQ_R1 in $FASTP_OUTDIR/*_R1.fastq.gz
-#   do SAMPLE_NAME=$(basename ${FASTQ_R1%_trimmed_R1.fastq.gz})
-#   FASTQ_R2="${FASTP_OUTDIR}/${SAMPLE_NAME}_trimmed_R2.fastq.gz"
-#   echo $SAMPLE_NAME
-#   time kallisto quant \
-#     -i transcriptome_index.idx \
-#     -o $KALLISTO_OUTDIR/$SAMPLE_NAME -t 4 --bias --bootstrap-samples 10 --seed 42 \
-#     $FASTQ_R1 $FASTQ_R2 \
-#     2> $KALLISTO_OUTDIR/$SAMPLE_NAME"_kallisto.stderr" > $KALLISTO_OUTDIR/$SAMPLE_NAME"_kallisto.stdout"
-# done
+# We use the same 
+for SAMPLE_NAME in HCT116_EpCAMhigh_1 HCT116_EpCAMhigh_2 HCT116_EpCAMhigh_3 HCT116_EpCAMhigh_4
+  do FASTQ_R1="${FASTP_OUTDIR}/${SAMPLE_NAME}_R1.fastq.gz"
+  FASTQ_R2="${FASTP_OUTDIR}/${SAMPLE_NAME}_R2.fastq.gz"
+  echo $SAMPLE_NAME
+  time kallisto quant \
+    -i $KALLISTO_INDEX \
+    -o $KALLISTO_OUTDIR/$SAMPLE_NAME -t 4 --bootstrap-samples 10 --seed 42 \
+    $FASTQ_R1 $FASTQ_R2 \
+    2> $KALLISTO_OUTDIR/$SAMPLE_NAME"_kallisto.stderr" > $KALLISTO_OUTDIR/$SAMPLE_NAME"_kallisto.stdout"
+done
 ```
 
 #### Exercise #1
