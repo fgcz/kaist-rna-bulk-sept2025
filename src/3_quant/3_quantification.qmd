@@ -31,7 +31,6 @@ suppressPackageStartupMessages({
   library(plotly)
   library(tidyverse)
 })
-source("helpers.R")
 ```
 
 ### Feature Counts
@@ -80,6 +79,8 @@ We are now ready to run `featureCounts` from the Rsubread package.
 
 ```{r}
 #| class-output: scrolling
+source("helpers.R")
+
 bamFiles <- Sys.glob(file.path("~/work/gse154927-subsampled/bams", "*bam"))
 outputDir <- "~/work/results/3_quant/featureCounts"
 dir.create(outputDir, showWarnings=FALSE, recursive=TRUE)
@@ -217,27 +218,7 @@ Let's fetch the input count files generated from featureCounts for each sample.
 
 ```{r setup}
 countDirectoryToUse <- "~/work/gse154927-full/featureCounts"
-
-sampleNames <- c(
-  "HCT116_EpCAMhigh_1",
-  "HCT116_EpCAMhigh_2",
-  "HCT116_EpCAMhigh_3",
-  "HCT116_EpCAMhigh_4",
-  "HCT116_EpCAMlow_1",
-  "HCT116_EpCAMlow_2",
-  "HCT116_EpCAMlow_3",
-  "HCT116_EpCAMlow_4",
-  "SW480_EpCAMhigh_1",
-  "SW480_EpCAMhigh_2",
-  "SW480_EpCAMhigh_3",
-  "SW480_EpCAMhigh_4",
-  "SW480_EpCAMlow_1",
-  "SW480_EpCAMlow_2",
-  "SW480_EpCAMlow_3",
-  "SW480_EpCAMlow_4"
-)
-
-countFilenames <- paste0(sampleNames, ".txt")
+countFilenames <- list.files(path="~/work/gse154927-full/featureCounts", pattern="*[0-9].txt")
 ```
 
 You will notice a new directory called "feature_counts" in the same folder where you executed this code. Take a quick look inside.
@@ -266,6 +247,7 @@ Now that the we have loaded the counts, we can start exploring the data. We coul
 
 ```{r metadata}
 # Define meta dataframe for later use
+sampleNames <- tools::file_path_sans_ext(countFilenames)
 meta <- data.frame(
   Condition=as.factor(c(rep("HCT116_EpCAMhigh", 4), 
                         rep("HCT116_EpCAMlow", 4),
@@ -367,8 +349,6 @@ Our strategy:
 For our data, this means that we keep a gene if it is expressed in 2 or more samples within 2 or more groups.
 
 ```{r filtering}
-# First filter genes 
-
 # Which genes are above threshold?
 isPresent <- rawCounts > sigThresh
 # For every gene, how many samples within a group have it expressed?
@@ -380,7 +360,46 @@ isPresentCond <- t(sweep(isPresentCond, 1,
 isValid <- rowMeans(isPresentCond) >= 0.5
 # Subset the count matrix
 rawCountsFilt <- rawCounts[isValid, ]
+```
 
+Now that we have filtered the genes, let's see how the distribution of counts looks before and after the filtration step.
+
+```{r filtering before after}
+# Let's compare raw counts and filtered raw counts:
+density_data <- density(log1p(as.matrix(rawCounts)), na.rm = TRUE)  # log1p to handle zeros
+plot_ly(
+  x = density_data$x,
+  y = density_data$y,
+  type = "scatter",
+  mode = "lines",
+  name = "All Samples",
+  line = list(color = "blue")
+) %>%
+  layout(
+    title = "Density Plot of Log-Transformed Raw Gene Expression Counts",
+    xaxis = list(title = "log1p(Counts)"),
+    yaxis = list(title = "Density")
+  )
+
+density_data <- density(log1p(as.matrix(rawCountsFilt)), na.rm = TRUE)  # log1p to handle zeros
+plot_ly(
+  x = density_data$x,
+  y = density_data$y,
+  type = "scatter",
+  mode = "lines",
+  name = "All Samples",
+  line = list(color = "blue")
+) %>%
+  layout(
+    title = "Density Plot of Log-Transformed Filtered Raw Gene Expression Counts",
+    xaxis = list(title = "log1p(Counts)"),
+    yaxis = list(title = "Density")
+  )
+```
+
+With the genes filtered, we will now perform normalisation. We have many options here. As we will be using DESeq2 to do the differential expression in the next chapter, let's also use it here to perform the normalisation.
+
+```{r}
 # Load data into a DESeq2 dataset so we can use the variance stabilizing function from DESeq2
 dds <- DESeq2::DESeqDataSetFromMatrix(countData=rawCountsFilt,
                                       colData=meta,
@@ -395,7 +414,47 @@ Let's quickly compare the raw and normalised counts to see how they have changed
 
 ```{r head counts}
 head(rawCountsFilt)
-head(as.data.frame(vsdSE))
+normCounts <- as.data.frame(vsdSE)
+head(normCounts)
+
+# Compare boxplots of raw and normalized counts
+data_long <-  rawCountsFilt %>%
+  pivot_longer(cols = everything(),
+               names_to = "Sample", 
+               values_to = "Count")
+data_long_log <- data_long %>%
+  mutate(LogCount = log2(Count + 1))# Get long format and +1 to handle possible zeros in log scale
+
+plot_ly(data_long_log, 
+              x = ~Sample, 
+              y = ~LogCount, 
+              type = "box",
+              boxpoints = "outliers") %>%
+  layout(title = "Distribution of Log(Counts+1) Across Samples",
+         xaxis = list(title = "Samples", 
+                     tickangle = -45),
+         yaxis = list(title = "Log(Counts + 1)"),
+         margin = list(b = 100))
+
+
+data_long <-  normCounts %>%
+  pivot_longer(cols = everything(),
+               names_to = "Sample", 
+               values_to = "Count")
+data_long_log <- data_long %>%
+  mutate(LogCount = log2(Count + 1))  # Get long format and +1 to handle possible zeros in log scale
+
+plot_ly(data_long_log, 
+              x = ~Sample, 
+              y = ~LogCount, 
+              type = "box",
+              boxpoints = "outliers") %>%
+  layout(title = "Distribution of Log2(Normalized counts+1) Across Samples",
+         xaxis = list(title = "Samples", 
+                     tickangle = -45),
+         yaxis = list(title = "Log2(Normalized Counts + 1)"),
+         margin = list(b = 100))
+
 ```
 
 #### Dimensionality Reduction
