@@ -60,7 +60,7 @@ Alternatively, we are going to be using a step-by-step approach so we can analyz
 
 First, we are loading the package and importing the data:
 
-```{r import}
+```{r import packages}
 # Installation from the Bioconductor repository:
 # First install Bioconductor
 # if (!requireNamespace("BiocManager", quietly = TRUE)){
@@ -91,7 +91,7 @@ kallistoQuant <- importIsoformExpression(sampleVector=kallistoFilePaths)
 
 Next, let's take a closer look. What have we imported?
 
-```{r import2}
+```{r check kallisto quant}
 class(kallistoQuant)
 
 head(kallistoQuant$abundance, 5)

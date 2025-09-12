@@ -3132,11 +3132,15 @@ background-origin: content-box;
   <li><a href="#computing-isoform-switches" id="toc-computing-isoform-switches" class="nav-link" data-scroll-target="#computing-isoform-switches">Computing Isoform Switches</a></li>
   <li><a href="#exercise-5" id="toc-exercise-5" class="nav-link" data-scroll-target="#exercise-5">Exercise #5</a></li>
   <li><a href="#computing-alternative-splicing" id="toc-computing-alternative-splicing" class="nav-link" data-scroll-target="#computing-alternative-splicing">Computing alternative splicing</a></li>
-  <li><a href="#exercise-6" id="toc-exercise-6" class="nav-link" data-scroll-target="#exercise-6">Exercise #6</a></li>
+  <li><a href="#exercise-6" id="toc-exercise-6" class="nav-link" data-scroll-target="#exercise-6">Exercise #6</a>
+  <ul class="collapse">
   <li><a href="#solution-5" id="toc-solution-5" class="nav-link" data-scroll-target="#solution-5">Solution</a></li>
+  </ul></li>
   <li><a href="#predicting-potential-consequences" id="toc-predicting-potential-consequences" class="nav-link" data-scroll-target="#predicting-potential-consequences">Predicting potential consequences</a></li>
-  <li><a href="#exercise-7" id="toc-exercise-7" class="nav-link" data-scroll-target="#exercise-7">Exercise #7</a></li>
+  <li><a href="#exercise-7" id="toc-exercise-7" class="nav-link" data-scroll-target="#exercise-7">Exercise #7</a>
+  <ul class="collapse">
   <li><a href="#solution-6" id="toc-solution-6" class="nav-link" data-scroll-target="#solution-6">Solution</a></li>
+  </ul></li>
   <li><a href="#interrogating-particular-genes" id="toc-interrogating-particular-genes" class="nav-link" data-scroll-target="#interrogating-particular-genes">Interrogating particular genes</a></li>
   </ul></li>
   </ul>
@@ -3461,8 +3465,8 @@ Solution
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                           comparison estimated_genes_with_dtu
-1 HCT116_EpCAMhigh vs SW480_EpCAMhigh              1102 - 1837
-2   HCT116_EpCAMlow vs SW480_EpCAMlow              1342 - 2237</code></pre>
+1 HCT116_EpCAMhigh vs SW480_EpCAMhigh               967 - 1612
+2   HCT116_EpCAMlow vs SW480_EpCAMlow              1425 - 2374</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Done</code></pre>
@@ -3563,8 +3567,8 @@ Solution
 <span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(aSwitchList); <span class="fu">rm</span>(kallistoQuant); <span class="fu">gc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           used  (Mb) gc trigger   (Mb)  max used   (Mb)
-Ncells 11602155 619.7   34388315 1836.6  34388315 1836.6
-Vcells 68622756 523.6  207843530 1585.8 207838392 1585.7</code></pre>
+Ncells 11602835 619.7   34389758 1836.7  34389758 1836.7
+Vcells 68624078 523.6  207847468 1585.8 207844897 1585.8</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that we need to think about two parameters before computing switches:</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.05</span> <span class="co"># FDR corrected P-value (Q-value) cutoff</span></span>
@@ -3774,7 +3778,7 @@ Solution
 <pre><code>Step 2 of 3: Analyzing splicing...</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
+<pre class="scrolling"><code>
   |                                                                            
   |                                                                      |   0%
   |                                                                            
@@ -4116,107 +4120,28 @@ Solution
 <div class="cell-output cell-output-stderr">
 <pre><code>Done</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(aSwitchList_sub<span class="sc">$</span>AlternativeSplicingAnalysis, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">as_tibble</span>(<span class="fu">head</span>(aSwitchList_sub<span class="sc">$</span>AlternativeSplicingAnalysis, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>        isoform_id ES ES_genomic_start ES_genomic_end MEE MEE_genomic_start
-1  ENST00000483026  1         42718246       42718586   0              &lt;NA&gt;
-2  ENST00000647439  0             &lt;NA&gt;           &lt;NA&gt;   0              &lt;NA&gt;
-3  ENST00000205557  1         16220273       16220388   0              &lt;NA&gt;
-4  ENST00000576204  0             &lt;NA&gt;           &lt;NA&gt;   0              &lt;NA&gt;
-5  ENST00000577103  0             &lt;NA&gt;           &lt;NA&gt;   0              &lt;NA&gt;
-6  ENST00000683808  0             &lt;NA&gt;           &lt;NA&gt;   0              &lt;NA&gt;
-7  ENST00000684614  0             &lt;NA&gt;           &lt;NA&gt;   0              &lt;NA&gt;
-8  ENST00000315713  0             &lt;NA&gt;           &lt;NA&gt;   0              &lt;NA&gt;
-9  ENST00000370214  1         94478524       94478723   0              &lt;NA&gt;
-10 ENST00000554566  0             &lt;NA&gt;           &lt;NA&gt;   0              &lt;NA&gt;
-   MEE_genomic_end MES MES_genomic_start MES_genomic_end IR IR_genomic_start
-1             &lt;NA&gt;   0              &lt;NA&gt;            &lt;NA&gt;  0             &lt;NA&gt;
-2             &lt;NA&gt;   0              &lt;NA&gt;            &lt;NA&gt;  0             &lt;NA&gt;
-3             &lt;NA&gt;   0              &lt;NA&gt;            &lt;NA&gt;  0             &lt;NA&gt;
-4             &lt;NA&gt;   0              &lt;NA&gt;            &lt;NA&gt;  0             &lt;NA&gt;
-5             &lt;NA&gt;   0              &lt;NA&gt;            &lt;NA&gt;  0             &lt;NA&gt;
-6             &lt;NA&gt;   0              &lt;NA&gt;            &lt;NA&gt;  0             &lt;NA&gt;
-7             &lt;NA&gt;   0              &lt;NA&gt;            &lt;NA&gt;  0             &lt;NA&gt;
-8             &lt;NA&gt;   0              &lt;NA&gt;            &lt;NA&gt;  0             &lt;NA&gt;
-9             &lt;NA&gt;   0              &lt;NA&gt;            &lt;NA&gt;  0             &lt;NA&gt;
-10            &lt;NA&gt;   0              &lt;NA&gt;            &lt;NA&gt;  0             &lt;NA&gt;
-   IR_genomic_end A5  A5_genomic_start    A5_genomic_end A3 A3_genomic_start
-1            &lt;NA&gt;  0              &lt;NA&gt;              &lt;NA&gt;  0             &lt;NA&gt;
-2            &lt;NA&gt;  0              &lt;NA&gt;              &lt;NA&gt;  0             &lt;NA&gt;
-3            &lt;NA&gt;  2 16202000;16221187 16202001;16221649  1         16155031
-4            &lt;NA&gt;  0              &lt;NA&gt;              &lt;NA&gt;  0             &lt;NA&gt;
-5            &lt;NA&gt;  1          16221187          16221649  0             &lt;NA&gt;
-6            &lt;NA&gt;  0              &lt;NA&gt;              &lt;NA&gt;  0             &lt;NA&gt;
-7            &lt;NA&gt;  0              &lt;NA&gt;              &lt;NA&gt;  0             &lt;NA&gt;
-8            &lt;NA&gt;  0              &lt;NA&gt;              &lt;NA&gt;  0             &lt;NA&gt;
-9            &lt;NA&gt;  0              &lt;NA&gt;              &lt;NA&gt;  0             &lt;NA&gt;
-10           &lt;NA&gt;  0              &lt;NA&gt;              &lt;NA&gt;  0             &lt;NA&gt;
-   A3_genomic_end ATSS
-1            &lt;NA&gt;    1
-2            &lt;NA&gt;    0
-3        16155776    1
-4            &lt;NA&gt;    1
-5            &lt;NA&gt;    0
-6            &lt;NA&gt;    1
-7            &lt;NA&gt;    0
-8            &lt;NA&gt;    1
-9            &lt;NA&gt;    0
-10           &lt;NA&gt;    1
-                                                                                                                                                                                                                                            ATSS_genomic_start
-1                                                                                                                                                                                                                                                     42720829
-2                                                                                                                                                                                                                                                         &lt;NA&gt;
-3                                                                                                                                                                                                                                                     16223494
-4  16157663;16159482;16161438;16162993;16165623;16169646;16173284;16175911;16177452;16178798;16182412;16182804;16184959;16187124;16188831;16190164;16192830;16198021;16202000;16203410;16208728;16212185;16214324;16219554;16219822;16220273;16221187;16223399
-5                                                                                                                                                                                                                                                         &lt;NA&gt;
-6                                                                                                                                                                                                                 17462927;17463438;17470101;17474886;17476629
-7                                                                                                                                                                                                                                                         &lt;NA&gt;
-8                                                                                                                                                                                                                                                     94418389
-9                                                                                                                                                                                                                                                         &lt;NA&gt;
-10                                                                                                                                                                            50872053;50877952;50878745;50880452;50881596;50885614;50885766;50886647;50888824
-                                                                                                                                                                                                                                              ATSS_genomic_end
-1                                                                                                                                                                                                                                                     42720862
-2                                                                                                                                                                                                                                                         &lt;NA&gt;
-3                                                                                                                                                                                                                                                     16223522
-4  16157809;16159583;16161564;16163192;16165933;16169853;16173404;16175986;16177626;16178965;16182588;16182930;16185034;16187211;16188974;16190367;16192922;16198182;16202178;16203613;16208859;16212246;16214449;16219682;16219947;16220388;16221831;16223522
-5                                                                                                                                                                                                                                                         &lt;NA&gt;
-6                                                                                                                                                                                                                 17463009;17463604;17470222;17475027;17476676
-7                                                                                                                                                                                                                                                         &lt;NA&gt;
-8                                                                                                                                                                                                                                                     94418479
-9                                                                                                                                                                                                                                                         &lt;NA&gt;
-10                                                                                                                                                                            50872278;50878079;50878847;50880571;50881626;50885659;50885895;50886684;50888903
-   ATTS
-1     0
-2     1
-3     0
-4     1
-5     1
-6     0
-7     1
-8     1
-9     0
-10    1
-                                                                                                                                                                                      ATTS_genomic_start
-1                                                                                                                                                                                                   &lt;NA&gt;
-2                                                                                                                                                                                      42693971;42695146
-3                                                                                                                                                                                                   &lt;NA&gt;
-4                                                                                                                                                                             16149565;16150578;16154628
-5  16149565;16150578;16154628;16154873;16157663;16159482;16161438;16162993;16165623;16169646;16173284;16175911;16177452;16178798;16182412;16182804;16184959;16187124;16188831;16190164;16192830;16198021
-6                                                                                                                                                                                                   &lt;NA&gt;
-7                                                                                                                                                                                      17450779;17460488
-8                                                                 94480464;94483170;94487542;94487694;94487892;94489725;94489903;94491184;94498602;94498783;94498945;94499495;94506538;94515146;94517052
-9                                                                                                                                                                                                   &lt;NA&gt;
-10                                                                                                                                                                                              50904571
-                                                                                                                                                                                        ATTS_genomic_end
-1                                                                                                                                                                                                   &lt;NA&gt;
-2                                                                                                                                                                                      42693997;42695631
-3                                                                                                                                                                                                   &lt;NA&gt;
-4                                                                                                                                                                             16150241;16150772;16154730
-5  16150241;16150772;16154794;16155776;16157809;16159583;16161564;16163192;16165933;16169853;16173404;16175986;16177626;16178965;16182588;16182930;16185034;16187211;16188974;16190367;16192922;16198182
-6                                                                                                                                                                                                   &lt;NA&gt;
-7                                                                                                                                                                                      17453283;17460834
-8                                                                 94480606;94483239;94487611;94487791;94487983;94489816;94489975;94491247;94498679;94498848;94499034;94499614;94506642;94515202;94518663
-9                                                                                                                                                                                                   &lt;NA&gt;
-10                                                                                                                                                                                              50904970</code></pre>
+<pre class="scrolling"><code># A tibble: 10 × 25
+   isoform_id         ES ES_genomic_start ES_genomic_end   MEE MEE_genomic_start
+   &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;            
+ 1 ENST00000483026     1 42718246         42718586           0 &lt;NA&gt;             
+ 2 ENST00000647439     0 &lt;NA&gt;             &lt;NA&gt;               0 &lt;NA&gt;             
+ 3 ENST00000205557     1 16220273         16220388           0 &lt;NA&gt;             
+ 4 ENST00000576204     0 &lt;NA&gt;             &lt;NA&gt;               0 &lt;NA&gt;             
+ 5 ENST00000577103     0 &lt;NA&gt;             &lt;NA&gt;               0 &lt;NA&gt;             
+ 6 ENST00000683808     0 &lt;NA&gt;             &lt;NA&gt;               0 &lt;NA&gt;             
+ 7 ENST00000684614     0 &lt;NA&gt;             &lt;NA&gt;               0 &lt;NA&gt;             
+ 8 ENST00000315713     0 &lt;NA&gt;             &lt;NA&gt;               0 &lt;NA&gt;             
+ 9 ENST00000370214     1 94478524         94478723           0 &lt;NA&gt;             
+10 ENST00000554566     0 &lt;NA&gt;             &lt;NA&gt;               0 &lt;NA&gt;             
+# ℹ 19 more variables: MEE_genomic_end &lt;chr&gt;, MES &lt;dbl&gt;,
+#   MES_genomic_start &lt;chr&gt;, MES_genomic_end &lt;chr&gt;, IR &lt;dbl&gt;,
+#   IR_genomic_start &lt;chr&gt;, IR_genomic_end &lt;chr&gt;, A5 &lt;dbl&gt;,
+#   A5_genomic_start &lt;chr&gt;, A5_genomic_end &lt;chr&gt;, A3 &lt;dbl&gt;,
+#   A3_genomic_start &lt;chr&gt;, A3_genomic_end &lt;chr&gt;, ATSS &lt;dbl&gt;,
+#   ATSS_genomic_start &lt;chr&gt;, ATSS_genomic_end &lt;chr&gt;, ATTS &lt;dbl&gt;,
+#   ATTS_genomic_start &lt;chr&gt;, ATTS_genomic_end &lt;chr&gt;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extractSplicingSummary</span>(aSwitchList_sub)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -4235,7 +4160,7 @@ Solution
 </div>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>        condition_1     condition_2                            AStype nUp nDown
+<pre class="scrolling"><code>        condition_1     condition_2                            AStype nUp nDown
 1  HCT116_EpCAMhigh SW480_EpCAMhigh     A3 gain (paired with A3 loss)  45    50
 2  HCT116_EpCAMhigh SW480_EpCAMhigh     A5 gain (paired with A5 loss)  44    37
 3  HCT116_EpCAMhigh SW480_EpCAMhigh ATSS gain (paired with ATSS loss) 156   167
@@ -4297,9 +4222,8 @@ Solution
 <li>What would the <code>onlySwitchingGenes</code> parameter in the <code>analyzeAlternativeSplicing</code> function do? Is there anything unusual in the manual page?</li>
 <li>Is there type of splicing event significantly enriched?</li>
 </ol>
-</section>
-<section id="solution-5" class="level2">
-<h2 class="anchored" data-anchor-id="solution-5">Solution</h2>
+<section id="solution-5" class="level3">
+<h3 class="anchored" data-anchor-id="solution-5">Solution</h3>
 <div class="callout callout-style-simple callout-tip">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
@@ -4328,6 +4252,7 @@ Solution
 </div>
 </div>
 </section>
+</section>
 <section id="predicting-potential-consequences" class="level2">
 <h2 class="anchored" data-anchor-id="predicting-potential-consequences">Predicting potential consequences</h2>
 <p>Changes in isoform usage may have important functional consequences. Depending on the information that we have gathered in the workflow above, can we try and predict some consequences?</p>
@@ -4342,7 +4267,7 @@ Solution
 <pre><code>Step 2 of 4: Analyzing 70 pairwise isoforms comparisons...</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
+<pre class="scrolling"><code>
   |                                                                            
   |                                                                      |   0%
   |                                                                            
@@ -4497,14 +4422,14 @@ Solution
 </div>
 <div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extractSwitchSummary</span>(aSwitchList_sub, <span class="at">dIFcutoff =</span> <span class="fl">0.4</span>, <span class="at">filterForConsequences =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                           Comparison nrIsoforms nrSwitches nrGenes
+<pre class="scrolling"><code>                           Comparison nrIsoforms nrSwitches nrGenes
 1 HCT116_EpCAMhigh vs SW480_EpCAMhigh          7          5       4
 2   HCT116_EpCAMlow vs SW480_EpCAMlow         10          5       5
 3                            Combined         14          8       7</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extractSwitchSummary</span>(aSwitchList_sub, <span class="at">dIFcutoff =</span> <span class="fl">0.4</span>, <span class="at">filterForConsequences =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                           Comparison nrIsoforms nrSwitches nrGenes
+<pre class="scrolling"><code>                           Comparison nrIsoforms nrSwitches nrGenes
 1 HCT116_EpCAMhigh vs SW480_EpCAMhigh        130         37     100
 2   HCT116_EpCAMlow vs SW480_EpCAMlow        227         51     178
 3                            Combined        285         70     221</code></pre>
@@ -4517,9 +4442,8 @@ Solution
 <li>Why can we only choose intron_retention here?</li>
 <li>How many genes with isoform switches have potential functional consequences based on the differences in intron retention?</li>
 </ol>
-</section>
-<section id="solution-6" class="level2">
-<h2 class="anchored" data-anchor-id="solution-6">Solution</h2>
+<section id="solution-6" class="level3">
+<h3 class="anchored" data-anchor-id="solution-6">Solution</h3>
 <div class="callout callout-style-simple callout-tip">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
@@ -4533,6 +4457,7 @@ Solution
 </div>
 </div>
 </div>
+</section>
 </section>
 <section id="interrogating-particular-genes" class="level2">
 <h2 class="anchored" data-anchor-id="interrogating-particular-genes">Interrogating particular genes</h2>
