@@ -36,7 +36,7 @@ This time, we will use the transcript counts from Kallisto rather than the featu
 
 ```{r get counts}
 countsDirectoryToUse <- "~/work/gse154927-full/kallisto"
-kallistoFilePaths <- list.files(path=countsDirectoryToUse, pattern="*.txt", full.names = T)
+kallistoFilePaths <- list.files(path=countsDirectoryToUse, pattern="*.txt", full.names=T)
 ```
 
 First, let's create our meta-information frame and instantiate some variables we will use later.
@@ -53,7 +53,7 @@ meta <- data.frame(
 )
 
 # Define some general-use parameters for use later
-sigThresh <- 10  # significane threshold for the counts
+sigThresh <- 10  # significance threshold for the counts
 conditionColours <- scales::hue_pal()(length(unique(meta$Condition)))  # choose pretty colours
 # associate the conditions with the pretty colours
 names(conditionColours) <- unique(meta$Condition)
@@ -75,7 +75,7 @@ seqAnno <- getFeatureAnnotation(transcriptsAnnotation, dataFeatureType="transcri
 seqAnno <- seqAnno[seqAnno$type %in% "protein_coding", ]
 ```
 
-Next, we load the counts using `tximport` , a convenience function for loading in count data from a variety of sources (Salmon, Kallisto, featureCounts, etc.) which also performs the aggregation of transcript counts to the gene level (remember that Kallisto produced count files on the transcript level).
+Next, we load the counts using `tximport` , a convenient function for loading in count data from a variety of sources (Salmon, Kallisto, featureCounts, etc.) which also performs the aggregation of transcript counts to the gene level (remember that Kallisto produced count files on the transcript level).
 
 ```{r load kallisto}
 # Get the files
@@ -91,7 +91,7 @@ txiKallisto <- tximport(kallistoFilePaths, type = "kallisto",
                         geneIdCol = "gene_id")
 ```
 
-Take a quick look at the `txiKallisto` object we generated and take a look at the rownames. Contrast this to the rownames in the raw files.
+Take a quick look at the `txiKallisto` object we generated and take a look at the row names. Contrast this to the row names in the raw files.
 
 ```{r exercise0}
 # Your code here
@@ -112,7 +112,7 @@ dds
 
 ## Kallisto QC
 
-Let's first perform a QC step for these counts, to ensure they match up with the feature counts we attained in the last exercise.
+Let's first perform a QC step for these counts, to ensure they match up with the ones from featureCounts we attained in the last exercise.
 
 ```{r get norm}
 sigThresh <- 10
