@@ -20,7 +20,7 @@ The ENCODE consortium recently found that on average, \>6 transcripts/alternativ
 
 `IsoformSwitchAnalyzeR` measures isoform usage via isoform fraction (IF) values which quantifies the fraction of the parent gene expression originating from a specific isoform (calculated as isoform_exp / gene_exp). Consequently, the difference in isoform usage is quantified as the difference in isoform fraction (dIF) calculated as IF2 - IF1, and these dIF are used to measure the effect size (like fold changes are in gene/isoform expression analysis).
 
-In short, the aim of `IsoformSwitchAnalyzeR` is to find, annotate and visuale isoform switches with functional consequences, as well as its associated alternative splicing, from full-length RNA-seq derived isoform/transcript level quantification of RNASeq data. Quantification results coming from both short- and long-read sequencing data can be analyzed.
+In short, the aim of `IsoformSwitchAnalyzeR` is to find, annotate and visualise isoform switches with functional consequences, as well as its associated alternative splicing, from full-length RNA-seq derived isoform/transcript level quantification of RNASeq data. Quantification results coming from both short- and long-read sequencing data can be analyzed.
 
 `IsoformSwitchAnalyzeR` performs five high-level tasks:
 
@@ -288,7 +288,7 @@ ggplot(data=aSwitchList_sub$isoformFeatures, aes(x=gene_log2_fold_change, y=dIF)
 4.  216 genes with 216 switches
 :::
 
-## Computing alternative splicing 
+## Computing alternative splicing
 
 Since the gene/exon structure is known, alternative splicing can be identified. In this package, alternative splicing is used as a term which covers: Alternative Splicing (AS), Alternative Transcription Start Sites (ATSS, sometimes called alternative first exon), and Alternative Transcription Termination Sites (ATTS, sometimes called alternative last exon).
 
