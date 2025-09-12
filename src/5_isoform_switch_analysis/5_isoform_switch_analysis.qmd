@@ -134,7 +134,7 @@ myComparisons <- data.frame(
   condition_1 = c("HCT116_EpCAMhigh", "HCT116_EpCAMlow"),
   condition_2 = c("SW480_EpCAMhigh", "SW480_EpCAMlow")
 )
-# Note that the quantification that we are importing, annotation file, transcript sequences... must of course share the transcript IDs! Be careful when importing databases!
+# Note that the quantification that we are importing, annotation file, transcript sequences... must of course share the transcript IDs! Be careful when importing databases! Alternatively, the full vignette contain details on how to analyse de novo isoforms/transcripts.
 
 # An object called switchAnalyzeRlist is going to integrate all of this
 aSwitchList <- importRdata(
@@ -151,7 +151,7 @@ summary(aSwitchList)
 
 ## Exercise #3
 
-1.  Check out the resources used! How much GB of RAM is your R session using? In real analyses, the availaibility of computational resources is often a problem and something to keep in mind!
+1.  Check out the resources used! How much GB of RAM is your R session using? In real analyses, the availability of computational resources is often a problem and something to keep in mind!
 2.  How many isoforms have been quantified and how many genes are representing?
 3.  How many isoforms were not expressed in any sample?
 
@@ -196,37 +196,183 @@ aSwitchList <- preFilter(
 There are different approaches supported in `IsoformSwitchAnalyzeR`. We are using `DEXSeq`. This is a step that would take long and exhaust the computational resources of this session. We are then subsampling and taking only a subset of our data:
 
 ```{r dexseq}
-# Subsampling so we only get results with very high differential isoform fraction
-aSwitchList2 <- subsetSwitchAnalyzeRlist(
+# Subsampling, so we only get results with higher differential isoform fraction and the object is not that big anymore
+aSwitchList_sub <- subsetSwitchAnalyzeRlist(
     switchAnalyzeRlist = aSwitchList,
-    subset = abs(aSwitchList$isoformFeatures$dIF) > 0.4
+    subset = abs(aSwitchList$isoformFeatures$dIF) > 0.15
 )
+
+# We can also clean up the old one!
+rm(aSwitchList); rm(kallistoQuant); gc()
 
 # Note that we need to think about two parameters before computing switches:
 alpha <- 0.05 # FDR corrected P-value (Q-value) cutoff
-dIFcutoff <- 0.10 #  minimum (absolute) change in isoform usage (dIF) to be considered
+dIFcutoff <- 0.10 #  minimum (absolute) change in isoform usage (dIF) to be considered (effect size)
 
-aSwitchList2 <- isoformSwitchTestDEXSeq(
-  switchAnalyzeRlist = aSwitchList2,
+aSwitchList_sub <- isoformSwitchTestDEXSeq(
+  switchAnalyzeRlist = aSwitchList_sub,
   reduceToSwitchingGenes=FALSE,
   alpha=alpha,
   dIFcutoff = dIFcutoff,
-  onlySigIsoforms = FALSE
+  onlySigIsoforms = FALSE, 
+  correctForConfoundingFactors=TRUE
 )
 
+# Get some numbers
+extractSwitchSummary(aSwitchList_sub)
+
+table_top_10 <- extractTopSwitches(
+  aSwitchList_sub,
+  filterForConsequences = FALSE,
+  n=10,
+  inEachComparison = TRUE
+)
+
+table_top_10
+
+extractSwitchOverlap(
+  aSwitchList_sub,
+  filterForConsequences=FALSE,
+  plotIsoforms = FALSE
+)
+
+# Get nice Volcano plots to visualise differences
+datToPlot <- aSwitchList_sub$isoformFeatures
+datToPlot$isoform_switch_q_value <- ifelse(datToPlot$isoform_switch_q_value < minPValToPlot, minPValToPlot, datToPlot$isoform_switch_q_value)
+minPValToPlot <- 1E-50
+
+ggplot(data=datToPlot, aes(x=dIF, y=-log10(isoform_switch_q_value))) +
+   geom_point(
+      aes( color=abs(dIF) > 0.1 & isoform_switch_q_value < 0.05 ), # default cutoff
+      size=1
+  ) +
+  geom_hline(yintercept = -log10(0.05), linetype='dashed') + # default cutoff
+  geom_vline(xintercept = c(-0.1, 0.1), linetype='dashed') + # default cutoff
+  facet_wrap( ~ condition_1 ~ condition_2) +
+  #facet_grid(condition_1 ~ condition_2) + # alternative to facet_wrap if you have overlapping conditions
+  scale_color_manual('Signficant\nIsoform Switch', values = c('black','red')) +
+  labs(x='dIF', y='-Log10 ( Isoform Switch Q Value )', 
+       caption=sprintf("(Q Values set to a maximum of %s)", -log10(minPValToPlot))) +
+  theme_bw()
+
+# Take into account the gene-level fold change too
+ggplot(data=aSwitchList_sub$isoformFeatures, aes(x=gene_log2_fold_change, y=dIF)) +
+  geom_point(
+      aes( color=abs(dIF) > 0.1 & isoform_switch_q_value < 0.05 ), # default cutoff
+      size=1
+  ) + 
+  facet_wrap( ~ condition_1 ~ condition_2) +
+  #facet_grid(condition_1 ~ condition_2) + # alternative to facet_wrap if you have overlapping conditions
+  geom_hline(yintercept = 0, linetype='dashed') +
+  geom_vline(xintercept = 0, linetype='dashed') +
+  scale_color_manual('Signficant\nIsoform Switch', values = c('black','red')) +
+  labs(x='Gene log2 fold change', y='dIF') +
+  theme_bw()
+
+
 ```
 
-```{r import2}
+## Exercise #5
+
+1.  How many isoform switches have we detected in total? Corresponding to how many genes?
+2.  How many gene comparisons were tested?
+3.  Which is the gene with the switch considered to be top?
+4.  How many overlapping genes are shared between comparisons?
+
+::: {.callout-tip collapse="true" appearance="simple"}
+## Solution
+
+1.  1,414 switches involving 2,157 isoforms of 1,039 genes
+2.  Isoform switch analysis was performed for 5,117 gene comparisons
+3.  GUSB
+4.  216 genes with 216 switches
+:::
+
+## Computing alternative splicing 
+
+Since the gene/exon structure is known, alternative splicing can be identified. In this package, alternative splicing is used as a term which covers: Alternative Splicing (AS), Alternative Transcription Start Sites (ATSS, sometimes called alternative first exon), and Alternative Transcription Termination Sites (ATTS, sometimes called alternative last exon).
+
+```{r splic}
+
+aSwitchList_sub <- analyzeAlternativeSplicing(
+    switchAnalyzeRlist = aSwitchList_sub
+)
+
+head(aSwitchList_sub$AlternativeSplicingAnalysis, 10)
+
+extractSplicingSummary(aSwitchList_sub)
+
+extractSplicingEnrichment(aSwitchList_sub,splicingToAnalyze='all')
 ```
 
-```{r import2}
+## Exercise #6
+
+1.  Which splicing events can we capture? (Hint: see column names of `aSwitchList_sub$AlternativeSplicingAnalysis`, `?analyzeAlternativeSplicing`, labels of the plot...
+2.  Table manipulations (of data.frames matrices) are crucial when working with omics datasets and interrogating results in R. Choose two splicing events and report how many have we detected checking out the table results.
+3.  What would the `onlySwitchingGenes` parameter in the `analyzeAlternativeSplicing` function do? Is there anything unusual in the manual page?
+4.  Is there type of splicing event significantly enriched?
+
+## Solution
+
+::: {.callout-tip collapse="true" appearance="simple"}
+1.  ES, MEE, MES, IR, A5, A3, ATSS, ATTS
+2.  Will depend on your choice, but one of:
+    -   ES-793
+
+    -   MEE-20
+
+    -   MES-208
+
+    -   IR-167
+
+    -   A5-387
+
+    -   A3-372
+
+    -   ATSS-1,485
+
+    -   ATTS- 1,433
+3.  Only genes with isoform switches would be included (filtering by the parameters `alpha` and `dIFcutoff`). Contradictory default values are mentioned? But it's `TRUE`!
+4.  Yes! IR in the second comparison
+:::
+
+## Predicting potential consequences
+
+Changes in isoform usage may have important functional consequences. Depending on the information that we have gathered in the workflow above, can we try and predict some consequences?
+
+```{r consequen}
+consequencesOfInterest <- c("intron_retention") # The only thing that we can compute
+
+aSwitchList_sub <- analyzeSwitchConsequences(aSwitchList_sub, consequencesToAnalyze = consequencesOfInterest, dIFcutoff = 0.4)
+
+extractSwitchSummary(aSwitchList_sub, dIFcutoff = 0.4, filterForConsequences = TRUE)
+
+extractSwitchSummary(aSwitchList_sub, dIFcutoff = 0.4, filterForConsequences = FALSE)
 ```
 
-```{r import2}
-```
+## Exercise #7
 
-```{r import2}
-```
+1.  Why can we only choose intron_retention here?
+2.  How many genes with isoform switches have potential functional consequences based on the differences in intron retention?
 
-```{r import2}
+## Solution
+
+::: {.callout-tip collapse="true" appearance="simple"}
+1.  Because for the sake of time we skipped some steps were we would have added more information to the `switchAnalyzeRlist`, executing external software. These could have included others aspects such as coding potential, protein domains, prediction of intrinsically disordered regions, etc.
+2.  7 out of 221 genes with switches with a dIF \> 0.4.
+:::
+
+## Interrogating particular genes
+
+Articular genes
+
+```{r genes}
+switchPlot(
+    aSwitchList_sub,
+    gene="GUSB",
+    condition1 = "SW480_EpCAMhigh",
+    condition2 = "HCT116_EpCAMhigh",
+    plotTopology=FALSE
+  )
+
 ```
