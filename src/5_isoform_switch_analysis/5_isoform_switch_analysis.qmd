@@ -293,12 +293,13 @@ ggplot(data=aSwitchList_sub$isoformFeatures, aes(x=gene_log2_fold_change, y=dIF)
 Since the gene/exon structure is known, alternative splicing can be identified. In this package, alternative splicing is used as a term which covers: Alternative Splicing (AS), Alternative Transcription Start Sites (ATSS, sometimes called alternative first exon), and Alternative Transcription Termination Sites (ATTS, sometimes called alternative last exon).
 
 ```{r splic}
+#| class-output: scrolling
 
 aSwitchList_sub <- analyzeAlternativeSplicing(
   switchAnalyzeRlist = aSwitchList_sub
 )
 
-head(aSwitchList_sub$AlternativeSplicingAnalysis, 10)
+tibble::as_tibble(head(aSwitchList_sub$AlternativeSplicingAnalysis, 10))
 
 extractSplicingSummary(aSwitchList_sub)
 
@@ -342,7 +343,9 @@ extractSplicingEnrichment(aSwitchList_sub, splicingToAnalyze='all')
 
 Changes in isoform usage may have important functional consequences. Depending on the information that we have gathered in the workflow above, can we try and predict some consequences?
 
-```{r consequen}
+```{r consequence}
+#| class-output: scrolling
+
 consequencesOfInterest <- c("intron_retention") # The only thing that we can compute
 
 aSwitchList_sub <- analyzeSwitchConsequences(aSwitchList_sub, consequencesToAnalyze = consequencesOfInterest, dIFcutoff = 0.4)
