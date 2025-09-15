@@ -190,21 +190,6 @@ if(length(fcFiles) > 0) {
 }
 ```
 
-::: {.callout-tip appearance="simple" collapse="true"}
-#### Solutions
-
-1.  FeatureCounts typically runs quite quickly on subsampled data like this, but keep in mind that the difficult and time-intensive step of alignment has already been done. Kallisto takes on the order of a minute or so for these data. Nonetheless, both tools perform quickly on datasets of this size. Keep in mind that featureCounts requires .bam files which we generated in a previous step with STAR, while Kallisto works on the fastqs themselves. Alignment with STAR can take a long time, especially with large genomes.
-
-2.  The summary statistics show important information including:
-
--   Total number of reads processed
--   Successfully assigned reads
--   Unassigned reads due to various reasons (multimapping, no features, etc.)
--   This information is crucial for assessing the quality of your quantification
-
-3.  FeatureCounts outputs integer counts, which is appropriate for most differential expression analysis tools that expect discrete count data. This contrasts with some other quantification methods that might output continuous values that need to be rounded, like the abundance estimates from Kallisto.
-:::
-
 ## CountQC
 
 Now that we know how to generate counts based on some downsampled data, let's move on to how we can QC counts. For this, we switch again to the **full data**, which has been processed for us in an analogous way to the steps above.
@@ -320,14 +305,6 @@ plot_ly(
 ![Raw fastq read counts for each sample](report_assets/fastq_counts.png)
 
 2.  How many features (in %) are above threshold? Do you think re-sequencing the samples with relatively low counts will be useful or provide a significant return on investment?
-
-::: {.callout-note appearance="simple" collapse="true"}
-#### Solutions
-
-1.  The counts after mapping and quantification are lower.
-
-2.  All around 50-60%. Re-sequencing is unlikely to be worth our time, unless we are interested in very lowly-expressed genes. Even the sample with the lowest counts has almost as many features expressed above threshold as the sample with the highest read counts, despite having only a fraction of the counts.
-:::
 
 ### Filtering Counts
 
@@ -531,25 +508,13 @@ plot_ly(toPlot,
 
 The following image and linked StackedOverflow post explains well the difference between the two methods.
 
-[![](https://i.stack.imgur.com/WvnU7.png){fig-alt="Visual explanation of the  difference between PCA and MDS" fig-align="center"}](https://stats.stackexchange.com/questions/14002/whats-the-difference-between-principal-component-analysis-and-multidimensional)
+[![](https://i.sstatic.net/WvnU7.png){fig-alt="Visual explanation of the  difference between PCA and MDS" fig-align="center"}](https://stats.stackexchange.com/questions/14002/whats-the-difference-between-principal-component-analysis-and-multidimensional)
 :::
 
 ### Exercise #3
 
 1.  How many genes are used by the function `plotMDS` as inputs. What kind of genes are these?
 2.  Change the above function call so that all genes in the count matrix are used as input.
-
-::: {.callout-tip collapse="true" appearance="simple"}
-#### Solutions
-
-1.  By default, the top 500 genes are used.
-
-2.  We must change the `top` argument in order to include all necessary genes.
-
-    ```{r, eval=FALSE}
-    mds <- limma::plotMDS(vsdSE, top=nrow(vsdSE), plot=FALSE)
-    ```
-:::
 
 ### Correlation Plots
 

@@ -3422,7 +3422,9 @@ background-origin: content-box;
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p>Welcome to our introductory RNA-seq course.</p>
-<p>In this part of the course, we will be primarily working with a <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE154927">public cancer dataset</a> from the following <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9674345/">publication</a>. We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.</p>
+<p>In this part of the course, we will be primarily working with a <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE154927">public cancer dataset</a> from the following <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9674345/">publication</a>.</p>
+<p>It is not important to understand the paper in detail. Just know we are dealing with two colon cancer cell-lines “HCT116” and “SW480” which have been FACS-sorted according to the expression of CD44 and EpCAM.</p>
+<p>We will be exploring this dataset thoroughly, starting with the QC discussed in the presentations. For this first part, we will be dealing with the full data. For later parts, such as the mapping module, subsets of the data will be used instead to save computational resources and allow for faster processing.</p>
 <section id="checking-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="checking-the-data">Checking the data</h2>
 <p>First, let’s take a quick look at the data.</p>
@@ -3516,53 +3518,32 @@ dbl (1): Read Count
 <li><p>What is the read count? Is this what we expect for RNA-seq?</p></li>
 <li><p>Is there information about the strandedness of the libraries?</p></li>
 </ol>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solutions
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li><p>4 groups:</p>
-<pre><code>HCT116_EpCAMhigh, HCT116_EpCAMlow, SW480_EpCAMhigh, SW480_EpCAMlow</code></pre></li>
-<li><p>TURBO DNA-free Kit protocol (Invitrogen)</p></li>
-<li><p>The samples vary between 2M to just under 52M reads. In general, we seek to get around 20M samples for bulk RNA-seq of human and mouse samples. Given that these are human samples, some of these have less than optimal counts. However, it may still be enough to get usable gene expression data. (see Count QC in chapter 3).</p></li>
-<li><p>The libraries do not have a specific strandedness.</p></li>
-</ol>
-</div>
-</div>
-</div>
 </section>
 </section>
 <section id="fastqc-multiqc" class="level1">
 <h1>FastQC &amp; MultiQC</h1>
 <p>First, let’s run FastQC. This tool was developed by Babraham Bioinformatics <span class="citation" data-cites="Andrews:2010tn">(<a href="#ref-Andrews:2010tn" role="doc-biblioref">Andrews 2010</a>)</span> and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC <span class="citation" data-cites="ewels2016">(<a href="#ref-ewels2016" role="doc-biblioref">Ewels et al. 2016</a>)</span> which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. We won’t run these tools now, but if we did, this process would take about 10 minutes on 8 cores.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make directories</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="va">PROCESSED_FASTQC</span><span class="op">=</span>~/work/results/1_qc/fastqc</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="va">PROCESSED_MULTIQC</span><span class="op">=</span>~/work/results/1_qc/multiqc</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$PROCESSED_FASTQC</span> <span class="va">$PROCESSED_MULTIQC</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Process with FastQC</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> fastqc <span class="at">--extract</span> <span class="at">-o</span> <span class="va">$PROCESSED_FASTQC</span> <span class="dt">\</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">-t</span> 8 <span class="at">-a</span> ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt <span class="at">--kmers</span> 7 <span class="dt">\</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  ~/work/gse154927-full/fastq/<span class="pp">*</span>fastq.gz</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> ~/work/gse154927-full/fastqc ~/work/results/1_qc/</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine result with multiqc</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="ex">multiqc</span> <span class="at">--outdir</span> <span class="va">$PROCESSED_MULTIQC</span> <span class="va">$PROCESSED_FASTQC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make directories</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="va">PROCESSED_FASTQC</span><span class="op">=</span>~/work/results/1_qc/fastqc</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="va">PROCESSED_MULTIQC</span><span class="op">=</span>~/work/results/1_qc/multiqc</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$PROCESSED_FASTQC</span> <span class="va">$PROCESSED_MULTIQC</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Process with FastQC</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;fastqc --extract -o </span><span class="va">$PROCESSED_FASTQC</span><span class="st"> </span><span class="dt">\</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="st">  -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 </span><span class="dt">\</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="st">  ~/work/gse154927-full/fastq/*fastq.gz&quot;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> ~/work/gse154927-full/fastqc ~/work/results/1_qc/</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine result with multiqc</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="ex">multiqc</span> <span class="at">--outdir</span> <span class="va">$PROCESSED_MULTIQC</span> <span class="va">$PROCESSED_FASTQC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre class="scrolling"><code>fastqc --extract -o /home/rstudio/work/results/1_qc/fastqc -t 8 -a /home/rstudio/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7 /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMhigh_1_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMhigh_1_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMhigh_2_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMhigh_2_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMhigh_3_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMhigh_3_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMhigh_4_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMhigh_4_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMlow_1_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMlow_1_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMlow_2_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMlow_2_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMlow_3_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMlow_3_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMlow_4_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/HCT116_EpCAMlow_4_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMhigh_1_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMhigh_1_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMhigh_2_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMhigh_2_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMhigh_3_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMhigh_3_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMhigh_4_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMhigh_4_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMlow_1_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMlow_1_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMlow_2_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMlow_2_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMlow_3_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMlow_3_R2.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMlow_4_R1.fastq.gz /home/rstudio/work/gse154927-full/fastq/SW480_EpCAMlow_4_R2.fastq.gz
+<pre class="scrolling"><code>fastqc --extract -o /home/rstudio/work/results/1_qc/fastqc   -t 8 -a ~/work/kaist-rna-bulk-sept2025/data/adapter_list.txt --kmers 7   ~/work/gse154927-full/fastq/*fastq.gz
 
 /// MultiQC 🔍 v1.30
 
+     version_check | MultiQC Version v1.31 now available!
        file_search | Search path: /home/rstudio/work/results/1_qc/fastqc
 
             fastqc | Found 32 reports
@@ -3582,28 +3563,6 @@ Solutions
 <li>Do you think it makes sense to sequence longer based on these data?</li>
 <li>What would be a good method of preprocessing?</li>
 </ol>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solutions
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li>There were most likely some problems with the pooling. SW480_EpCAMhigh_1 appears to be under-represented while other samples are comparatively underrepresented.</li>
-<li>This is a multi-faceted issue. It is a general artifact of sequencers on one hand, related towards the speed of sequencing and the longevity of the reagents. On another, increasing adapter content towards the 3’ end of the read can negatively affect the performance due to low sequence diversity.</li>
-<li>It looks as expected. A number of samples however have an increase in the amount of As towards the end of the read. This is most likely due to very short fragment lengths (or adapter dimers) and the sequencer beginning to read past the adapter.</li>
-<li>No, the adapter content is already quite high for most of the samples. Sequencing longer fragments would not be worth the investment, most likely.</li>
-<li>Trimming off the adapter and removing the first few bases off the 5’ end would remove most of the marking of bad quality from these samples.</li>
-</ol>
-</div>
-</div>
-</div>
 </section>
 </section>
 <section id="fastqscreen" class="level1">
@@ -3611,7 +3570,7 @@ Solutions
 <p><a href="https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/_build/html/index.html">FastqScreen</a> is a tool which aligns fastq files to a database of different genomes to determine from where the data originate. This can be used for a variety of purposes, such as for metagenomic characterisation, but we will use it as a QC tool to determine any potential sources of contamination.</p>
 <p>Unfortunately, executing <code>fastq_screen</code> can take a significant amount of time even on a larger amount of resources than we have available in the course, so we will simply look at the results. The application is installed, however, and you can take a look at the arguments it would take if we were to execute it ourselves.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fastq_screen</span> <span class="at">-h</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fastq_screen</span> <span class="at">-h</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre class="scrolling"><code>    
 FastQ Screen - Map sequences against multiple genomes
@@ -3819,65 +3778,46 @@ Options
 <h2 class="anchored" data-anchor-id="exercise-3">Exercise #3</h2>
 <ol type="1">
 <li>Which sample has the highest rate of alignment to adapter sequence? Is there a correspondence with fastqc?</li>
-<li>Which organism apart from Homo sapiens to has the highest hit for the samples?</li>
+<li>Which organism apart from <em>Homo sapiens</em> to has the highest hit for the samples?</li>
 </ol>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solutions
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li>HCT116_EpCAMhigh_3 has the highest rate of adapter contamination. This makes sense if we take a look at the “Adapter Content” tab of the MultiQC output.</li>
-<li>The second highest hit for all samples is Pan troglodytes. This is due to sequence homology and is common to see for human samples.</li>
-</ol>
-</div>
-</div>
-</div>
 </section>
 </section>
 <section id="preprocessing-with-fastp" class="level1">
 <h1>Preprocessing with <code>fastp</code></h1>
-<p>In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp<span class="citation" data-cites="chen2018">(<a href="#ref-chen2018" role="doc-biblioref">Chen et al. 2018</a>)</span>. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does. Depending on the resources, fastp can take a long time to execute for this number of samples, so we opt to rather do this step on only two samples from the downsampled data to get a sense for how fastp improves the quality in fastq files.</p>
+<p>In this section, we preprocess the fastqs to prepare them for alignment in the next chapter using fastp <span class="citation" data-cites="chen2018">(<a href="#ref-chen2018" role="doc-biblioref">Chen et al. 2018</a>)</span>. This command-line tool trims and quality-filters reads in the input fastqs and deposits the output into a new set of fastq files. fastp has many potential options that can be set depending on the requirements of the experiment, but we opt for fairly simple options here. Look over the script below to see what it does. Depending on the resources, fastp can take a long time to execute for this number of samples, so we opt to rather do this step on only two samples from the downsampled data to get a sense for how fastp improves the quality in fastq files.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="va">CURR_DIR</span><span class="op">=</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../..</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="va">INPUT_DIR</span><span class="op">=</span>~/work/gse154927-subsampled/fastq</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="va">FASTP_OUTDIR</span><span class="op">=</span>~/work/results/1_qc/fastp</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$FASTP_OUTDIR</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Start processing with fastp</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># In case we want to process all (skip during lecture)</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="va">ALL_SAMPLES</span><span class="op">=</span><span class="va">$(</span><span class="fu">cat</span> ~/work/gse154927-subsampled/fastq/dataset.tsv <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F</span><span class="st">&quot;\t&quot;</span> <span class="st">&#39;{print $1}&#39;</span> <span class="kw">|</span> <span class="fu">tail</span> +2 <span class="kw">|</span> <span class="fu">sort</span><span class="va">)</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> SN <span class="kw">in</span> HCT116_EpCAMhigh_3 SW480_EpCAMhigh_1<span class="kw">;</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">do</span> <span class="bu">echo</span> <span class="st">&quot;Processing: </span><span class="va">${SN}</span><span class="st">&quot;</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="ex">fastp</span> <span class="dt">\</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">--in1</span> <span class="st">&quot;</span><span class="va">${INPUT_DIR}</span><span class="st">/</span><span class="va">${SN}</span><span class="st">_R1.fastq.gz&quot;</span> <span class="dt">\</span></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">--in2</span> <span class="st">&quot;</span><span class="va">${INPUT_DIR}</span><span class="st">/</span><span class="va">${SN}</span><span class="st">_R2.fastq.gz&quot;</span> <span class="dt">\</span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">--out1</span> <span class="st">&quot;</span><span class="va">${FASTP_OUTDIR}</span><span class="st">/</span><span class="va">${SN}</span><span class="st">_trimmed_R1.fastq.gz&quot;</span> <span class="dt">\</span></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">--out2</span> <span class="st">&quot;</span><span class="va">${FASTP_OUTDIR}</span><span class="st">/</span><span class="va">${SN}</span><span class="st">_trimmed_R2.fastq.gz&quot;</span> <span class="dt">\</span></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">--adapter_fasta</span> ~/work/kaist-rna-bulk-sept2025/data/allIllumina-forTrimmomatic-20160202.fa <span class="dt">\</span></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">--thread</span> 8 <span class="dt">\</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">--trim_front1</span> 4 <span class="dt">\</span></span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">--trim_tail1</span> 4    <span class="dt">\</span></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">--average_qual</span> 20 <span class="dt">\</span></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">--max_len1</span> 0 <span class="dt">\</span></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">--max_len2</span> 0 <span class="dt">\</span></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">--trim_poly_x</span> <span class="dt">\</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">--poly_x_min_len</span> 10 <span class="dt">\</span></span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">--length_required</span> 30</span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="va">CURR_DIR</span><span class="op">=</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../..</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="va">INPUT_DIR</span><span class="op">=</span>~/work/gse154927-subsampled/fastq</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="va">FASTP_OUTDIR</span><span class="op">=</span>~/work/results/1_qc/fastp</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$FASTP_OUTDIR</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Start processing with fastp</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># In case we want to process all (skip during lecture)</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="va">ALL_SAMPLES</span><span class="op">=</span><span class="va">$(</span><span class="fu">cat</span> ~/work/gse154927-subsampled/fastq/dataset.tsv <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F</span><span class="st">&quot;\t&quot;</span> <span class="st">&#39;{print $1}&#39;</span> <span class="kw">|</span> <span class="fu">tail</span> +2 <span class="kw">|</span> <span class="fu">sort</span><span class="va">)</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> SN <span class="kw">in</span> HCT116_EpCAMhigh_3 SW480_EpCAMhigh_1<span class="kw">;</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">do</span> <span class="bu">echo</span> <span class="st">&quot;Processing: </span><span class="va">${SN}</span><span class="st">&quot;</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="ex">fastp</span> <span class="dt">\</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">--in1</span> <span class="st">&quot;</span><span class="va">${INPUT_DIR}</span><span class="st">/</span><span class="va">${SN}</span><span class="st">_R1.fastq.gz&quot;</span> <span class="dt">\</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">--in2</span> <span class="st">&quot;</span><span class="va">${INPUT_DIR}</span><span class="st">/</span><span class="va">${SN}</span><span class="st">_R2.fastq.gz&quot;</span> <span class="dt">\</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">--out1</span> <span class="st">&quot;</span><span class="va">${FASTP_OUTDIR}</span><span class="st">/</span><span class="va">${SN}</span><span class="st">_trimmed_R1.fastq.gz&quot;</span> <span class="dt">\</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">--out2</span> <span class="st">&quot;</span><span class="va">${FASTP_OUTDIR}</span><span class="st">/</span><span class="va">${SN}</span><span class="st">_trimmed_R2.fastq.gz&quot;</span> <span class="dt">\</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">--adapter_fasta</span> ~/work/kaist-rna-bulk-sept2025/data/allIllumina-forTrimmomatic-20160202.fa <span class="dt">\</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">--thread</span> 8 <span class="dt">\</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">--trim_front1</span> 4 <span class="dt">\</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">--trim_tail1</span> 4    <span class="dt">\</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">--average_qual</span> 20 <span class="dt">\</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">--max_len1</span> 0 <span class="dt">\</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">--max_len2</span> 0 <span class="dt">\</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">--trim_poly_x</span> <span class="dt">\</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">--poly_x_min_len</span> 10 <span class="dt">\</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">--length_required</span> 30</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre class="scrolling"><code>/home/rstudio/work/kaist-rna-bulk-sept2025
 Processing: HCT116_EpCAMhigh_3
@@ -3927,7 +3867,7 @@ JSON report: fastp.json
 HTML report: fastp.html
 
 fastp --in1 /home/rstudio/work/gse154927-subsampled/fastq/HCT116_EpCAMhigh_3_R1.fastq.gz --in2 /home/rstudio/work/gse154927-subsampled/fastq/HCT116_EpCAMhigh_3_R2.fastq.gz --out1 /home/rstudio/work/results/1_qc/fastp/HCT116_EpCAMhigh_3_trimmed_R1.fastq.gz --out2 /home/rstudio/work/results/1_qc/fastp/HCT116_EpCAMhigh_3_trimmed_R2.fastq.gz --adapter_fasta /home/rstudio/work/kaist-rna-bulk-sept2025/data/allIllumina-forTrimmomatic-20160202.fa --thread 8 --trim_front1 4 --trim_tail1 4 --average_qual 20 --max_len1 0 --max_len2 0 --trim_poly_x --poly_x_min_len 10 --length_required 30 
-fastp v1.0.1, time used: 30 seconds
+fastp v1.0.1, time used: 31 seconds
 
 Processing: SW480_EpCAMhigh_1
 Read1 before filtering:
@@ -3986,38 +3926,6 @@ fastp v1.0.1, time used: 3 seconds</code></pre>
 <li>Which sequences are provided for trimming?</li>
 <li>How could the sequence of operations of fastp affect trimming?</li>
 </ol>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solutions
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li><p>The adapter content in some of the samples</p></li>
-<li><p>The file with all sequences considered to be adapter provided here <code>~/work/kaist-rna-bulk-sept2025/data/allIllumina-forTrimmomatic-20160202.fa</code> . This list is not exhaustive and may need to be expanded if your library prep in question uses an adapter not in the list.</p></li>
-<li><p>According to the documentation on GitHub, fastp performs trimming in the following order:</p>
-<pre class="text"><code>1, UMI preprocessing (--umi)
-2, global trimming at front (--trim_front)
-3, global trimming at tail (--trim_tail)
-4, quality pruning at 5&#39; (--cut_front)
-5, quality pruning by sliding window (--cut_right)
-6, quality pruning at 3&#39; (--cut_tail)
-7, trim polyG (--trim_poly_g, enabled by default for NovaSeq/NextSeq data)
-8, trim adapter by overlap analysis (enabled by default for PE data)
-9, trim adapter by adapter sequence (--adapter_sequence, --adapter_sequence_r2. For PE data, this step is skipped if last step succeeded)
-10, trim polyX (--trim_poly_x)
-11, trim to max length (---max_len)</code></pre>
-<p>This sequence of steps might not work for every application. As an example: If we know we need to trim bases after the 5’ adapter, as might be the case in some types of library prep, one round of fastp processing will not be enough. We would need to run fastp once to perform adapter trimming and then run fastp again to trim off the remaining sequences at the 5’.</p></li>
-</ol>
-</div>
-</div>
-</div>
 
 </section>
 </section>

@@ -183,37 +183,6 @@ WGCNA::plotDendroAndColors(hc, sampleColours, autoColorHeight=TRUE, hang = -0.1)
     # Your code here
     ```
 
-::: {.callout-tip collapse="true" appearance="simple"}
-### Solutions
-
-1.  Yes, beyond some minor differences, the results look similar.
-
-2.  The easy solution is to simply copy the code from the previous exercise here:
-
-    ```{r exercise1b, eval=FALSE}
-    # First, we center the matrix
-    normCountsCentered <- sweep(vsdSE, 1, rowMeans(vsdSE))
-    # Identify high variance features
-    topGenes <- rownames(vsdSE)[head(order(rowSds(vsdSE, na.rm=TRUE),
-                                                decreasing = TRUE), 2000)]
-
-    countsToPlot <- normCountsCentered[topGenes,]
-
-    # Clustering of high variance features
-    hmObj <- pheatmap(countsToPlot, 
-             clustering_method="ward.D2",
-             scale = "row", cluster_rows = TRUE,
-             cluster_cols = TRUE, show_rownames = FALSE,
-             cutree_rows = 6, cutree_cols = 2,
-             treeheight_row = 50, treeheight_col = 50,
-             annotation_col = meta,
-             fontsize_row = 8, fontsize_col = 9,
-             annotation_legend = TRUE,
-             fontsize=8)
-    hmObj
-    ```
-:::
-
 ## Performing the DE
 
 The standard differential expression analysis steps are wrapped into a single function, `DESeq`. The estimation steps performed by this function are described below, in the manual page for `?DESeq` .
@@ -249,22 +218,6 @@ Next, let's take a closer look at the results.
 1.  What are the columns of the object?
 2.  What was the method used for p-value correction?
 3.  How many significantly-expressed genes are there assuming we consider genes differentially expressed if `p <= pvalThresh` and `log2FoldChange >= log2FCThresh`?
-
-::: {.callout-tip collapse="true" appearance="simple"}
-### Solutions
-
-1.  The columns most interesting to us are pvalue, padj (adjusted p-value), and log2FoldChange. Some other columns include `lfcSE`, which gives the standard error of the `log2FoldChange` and `stat`, which gives the Wald statistic. See `?results` for more information.
-
-2.  BH (Benjamin-Hochberg), otherwise known as the false discovery rate.
-
-3.  Execute the following:
-
-    ```{r exercise2a}
-    sum(abs(res$log2FoldChange) >= log2FCThresh & 
-          res$pvalue <= pvalThresh &
-          isValid, na.rm=TRUE)
-    ```
-:::
 
 ## Exploring and Visualizing Results
 
@@ -350,28 +303,6 @@ EnhancedVolcano::EnhancedVolcano(toPlot,
 1.  The authors write in their paper the following about the predicted mechanism in these samples: *It has been established that in breast and pancreatic cancer ZEB1-driven EMT downregulates the expression of the RBP and splicing regulator ESRP1 as part of a self-enforcing feedback loop. Accordingly, among the top differentially expressed genes (DEGs) between EpCAMhi and EpCAMlo in SW480 and HCT116 colon cancer cells, ESRP1 was found to be upregulated both at the RNA and at the protein level in the quasi-mesenchymal subpopulation where ZEB1 expression is downregulated.*
 
 Can we confirm in our data that this finding holds water?
-
-::: {.callout-tip collapse="true" appearance="simple"}
-### Solutions
-
-1.  Put the gene names in question to the "selectLab" argument and re-run that line.
-
-    ```{r exercise3a, fig.height=5}
-    EnhancedVolcano::EnhancedVolcano(toPlot,
-      lab = toPlot$gene_name,
-      selectLab = c("ESRP1", "ZEB1"),
-      drawConnectors = TRUE,
-      arrowheads = FALSE,
-      xlim = c(-xmax, xmax),
-      ylim = c(0, ymax),
-      boxedLabels = TRUE,
-      parseLabels = TRUE,
-      x = 'log2FoldChange',
-      y = 'pvalue') + coord_flip()
-    ```
-
-    ESRP1 is upregulated (positive logFC) while ZEB1 is downregulated (negative logFC).
-:::
 
 ## Clustering of Significant Features
 

@@ -55,22 +55,6 @@ ds
 
 4.  Is there information about the strandedness of the libraries?
 
-::: {.callout-note appearance="simple" collapse="true"}
-### Solutions
-
-1.  4 groups:
-
-    ```         
-    HCT116_EpCAMhigh, HCT116_EpCAMlow, SW480_EpCAMhigh, SW480_EpCAMlow
-    ```
-
-2.  TURBO DNA-free Kit protocol (Invitrogen).
-
-3.  The samples vary between 2M to just under 52M reads. In general, we seek to get around 20M samples for bulk RNA-seq of human and mouse samples. Given that these are human samples, some of these have less than optimal counts. However, it may still be enough to get usable gene expression data. (see Count QC in chapter 3).
-
-4.  The libraries do not have a specific strandedness.
-:::
-
 # FastQC & MultiQC
 
 First, let's run FastQC. This tool was developed by Babraham Bioinformatics [@Andrews:2010tn] and is what we will primarily use for QC of our fastq files. In addition, we will run MultiQC [@ewels2016] which aims to aggregate outputs from tools like FastQC into a single report for easier viewing. We won't run these tools now, but if we did, this process would take about 10 minutes on 8 cores.
@@ -104,16 +88,6 @@ Take a look at the outputs in the "\~/work/results/1_qc/fastqc" and "\~/work/res
 4.  Do you think it makes sense to sequence longer based on these data?
 5.  What would be a good method of preprocessing?
 
-::: {.callout-note collapse="true" appearance="simple"}
-## Solutions
-
-1.  There were most likely some problems with the pooling. SW480_EpCAMhigh_1 appears to be under-represented while other samples are comparatively overrepresented.
-2.  This is a multi-faceted issue. It is a general artifact of sequencers on one hand, related towards the speed of sequencing and the longevity of the reagents. On another, increasing adapter content towards the 3' end of the read can negatively affect the performance due to low sequence diversity.
-3.  It looks as expected. A number of samples however have an increase in the amount of As towards the end of the read. This is most likely due to very short fragment lengths (or adapter dimers) and the sequencer beginning to read past the adapter.
-4.  No, the adapter content is already quite high for most of the samples. Sequencing longer fragments would not be worth the investment, most likely.
-5.  Trimming off the adapter and removing the first few bases off the 5' end would remove most of the marking of bad quality from these samples.
-:::
-
 # FastqScreen
 
 [FastqScreen](https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/_build/html/index.html) is a tool which aligns fastq files to a database of different genomes to determine from where the data originate. This can be used for a variety of purposes, such as for metagenomic characterisation, but we will use it as a QC tool to determine any potential sources of contamination.
@@ -131,13 +105,6 @@ Open the downloaded html file which has been placed within `~/work/gse154927-ful
 
 1.  Which sample has the highest rate of alignment to adapter sequence? Is there a correspondence with fastqc?
 2.  Which organism apart from *Homo sapiens* to has the highest hit for the samples?
-
-::: {.callout-note collapse="true" appearance="simple"}
-## Solutions
-
-1.  HCT116_EpCAMhigh_3 has the highest rate of adapter contamination. This makes sense if we take a look at the "Adapter Content" tab of the MultiQC output.
-2.  The second highest hit for all samples is *Pan troglodytes*. This is due to sequence homology and is common to see for human samples.
-:::
 
 # Preprocessing with `fastp`
 
@@ -185,29 +152,3 @@ done
 1.  What issues if any that you noticed in the FastQC output would be solved by using fastp with the arguments provided?
 2.  Which sequences are provided for trimming?
 3.  How could the sequence of operations of fastp affect trimming?
-
-::: {.callout-note appearance="simple" collapse="true"}
-### Solutions
-
-1.  The adapter content in some of the samples.
-
-2.  The file with all sequences considered to be adapter provided here `~/work/kaist-rna-bulk-sept2025/data/allIllumina-forTrimmomatic-20160202.fa` . This list is not exhaustive and may need to be expanded if your library prep in question uses an adapter not in the list.
-
-3.  According to the documentation on GitHub, fastp performs trimming in the following order:
-
-    ``` text
-    1, UMI preprocessing (--umi)
-    2, global trimming at front (--trim_front)
-    3, global trimming at tail (--trim_tail)
-    4, quality pruning at 5' (--cut_front)
-    5, quality pruning by sliding window (--cut_right)
-    6, quality pruning at 3' (--cut_tail)
-    7, trim polyG (--trim_poly_g, enabled by default for NovaSeq/NextSeq data)
-    8, trim adapter by overlap analysis (enabled by default for PE data)
-    9, trim adapter by adapter sequence (--adapter_sequence, --adapter_sequence_r2. For PE data, this step is skipped if last step succeeded)
-    10, trim polyX (--trim_poly_x)
-    11, trim to max length (---max_len)
-    ```
-
-    This sequence of steps might not work for every application. As an example: If we know we need to trim bases after the 5' adapter, as might be the case in some types of library prep, one round of fastp processing will not be enough. We would need to run fastp once to perform adapter trimming and then run fastp again to trim off the remaining sequences at the 5'.
-:::

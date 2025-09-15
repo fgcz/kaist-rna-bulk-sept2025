@@ -40,22 +40,6 @@ seqkit stats --skip-err --quiet ~/work/gse154927-subsampled/fastp/HCT116*fastq.g
 
 2.  Is the minimum length of each read in the fastq files expected?
 
-::: {.callout-tip collapse="true"}
-## Solutions
-
-```{r, warning=FALSE}
-suppressPackageStartupMessages(library(tidyverse))
-
-dat_raw <- vroom::vroom("~/work/gse154927-subsampled/fastq/dataset.tsv", show_col_types = FALSE) %>% arrange(Name)
-dat_fastp <- vroom::vroom("~/work/gse154927-subsampled/fastp/dataset.tsv", show_col_types = FALSE) %>% arrange(Name)
-
-tibble(Name=dat_raw$Name, OriginalCount=dat_raw$"Read Count", FastpCount=dat_fastp$"Read Count", ReadFraction=dat_fastp$"Read Count" / dat_raw$"Read Count")
-```
-
-1.  As expected, each sample has around a tenth of the input reads of our initial sequencing data. 500'000 to 1'000'000 may seem like little considering the general recommendation of 20M for bulk RNA-seq, but we would likely still get somewhat usable count data from this assuming we mostly care about large fold changes (biological effect size).
-2.  Yes, we specified a minimum length of 30bp when we ran fastp, which is what we see in the seqkit output.
-:::
-
 ## Running STAR
 
 We are now ready to run the STAR aligner on our inputs. Note that an import step has already been done for us, namely the creation of the STAR index directory. How to generate this directory be found [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html#running-star). Alignment with STAR can (despite its purported speed) take a while and use a lot of RAM (\~30GB for the human genome), so **do not** run the code chuck below.
@@ -133,37 +117,6 @@ cp -r ~/work/gse154927-subsampled/bams/* $OUTPUT_DIR
 2.  What is the range of splices for the samples? Do you think these are real?
 3.  (Challenge) Find the answers to the above two questions programmatically.
 4.  We ran a python file called `infer_experiment.py`, which aims to infer the strandedness of bam alignments using a bed file for reference. These outputs were placed into the files ending in "\_inferred.txt". Is the predicted strandedness consistent with our expectations?
-
-::: {.callout-tip collapse="true"}
-## Solutions
-
-Let's first answer number 3, as it will help us to answer the other questions. This is obviously not the only way to do this, so feel free to use your own (potentially more efficient) solution.
-
-```{r}
-suppressPackageStartupMessages(library(tidyverse))
-starLogFiles <- Sys.glob("~/work/results/2_mapping/STAR_alignment/*_STAR.log")
-logFiles <- lapply(starLogFiles, function(x) {
-  tmp <- data.table::fread(x, sep="|", strip.white=TRUE, nrows=9, skip="Uniquely mapped") %>% 
-    as.data.frame()
-  tmpVals <- str_trim(tmp[,2])
-  tmpNames <- tmp[,1]
-  names(tmpVals) <- tmpNames
-  return(as_tibble(as.list(tmpVals)))
-}) %>% 
-  bind_rows() %>%
-  mutate("Uniquely mapped reads %"=sub("%", "", `Uniquely mapped reads %`)) %>%
-  mutate_all(., as.numeric) %>%
-  mutate(Name = basename(starLogFiles))
-
-summary(logFiles$"Number of splices: Total")
-summary(logFiles$"Number of splices: Annotated (sjdb)")
-```
-
-1.  SW480_EpCAMlow_1 is the sample with the highest mapping rate. HCT116_EpCAMlow_2_STAR is the sample with the lowest mapping rate.
-2.  3E4 to 6.4E5. Compare this to the total amount of non-canonical splice sites. The amount of annotated splice sites makes up the vast majority of splice sites.
-3.  (see code)
-4.  Yes, the output is not stranded.
-:::
 
 ------------------------------------------------------------------------
 
