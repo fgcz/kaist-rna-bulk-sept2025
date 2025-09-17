@@ -113,7 +113,7 @@ cp -r ~/work/gse154927-subsampled/bams/* $OUTPUT_DIR
 
 ### Exercise #2
 
-1.  Take a look at the files ending in "\_Log.final.out". Which sample has the highest percentage of primary alignments? Which has the lowest percentage?
+1.  Take a look at the files ending in "\_STAR.log". Which sample has the highest percentage of primary alignments? Which has the lowest percentage?
 2.  What is the range of splices for the samples? Do you think these are real?
 3.  (Challenge) Find the answers to the above two questions programmatically.
 4.  We ran a python file called `infer_experiment.py`, which aims to infer the strandedness of bam alignments using a bed file for reference. These outputs were placed into the files ending in "\_inferred.txt". Is the predicted strandedness consistent with our expectations?
